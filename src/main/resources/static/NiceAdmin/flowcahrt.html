@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Design and Activity Diagram</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Mermaid JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+        .mermaid {
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9;
+            margin-top: 20px;
+            overflow: auto;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({ startOnLoad: true });
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center my-4">System Design and Activity Diagram</h1>
+
+    <!-- System Design Section -->
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">System Design Overview</h5>
+        </div>
+        <div class="card-body">
+            <h6 class="card-title">Admin Module</h6>
+            <ul>
+                <li><strong>Admin Dashboard:</strong> Central control panel for admin tasks and monitoring.</li>
+                <li><strong>Create Table:</strong> Functionality to create new game tables.</li>
+                <li><strong>Delete Table:</strong> Ability to remove existing game tables.</li>
+                <li><strong>View Bets:</strong> Monitoring and reviewing bets placed.</li>
+                <li><strong>Set Winner:</strong> Designate winners based on betting outcomes.</li>
+                <li><strong>Referral Commission:</strong> Set and manage referral commission rates.</li>
+                <li><strong>Block User:</strong> Block or suspend user accounts.</li>
+                <li><strong>Payout Requests:</strong> Handle and approve or reject user payout requests.</li>
+                <li><strong>Manage Queries:</strong> Oversee user queries and support requests.</li>
+                <li><strong>View Active Users:</strong> Monitor currently active users.</li>
+                <li><strong>View Active Tables:</strong> Track currently active game tables.</li>
+                <li><strong>System Monitoring:</strong> Continuous monitoring of system performance.</li>
+            </ul>
+
+            <h6 class="card-title">User Module</h6>
+            <ul>
+                <li><strong>User Login:</strong> Authentication process for users.</li>
+                <li><strong>User Dashboard:</strong> Main interface for users.</li>
+                <li><strong>Join Lobby:</strong> Action to join a game lobby.</li>
+                <li><strong>Place Bet:</strong> Functionality for placing bets.</li>
+                <li><strong>Pay-In:</strong> Recharge user wallet.</li>
+                <li><strong>Request Payout:</strong> Request to withdraw funds.</li>
+                <li><strong>Referral System:</strong> Manage and track user referrals.</li>
+                <li><strong>Manage Profile:</strong> Update profile information.</li>
+                <li><strong>Play Game:</strong> Engage in the game.</li>
+                <li><strong>Contact Us:</strong> Reach out to support.</li>
+                <li><strong>View Token Balance:</strong> Check the balance of tokens.</li>
+            </ul>
+
+            <h6 class="card-title">Additional Features</h6>
+            <ul>
+                <li><strong>Payment Gateway Integration:</strong> Facilitates transactions and payment processing.</li>
+                <li><strong>Token Management System:</strong> Handles token issuance and tracking.</li>
+                <li><strong>Notification System:</strong> Sends notifications related to updates and game status.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Activity Diagram Section -->
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Activity Diagram</h5>
+        </div>
+        <div class="card-body">
+            <div class="mermaid">
+                %%{ init : { "theme" : "default" } }%%
+                stateDiagram-v2
+                [*] --> UserLogin
+                UserLogin --> UserDashboard
+                UserDashboard --> JoinLobby
+                JoinLobby --> PlaceBet
+                PlaceBet --> PayIn
+                PayIn --> RequestPayout
+                RequestPayout --> ReferralSystem
+                ReferralSystem --> ManageProfile
+                ManageProfile --> PlayGame
+                PlayGame --> ContactUs
+                ContactUs --> [*]
+
+                [*] --> AdminLogin
+                AdminLogin --> AdminDashboard
+                AdminDashboard --> CreateTable
+                AdminDashboard --> DeleteTable
+                AdminDashboard --> ViewBets
+                AdminDashboard --> SetWinner
+                AdminDashboard --> ReferralCommission
+                AdminDashboard --> BlockUser
+                AdminDashboard --> PayoutRequests
+                AdminDashboard --> ManageQueries
+                AdminDashboard --> ViewActiveUsers
+                AdminDashboard --> ViewActiveTables
+                AdminDashboard --> SystemMonitoring
+                SystemMonitoring --> [*]
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

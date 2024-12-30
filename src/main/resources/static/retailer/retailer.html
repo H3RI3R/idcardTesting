@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Retailer Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../NavbarStyle.css">
+
+</head>
+<body>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+<!--Main Navigation-->
+<header>
+    <!-- Sidebar -->
+    <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+        <div class="position-sticky">
+            <div class="list-group list-group-flush mx-3 mt-4">
+                <a href="mainDashboard.html" class="list-group-item list-group-item-action py-2 ripple">
+                    <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Main dashboard</span>
+                </a>
+
+                <a href="retailer.html" class="list-group-item list-group-item-action py-2 ripple active" aria-current="true">
+                    <i class="fas fa-chart-line fa-fw me-3"></i><span>Id Card </span></a>
+            </div>
+        </div>
+    </nav>
+    <!-- Sidebar -->
+
+    <!-- Navbar -->
+    <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+        <!-- Container wrapper -->
+        <div class="container-fluid">
+            <!-- Toggle button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu"
+                    aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <p class="font"> Scriza</p>
+
+            <!-- Right links -->
+            <ul class="navbar-nav ms-auto d-flex flex-row">
+                <!-- Welcome Message -->
+                <li class="nav-item d-flex align-items-center me-3">
+                    <span class="navbar-text">Welcome <span id="userEmail"></span></span>
+                </li>
+
+                <!-- Logout Button -->
+                <li class="nav-item">
+                    <a id="logoutBtn" class="btn btn-danger ms-3" href="../NiceAdmin/login.html" role="button">Logout</a>
+                </li>
+            </ul>
+        </div>
+        <!-- Container wrapper -->
+    </nav>
+    <!-- Navbar -->
+</header>
+<!--Main Navigation-->
+
+<!--Main layout-->
+<main style="margin-top: 58px;">
+    <div class="container pt-4">
+        <h1>Create ID card Page</h1>
+        <!-- Add more content here specific to retailers -->
+        <p>This is where you can Create Id card using the tokens.</p>
+
+
+        <!-- Create id card Form -->
+        <!-- Create ID Card Form -->
+        <div class="mb-4">
+            <h2>Create ID Card</h2>
+            <form id="createIdCardForm" enctype="multipart/form-data">
+                <!-- Removed Retailer Email field since it's obtained from session -->
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="businessName" class="form-label">Business Name</label>
+                    <input type="text" class="form-control" id="businessName" required>
+                </div>
+                <div class="mb-3">
+                    <label for="businessAddress" class="form-label">Business Address</label>
+                    <input type="text" class="form-control" id="businessAddress" required>
+                </div>
+                <div class="mb-3">
+                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" id="phoneNumber" required>
+                </div>
+                <div class="mb-3">
+                    <label for="emailAddress" class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="emailAddress" required>
+                </div>
+                <div class="mb-3">
+                    <label for="permanentAddress" class="form-label">Permanent Address</label>
+                    <input type="text" class="form-control" id="permanentAddress" required>
+                </div>
+                <div class="mb-3">
+                    <label for="currentAddress" class="form-label">Current Address</label>
+                    <input type="text" class="form-control" id="currentAddress" required>
+                </div>
+                <div class="mb-3">
+                    <label for="photo" class="form-label">Photo</label>
+                    <input type="file" class="form-control" id="photo" accept="image/*" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Create ID Card</button>
+            </form>
+        </div>
+    </div>
+</main>
+<script src="retailers.js"></script>
+
+<!--Main layout-->
+
+</body>
+</html>

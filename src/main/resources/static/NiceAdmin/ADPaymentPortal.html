@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Dashboard</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+  <style>
+    #toggleActiveFilter {
+    width: 150px; /* Adjust the width as needed */
+    padding: 0.25rem 0.5rem; /* Adjust padding for smaller button */
+    font-size: 0.875rem; /* Smaller font size */
+    text-align: center; /* Center the text */
+}</style>
+
+  <!-- =======================================================
+  * Template Name: NiceAdmin
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Updated: Apr 20 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ========================================aaaaaa================ -->
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="Adindex.html" class="logo d-flex align-items-center">
+        <img src="assets/img/logo.png" alt="">
+        <span class="d-none d-lg-block">IdCard</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+
+
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2"><span id="userEmail"></span></span>
+          </a><!-- End Profile Iamge Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6><span id="userEmail1"></span></h6>
+              <span>Web Designer</span>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="ADusers-profile.html">
+                <i class="bi bi-person"></i>
+                <span>My Profile</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="#" id="logoutBtn">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign Out</span>
+              </a>
+            </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="Adindex.html">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+      <li class="nav-item">
+        <a class="nav-link " href="ADPaymentPortal.html">
+          <i class="bi bi-credit-card"></i>
+          <span>Payment portal</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-menu-button-wide"></i><span>Manage Retailer</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="ADforms-elements.html" >
+              <i class="bi bi-circle"></i><span>Create retailer</span>
+            </a>
+          </li>
+          <li>
+            <a href="ADShowRetailer.html" >
+              <i class="bi bi-circle"></i><span>Show retailer</span>
+            </a>
+          </li>
+          <li>
+            <a href="ADDeleteRetailer.html" >
+              <i class="bi bi-circle"></i><span>Delete retailer</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#distributor-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-menu-button-wide"></i><span>Manage Distributor</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="distributor-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="ADCreateDIs.html" >
+              <i class="bi bi-circle"></i><span>Create Distributor</span>
+            </a>
+          </li>
+          <li>
+            <a href="ADShowDis.html" >
+              <i class="bi bi-circle"></i><span>Show Distributor</span>
+            </a>
+          </li>
+          <li>
+            <a href="ADDeleteDis.html" >
+              <i class="bi bi-circle"></i><span>Delete Distributor</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-journal-text"></i><span>Manage Report</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="ADTokenReport.html" >
+              <i class="bi bi-circle"></i><span>Overall Token Usage Report</span>
+            </a>
+          </li>
+          <li>
+            <a href="ADDistributorReport.html" >
+              <i class="bi bi-circle"></i><span>Distributor Activity Report</span>
+            </a>
+          </li>
+          <li>
+            <a href="ADRetailerReport.html" >
+              <i class="bi bi-circle"></i><span>Retailer Activity Summary</span>
+            </a>
+          </li>
+          <li>
+            <a href="ADDateSpecificReport.html" >
+              <i class="bi bi-circle"></i><span>Date Range Filter</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed " data-bs-target="#Token-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-journal-text"></i><span>Manage Tokens</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="Token-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="ADToken.html">
+              <i class="bi bi-circle"></i><span>Show Tokens</span>
+            </a>
+          </li>
+          <li>
+            <a href="ADTokenCreate.html">
+              <i class="bi bi-circle"></i><span>Create Tokens</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-heading">Pages</li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="ADusers-profile.html">
+          <i class="bi bi-person"></i>
+          <span>Profile</span>
+        </a>
+      </li><!-- End Profile Page Nav -->
+    </ul>
+  </aside><!-- End Sidebar-->
+
+
+  <main id="main" class="main">
+    <!-- Modal Structure (Placed towards the bottom of the file) -->
+    <div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="notificationModalTitle">All Notifications</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Notification items go here -->
+            <div class="notification-item">
+              <i class="bi bi-exclamation-circle text-warning"></i>
+              <div>
+                <h4>Lorem Ipsum</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>30 min. ago</p>
+              </div>
+            </div>
+            <hr class="dropdown-divider">
+            <div class="notification-item">
+              <i class="bi bi-x-circle text-danger"></i>
+              <div>
+                <h4>Atque rerum nesciunt</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>1 hr. ago</p>
+              </div>
+            </div>
+            <hr class="dropdown-divider">
+            <div class="notification-item">
+              <i class="bi bi-check-circle text-success"></i>
+              <div>
+                <h4>Sit rerum fuga</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>2 hrs. ago</p>
+              </div>
+            </div>
+            <hr class="dropdown-divider">
+            <div class="notification-item">
+              <i class="bi bi-info-circle text-primary"></i>
+              <div>
+                <h4>Dicta reprehenderit</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>4 hrs. ago</p>
+              </div>
+            </div>
+            <hr class="dropdown-divider">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="page-content-wrapper p-xxl-4" style="height: auto !important; min-height: 0px !important;">
+        <div class="row">
+          <div class="pagetitle">
+            <h1>
+              <i class="bi bi-bank"> Add Money</i>
+            </h1>
+            <nav>
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="Adindex.html">Home</a></li>
+                <li class="breadcrumb-item active">Payment portal</li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+        <ul class="nav nav-tabs nav-bottom-line mb-3 d-flex justify-content-center">
+          <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#tab-payment-gateway">
+              Create token
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab-qr-payment">
+              Banks
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab-tokenRate">
+              Token Rate
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab-Status">
+              Status
+            </a>
+          </li>
+        </ul>
+        <div class="tab-content mt-3" style="height: auto !important;">
+          <div class="tab-pane show active" id="tab-payment-gateway" style="height: auto !important;">
+            <div class="row g-4">
+              <!-- Left Column: Token Card -->
+              <div class="col-md-4 col-sm-6 col-lg-4 float-start">
+                <div class="card info-card revenue-card">
+                  <div class="card-body">
+                    <h5 class="card-title">Token</h5>
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-currency-dollar"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6 id="tokenCount">0</h6>
+                      </div>
+                    </div>
+                  </div>
+                </div><!-- End Token Card -->
+              </div>
+
+
+
+              <div class="col-md-6 col-sm-12 col-lg-6 mx-auto">
+              <div class="card">
+                  <div class="border-bottom card-header">
+                    <div class="mb-0 card-title h5">
+                      Create</div>
+                    <p class="mb-0 small">
+                      Create tokens from here
+                    </p>
+                  </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="mb-3">
+                        <label for="inputAmount" class="col-sm-2 col-form-label">Amount</label>
+                        <div class="col-sm-10">
+                          <input type="number" class="form-control" id="inputAmount" placeholder="Enter Token Amount" required>
+                        </div>
+                      </div>
+                      <div class="d-grid mt-4">
+                        <!-- Button Triggering Token Creation -->
+                        <button type="button" class="btn btn-dark d-flex justify-content-center align-items-center" id="createTokenButton">
+                          <span class="fs-5 me-2">✨ Create Tokens</span>
+                        </button>
+                      </div>
+
+                      <!-- Alert Message (Optional for displaying raw message) -->
+                      <div id="tokenCreationMessage" class="mt-3"></div>
+                    </form>
+
+                    <!-- Payment Modal -->
+                    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-body text-center">
+                            <!-- Modal Header Text -->
+                            <p class="text-muted small mb-4">Open your UPI app and scan the QR code below to PAY the amount:</p>
+
+                            <!-- QR Code Container -->
+                            <div class="d-flex justify-content-center mb-4">
+                              <div id="qrcode"></div>
+                            </div>
+
+                            <!-- Scan QR Text -->
+                            <p class="text-muted small mb-4">Scan QR</p>
+
+                            <!-- Transaction Code Input -->
+                            <p class="text-muted small mb-2">If payment is done, enter the transaction code below:</p>
+                            <input type="text" id="transactionID" class="form-control mb-3" placeholder="Transaction ID">
+
+                            <!-- Done Button -->
+                            <button type="button" class="btn btn-dark" id="doneButton">Done</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Bootstrap Alert (Initially Hidden) -->
+                    <div id="paymentAlert" class="alert alert-success alert-dismissible fade show d-none" role="alert">
+                      <span id="alertMessage"></span>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row g-4 mt-4" style="height: auto !important;">
+            </div>
+          </div>
+          <div class="tab-pane" id="tab-qr-payment">
+            <div class="row g-4">
+              <div class="col-md-8 mx-auto">
+                <div class="card">
+                  <div class="border-bottom card-header">
+                    <div class="mb-0 card-title h5">Modify Accounts</div>
+                    <p class="mb-0 small">Add or Remove Bank Accounts.</p>
+                  </div>
+                  <div class="card-body">
+                    <!-- Bank Details Section -->
+                    <!-- Bootstrap Alert -->
+                    <div id="alertContainer" class="alert d-none" role="alert"></div>
+                    <!-- Show Active Button -->
+                    <div class="d-grid mt-2">
+                      <button type="button" id="toggleActiveFilter" class="btn btn-dark btn-sm" onclick="filterActiveAccounts()">
+                        <span class="fs-6 me-2" id="buttonText">Show Active <i class="bi bi-arrow-down"></i></span>
+                      </button>
+                    </div>
+                    <div class="container mt-4">
+                      <h6 class="text-muted"><i class="bi bi-bank"></i> Account Details (Active)</h6>
+
+                      <div style="max-height: 300px; overflow-y: auto;"> <!-- Scrollable container -->
+                        <table class="table table-striped">
+                          <thead>
+                          <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Account Type</th>
+                            <th scope="col">Identifier</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Actions</th>
+                          </tr>
+                          </thead>
+                          <tbody id="accountTableBody">
+                          <!-- Table rows will be injected here -->
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid mt-4">
+                      <button type="button" class="btn btn-dark d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target="#addBankModal">
+                        <span class="fs-5 me-2">✨ Add Bank</span>
+                        <img src="assets/img/bank.png" style="height: 20px; width: auto;" alt="Bank">
+                      </button>
+                      <button type="button" class="btn btn-danger d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target="#addUpiModal">
+                        <span class="fs-5 me-2">✨ Add UPI Account</span>
+                        <img src="assets/img/upi.svg" style="height: 20px; width: auto;" alt="Upi">
+                      </button>
+                      <!--                    <button type="button" class="btn btn-warning d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">-->
+                      <!--                      <span class="fs-5 me-2">✨ Delete Accounts</span>-->
+                      <!--                      <img src="assets/img/upi.svg" style="height: 20px; width: auto;" alt="UPI">-->
+                      <!--                      <img src="assets/img/bank.png" style="height: 20px; width: auto;" alt="Bank">-->
+                      <!--                    </button>-->
+                    </div>
+                    <!-- Activate Confirmation Modal -->
+                    <div class="modal fade" id="activateAccountModal" tabindex="-1" aria-labelledby="activateModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="activateModalLabel">Confirm Activation</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Are you sure you want to activate this account?
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="activateAccount()">Activate</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Deactivate Confirmation Modal -->
+                    <div class="modal fade" id="deactivateModal" tabindex="-1" aria-labelledby="deactivateModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="deactivateModalLabel">Confirm Deactivation</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Are you sure you want to deactivate this account?
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger" onclick="deactivateAccount()">Deactivate</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Add Bank Modal -->
+                    <!-- Add Bank Modal -->
+                    <div class="modal fade" id="addBankModal" tabindex="-1" aria-labelledby="addBankModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="addBankModalLabel">Add Bank Account</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <form id="addBankForm">
+                              <div class="row">
+                                <!-- Bank Name -->
+                                <div class="col-md-6 mb-3">
+                                  <label for="bankName" class="form-label">Bank Name</label>
+                                  <input type="text" class="form-control" id="bankName" required>
+                                </div>
+
+                                <!-- Account Number -->
+                                <div class="col-md-6 mb-3">
+                                  <label for="accountNumber" class="form-label">Account Number</label>
+                                  <input type="text" class="form-control" id="accountNumber" required>
+                                </div>
+                              </div>
+
+                              <div class="row">
+                                <!-- Re-enter Account Number -->
+                                <div class="col-md-6 mb-3">
+                                  <label for="reAccountNumber" class="form-label">Re-enter Account Number</label>
+                                  <input type="text" class="form-control" id="reAccountNumber" required>
+                                </div>
+
+                                <!-- Account Owner Full Name -->
+                                <div class="col-md-6 mb-3">
+                                  <label for="accountOwner" class="form-label">Account Owner Full Name</label>
+                                  <input type="text" class="form-control" id="accountOwner" required>
+                                </div>
+                              </div>
+
+
+
+                              <div class="row">
+                                <!-- Address -->
+                                <div class="col-md-6 mb-3">
+                                  <label for="address" class="form-label">Branch Name</label>
+                                  <input type="text" class="form-control" id="address" required>
+                                </div>
+
+                                <!-- IFSC Code -->
+                                <div class="col-md-6 mb-3">
+                                  <label for="ifscCode" class="form-label">IFSC Code</label>
+                                  <input type="text" class="form-control" id="ifscCode" required>
+                                </div>
+                              </div>
+                              <!-- Use type="button" instead of "submit" -->
+                              <button type="button" id="addBankBtn" class="btn btn-dark">Add Account</button>
+
+                              <!-- Small Text -->
+                              <p class="text-center text-muted small mt-3">We support all payment methods.</p>
+
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Success Modal -->
+                    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-body text-center">
+                            <img src="assets/img/success.png" alt="Success" style="width: 100px; margin-bottom: 20px;">
+                            <h4>Account has been saved successfully!</h4>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Error Modal -->
+                    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-body text-center">
+                            <h4 class="text-danger">Error</h4>
+                            <p id="errorModalBody"></p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Add UPI Modal -->
+                    <div class="modal fade" id="addUpiModal" tabindex="-1" aria-labelledby="addUpiModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <!-- Modal Header -->
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="addUpiModalLabel">Add UPI Account</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+
+                          <!-- Modal Body -->
+                          <div class="modal-body">
+                            <p class="text-muted">Please enter your UPI account details</p>
+                            <form id="addUpiForm" enctype="multipart/form-data">
+                              <div class="row">
+                                <!-- UPI ID -->
+                                <div class="col-md-6 mb-3">
+                                  <label for="upiId" class="form-label">Enter UPI ID</label>
+                                  <input type="text" class="form-control" id="upiId" required>
+                                </div>
+
+                                <!-- Account Name -->
+                                <div class="col-md-6 mb-3">
+                                  <label for="upiAccountName" class="form-label">Account Name</label>
+                                  <input type="text" class="form-control" id="upiAccountName" required>
+                                </div>
+                              </div>
+
+
+
+                              <div class="row">
+                                <!-- Address -->
+                                <div class="col-md-6 mb-3">
+                                  <label for="upiAddress" class="form-label">Platform Name</label>
+                                  <input type="text" class="form-control" id="upiAddress" required>
+                                </div>
+
+                                <!-- QR Code Upload -->
+                                <div class="col-md-6 mb-3">
+                                  <label for="upiQrCode" class="form-label">Upload QR Code(Optional)</label>
+                                  <input type="file" class="form-control" id="upiQrCode" accept="image/*">
+                                </div>
+                              </div>
+
+                              <!-- Add UPI Account Button -->
+                              <div class="d-grid">
+                                <button type="submit" class="btn btn-dark">Add UPI Account</button>
+                              </div>
+
+                              <p class="text-center text-muted small mt-3">We support all payment methods.</p>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Alerts  Modal -->
+                    <div id="alertPlaceholder"></div>
+                    <!-- Delete Account Modal -->
+                    <!-- Delete Confirmation Modal -->
+                    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="deleteConfirmationLabel">Confirm Delete</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Are you sure you want to delete <span id="accountToDelete"></span>?
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="confirmDeleteButton">Delete</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Edit Account Modal -->
+                    <div class="modal fade" id="editAccountModal" tabindex="-1" aria-labelledby="editAccountModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <!-- Modal Header -->
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="editAccountModalLabel">Edit Account</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+
+                          <!-- Modal Body -->
+                          <div class="modal-body">
+                            <form id="editAccountForm">
+                              <div class="mb-3">
+                                <label for="editIdentifier" class="form-label">Identifier</label>
+                                <input type="text" class="form-control" id="editIdentifier" required>
+                              </div>
+                              <div class="mb-3">
+                                <label for="editName" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="editName" required>
+                              </div>
+                            </form>
+                          </div>
+
+                          <!-- Modal Footer -->
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="saveChanges()">Save changes</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+<!--        //  &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;Rate Table &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+
+          <div class="tab-pane" id="tab-tokenRate">
+            <div class="row g-4">
+              <div class="col-md-10 mx-auto">
+                <div class="border shadow card">
+                  <div class="border-bottom card-header">
+                    <div class="mb-0 card-title h5">Token Rate Table</div>
+                    <p class="mb-0 small">Set and manage token rates for distributors</p>
+                  </div>
+                  <div class="card-body">
+                    <table class="table table-bordered text-center" id="rateTable">
+                      <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Minimum Range</th>
+                        <th>Maximum Range</th>
+                        <th>Rate</th>
+                        <th>Actions</th>
+                      </tr>
+                      </thead>
+                      <tbody id="rateTableBody">
+                      <!-- Rows will be dynamically populated here -->
+                      </tbody>
+                    </table>
+                    <button class="btn btn-sm btn-primary" onclick="addNewRow()">Add Row</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!----------------------------------Status table ------------------------->
+          <div class="tab-pane" id="tab-Status">
+            <div class="row g-4">
+              <div class="col-md-10 mx-auto">
+                <div class="border shadow card">
+                  <div class="border-bottom card-header">
+                    <h5 class="card-header-title">
+                      Status
+                    </h5>
+                    <p class="mb-0 small">Status table</p>
+                  </div>
+                  <div class="card-body">
+                    <!-- Search and Refresh Controls -->
+                    <div class="d-flex justify-content-between mb-3">
+                      <input type="text" id="searchTransactionId" class="form-control" placeholder="Search by Transaction ID">
+                      <button id="refreshButton" class="btn btn-primary">Refresh</button>
+                    </div>
+                    <!-- Table -->
+                    <table class="table table-sm">
+                      <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Transaction ID</th>
+                        <th>Type</th> <!-- New Type Column -->
+                      </tr>
+                      </thead>
+                      <tbody id="transactionTableBody">
+                      <!-- Table rows will be inserted here -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+
+    </section>
+
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span>Idcard</span></strong>. All Rights Reserved
+    </div>
+    <div class="credits">
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+      Designed by <a href="https://scriza.in/">Scriza</a>
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/chart.js/chart.umd.js"></script>
+  <script src="assets/vendor/echarts/echarts.min.js"></script>
+  <script src="assets/vendor/quill/quill.js"></script>
+  <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="assets/vendor/tinymce/tinymce.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Add this in your <head> section or before the closing </body> tag -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Template Main JS File -->
+<!--  <script src="assets/js/main.js"></script>-->
+  <script src = ADPaymentPortal.js>
+
+  </script>
+
+
+</body>
+
+</html>
