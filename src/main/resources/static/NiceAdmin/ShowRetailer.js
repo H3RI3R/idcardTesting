@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <td>${retailer.email || 'null'}</td>
                         <td>${retailer.phoneNumber || 'null'}</td>
                         <td>${retailer.companyAddress || 'null'}</td>
-                        <td>${retailer.password || 'null'}</td>
+
                     `;
                 retailerTableBody.appendChild(row);
             });
@@ -501,7 +501,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const email = retailer.email || "null";
                 const phoneNumber = retailer.phoneNumber || "null";
                 const companyAddress = retailer.companyAddress || "null";
-                const password = retailer.password || "null";
+
 
                 // Create a new table row
                 const row = document.createElement('tr');
@@ -514,7 +514,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td>${email}</td>
                         <td>${phoneNumber}</td>
                         <td>${companyAddress}</td>
-                        <td>${password}</td>
+
                     `;
 
                 // Append the row to the table body
