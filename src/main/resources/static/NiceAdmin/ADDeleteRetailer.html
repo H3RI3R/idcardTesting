@@ -267,11 +267,11 @@
                             </div>
                         </form>
                         <h6 class="card-title">Activate Retailer Form</h6>
-                        <form id="deleteRetailerForm">
+                        <form id="deleteDistributorForm">
                             <div class="row mb-3">
                                 <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="inputEmail" placeholder="Enter Retailer Email">
+                                    <input type="text" class="form-control" id="inputEmail1" placeholder="Enter Distributor Email">
                                 </div>
                             </div>
                             <div class="row mb-3">
@@ -305,6 +305,30 @@
                         <div class="confirm-buttons">
                             <button id="confirmDelete" class="btn btn-danger">Yes, De-Activate</button>
                             <button id="cancelDelete" class="btn btn-secondary">No, Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="confirmationSection1" style="display:none;">
+                    <div class="card-body pb-0">
+                        <h5 class="card-title">Retailer Details</h5>
+                        <table class="table table-borderless">
+                            <thead>
+                            <tr>
+                                <th scope="col">R.ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Business</th>
+                                <th scope="col">Token Amount</th>
+                                <th scope="col">Phone Number</th>
+                            </tr>
+                            </thead>
+                            <tbody id="retailerTableBody1">
+                            <!-- Rows will be dynamically added here -->
+                            </tbody>
+                        </table>
+                        <div class="confirm-buttons">
+                            <button id="confirmDelete1" class="btn btn-danger">Yes, Activate</button>
+                            <button id="cancelDelete1" class="btn btn-secondary">No, Cancel</button>
                         </div>
                     </div>
                 </div>
