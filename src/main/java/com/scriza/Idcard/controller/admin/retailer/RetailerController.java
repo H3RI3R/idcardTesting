@@ -22,10 +22,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/admin/retailer")
@@ -338,6 +336,11 @@ public class RetailerController {
                 permanentAddress               // Permanent Address
         );
         // Return the dynamically generated HTML
+        // Log the activity
+        logActivity("ID Card Creation",
+                String.format("ID Card created for %s by retailer %s", name, retailerEmail),
+                retailerEmail);
+
         return ResponseEntity.ok().body(htmlContent);
 
 //        return savedIdCard;
@@ -577,7 +580,35 @@ public class RetailerController {
                 permanentAddress               // Permanent Address
         );
         // Return the dynamically generated HTML
+        // Save ID card
+        createIdCard(name, businessName, businessAddress, phoneNumber, emailAddress,
+                permanentAddress, currentAddress, retailer.getEmail(),
+                retailerEmail, photoBytes, null, null);
+
         return ResponseEntity.ok(htmlContent);
+    }
+    public IdCard createIdCard(String name, String businessName, String businessAddress, String phoneNumber,
+                               String emailAddress, String permanentAddress, String currentAddress,
+                               String creatorEmail, String userEmail, byte[] photo, byte[] pdf, String imagePath) {
+        IdCard idCard = new IdCard();
+        idCard.setName(name);
+        idCard.setBusinessName(businessName);
+        idCard.setBusinessAddress(businessAddress);
+        idCard.setPhoneNumber(phoneNumber);
+        idCard.setEmailAddress(emailAddress);
+        idCard.setPermanentAddress(permanentAddress);
+        idCard.setCurrentAddress(currentAddress);
+        idCard.setCreatorEmail(creatorEmail);
+        idCard.setUserEmail(userEmail);
+        idCard.setPhoto(photo);
+        idCard.setPdf(pdf);
+        idCard.setImagePath(imagePath);
+        // Add the current date and time in the format: yyyy-MM-dd HH:mm:ss
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String creationDateTime = sdf.format(new Date());
+        idCard.setCreationDateTime(creationDateTime);
+
+        return idCardRepository.save(idCard);
     }
 
     @PostMapping("/validate-image")

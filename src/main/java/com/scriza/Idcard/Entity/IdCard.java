@@ -24,6 +24,7 @@ public class IdCard {
     private String permanentAddress;
     private String currentAddress;
 private String creatorEmail;
+
     @Lob
     @Column(name = "photo", columnDefinition="LONGBLOB")
     private byte[] photo;
@@ -33,5 +34,6 @@ private String creatorEmail;
     @Column(name = "pdf", columnDefinition="LONGBLOB")
     private byte[] pdf;
     private String imagePath;
+    private String creationDateTime;
     // Getters and Settersa
 }
