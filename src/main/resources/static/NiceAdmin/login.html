@@ -55,55 +55,70 @@
         </form>
     </div>
 </div>
+<div class="modal" id="inactiveModal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <p id="modalMessage"></p>
+    </div>
+</div>
+
 
 <script>
 
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+           event.preventDefault(); // Prevent form from submitting the traditional way
 
- document.getElementById('loginForm').addEventListener('submit', function(event) {
-      event.preventDefault(); // Prevent the form from submitting the traditional way
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+           const email = document.getElementById('email').value;
+           const password = document.getElementById('password').value;
 
-      fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        if (data.message === 'Successful login') {
-          // Store email in session storage
-          sessionStorage.setItem('userEmail', email);
-          // Check the role and redirect accordingly
-          switch (data.role) {
-            case 'ADMIN':
-              window.location.href = './Adindex.html';
-              break;
-            case 'DISTRIBUTOR':
-              window.location.href = './index.html';
-              break;
-            case 'RETAILER':
-              window.location.href = './rindex.html';
-              break;
-            default:
-              alert('Unknown user role');
-          }
-        } else {
-          alert(data.error || 'Login failed. Please try again.');
-        }
-      })
-      .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
-        alert('Login failed. Please try again.');
-      });
-    });
+           fetch('/api/login', {
+               method: 'POST',
+               headers: {
+                   'Content-Type': 'application/x-www-form-urlencoded'
+               },
+               body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+           })
+           .then(response => {
+               if (!response.ok) {
+                   throw new Error('Network response was not ok');
+               }
+               return response.json();
+           })
+           .then(data => {
+               if (data.status === "true") { // User is active
+                   // Store email in session storage and redirect based on role
+                   sessionStorage.setItem('userEmail', email);
+                   switch (data.role) {
+                       case 'ADMIN':
+                           window.location.href = './Adindex.html';
+                           break;
+                       case 'DISTRIBUTOR':
+                           window.location.href = './index.html';
+                           break;
+                       case 'RETAILER':
+                           window.location.href = './rindex.html';
+                           break;
+                       default:
+                           alert('Unknown user role');
+                   }
+               } else if (data.status === "false") { // User is inactive
+                   // Show modal with inactive account message
+                   document.getElementById('modalMessage').textContent = data.message || "Your account is inactive.";
+                   document.getElementById('inactiveModal').style.display = 'block';
+               } else {
+                   alert(data.error || 'Login failed. Please try again.');
+               }
+           })
+           .catch(error => {
+               console.error('There was a problem with the fetch operation:', error);
+               alert('Login failed. Please try again.');
+           });
+       });
+
+       // Function to close the modal
+       function closeModal() {
+           document.getElementById('inactiveModal').style.display = 'none';
+       }
 </script>
 </body>
 </html>

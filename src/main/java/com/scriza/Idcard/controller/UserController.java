@@ -20,11 +20,20 @@ public class UserController {
                                      @RequestParam String password) {
         try {
             User user = userService.login(email, password);
+
             Map<String, String> response = new HashMap<>();
-            response.put("message", "Successful login");
-            response.put("token", user.getPassword()); // The token was set as password in UserService
-            response.put("role", user.getRole());
+
+            if (!user.isStatus()) { // Check if status is false (inactive)
+                response.put("message", "Your account is inactive.");
+                response.put("status", "false"); // Indicating inactive account
+            } else {
+                response.put("message", "Successful login");
+                response.put("token", user.getPassword()); // The token was set as password in UserService
+                response.put("role", user.getRole());
+                response.put("status", "true"); // Indicating active account
+            }
             return response;
+
         } catch (RuntimeException e) {
             Map<String, String> response = new HashMap<>();
             response.put("error", e.getMessage());
