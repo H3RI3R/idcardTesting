@@ -19,7 +19,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/admin/bank")
-public class BankController {
+public class
+BankController {
 
     @Autowired
     private BankService bankService;

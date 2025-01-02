@@ -69,3 +69,15 @@ document.addEventListener("DOMContentLoaded", function() {
     // Call the function on page load
     fetchUserName();
 });
+
+
+//--------------------------------Logout Button api ------------------------
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Add event listener to the logout button
+    document.getElementById('logoutBtn').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default link behavior
+        sessionStorage.clear(); // Clear session storage
+        window.location.href = './login.html'; // Redirect to login page or any other page
+    });
+});
