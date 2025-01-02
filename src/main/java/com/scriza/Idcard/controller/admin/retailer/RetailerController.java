@@ -93,6 +93,20 @@ public class RetailerController {
             return response;
         }
     }
+    @PostMapping("/activate-retailer")
+    public ResponseEntity<String> activateRetailer(
+            @RequestParam String email,
+            @RequestParam String creatorEmail) {
+
+        try {
+            // Call the service method to activate the distributor
+            retailerService.activateRetailer(email, creatorEmail);
+
+            return ResponseEntity.ok("Retailer activated successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 
 
     @GetMapping("/user-role")

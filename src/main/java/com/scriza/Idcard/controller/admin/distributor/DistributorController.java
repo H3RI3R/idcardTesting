@@ -106,6 +106,30 @@ public class DistributorController {
         }
         return response;
     }
+    @PostMapping("/activate-distributor")
+    public ResponseEntity<String> activateDistributor(
+            @RequestParam String email,
+            @RequestParam String creatorEmail) {
+
+        try {
+            // Call the service method to activate the distributor
+            distributorService.activateDistributor(email, creatorEmail);
+
+            return ResponseEntity.ok("Distributor activated successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+    @GetMapping("/get-creator-email")
+    public ResponseEntity<String> getCreatorEmail(@RequestParam String email) {
+        try {
+            String creatorEmail = distributorService.getCreatorEmailByUserEmail(email);
+            return ResponseEntity.ok(creatorEmail);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 
     @GetMapping("/find")
     public Map<String, Object> findUserDetails(@RequestParam String email,

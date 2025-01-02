@@ -24,10 +24,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -172,6 +170,37 @@ private ActivityRepository activityRepository;
             throw new RuntimeException("Retailer not found.");
         }
     }
+    public void activateRetailer(String email, String creatorEmail) {
+        // Fetch the retailer (distributor) and the creator (admin)
+        User retailer = userRepository.findByEmail(email);
+        User creator = userRepository.findByEmail(creatorEmail);
+
+        // Check if the retailer exists
+        if (retailer == null) {
+            throw new RuntimeException("Retailer not found.");
+        }
+
+        // Check if the retailer is already activated
+        if (retailer.isStatus()) {
+            throw new RuntimeException("Retailer is already activated.");
+        }
+
+        // Determine the role of the requesting user
+        String requestingUserRole = creator.getRole();
+        if ("ADMIN".equals(requestingUserRole)) {
+            activateRetailer(retailer); // Activate retailer
+            logActivityAdmin("RETAILER_ACTIVATION", "Activated retailer: " + email, creatorEmail);
+        } else if ("DISTRIBUTOR".equals(requestingUserRole)) {
+            // Ensure the distributor is authorized to activate this retailer
+            if (creatorEmail.equals(retailer.getCreatorEmail())) {
+                activateRetailer(retailer); // Activate retailer
+            } else {
+                throw new RuntimeException("Unauthorized to activate this retailer.");
+            }
+        } else {
+            throw new RuntimeException("Invalid role for activation.");
+        }
+    }
 
 
 //    ---------------------Show all Retailers-------------------------
@@ -194,6 +223,11 @@ public List<UserWithToken> getAllRetailersWithTokens() {
 
     private void deActivateRetailer(User user) {
        user.setStatus(false);
+        userRepository.save(user);
+
+    }
+    private void activateRetailer(User user) {
+        user.setStatus(true);
         userRepository.save(user);
 
     }
