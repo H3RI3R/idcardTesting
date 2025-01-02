@@ -38,13 +38,23 @@ document.addEventListener("DOMContentLoaded", function() {
                     // Mask phone number, showing only the last 4 digits
                     const maskedPhoneNumber = idCard.phoneNumber.slice(-4).padStart(idCard.phoneNumber.length, '*');
 
+                    // Parse the creationDateTime string from the backend response
+                    const creationDate = new Date(idCard.creationDateTime);
+
+                    // Check if creationDate is valid
+                    let formattedDate = "Invalid Date";
+                    if (!isNaN(creationDate.getTime())) {
+                        // If valid, format it properly
+                        formattedDate = creationDate.toLocaleString();
+                    }
+
                     row.innerHTML = `
                         <td>${idCard.name}</td>
                         <td>${maskedPhoneNumber}</td>
                         <td>${idCard.businessName}</td>
                         <td>Success</td>
                         <td>${idCard.id}</td>
-                        <td>${new Date(idCard.creationDate).toLocaleString()}</td>
+                        <td>${formattedDate}</td>
                     `;
                     retailerTableBody.appendChild(row);
                 });

@@ -47,8 +47,15 @@ public class RetailerService {
 private ActivityRepository activityRepository;
     private static final String ALPHANUMERIC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final SecureRandom RANDOM = new SecureRandom();
+    private String fetchUserRoleByEmail(String email) {
+        User user = userRepository.findByEmail(email); // Fetch user details by email
+        return user != null ? user.getRole() : null;   // Return the role if the user exists
+    }
     public User createRetailer(String name, String email, String password, String company, String phoneNumber, String companyAddress,  String creatorEmail, String statePincode , String aadharCardNo , String panCardNo)  {
         // Check if the retailer already exists
+       // Method to get the role based on email
+
+        // Perform retailer creation logic here
         if (userRepository.findByEmail(email) != null) {
             throw new RuntimeException("Email is already used.");
         }
@@ -102,7 +109,17 @@ private ActivityRepository activityRepository;
         activity.setTimestamp(new Date());
         activity.setUserEmail(creatorEmail);
         activityRepositoryDis.save(activity);
-        logActivityAdmin("RETAILER_CREATION", "Created retailer: " + email, creatorEmail);
+        // Log activities based on the role
+        if ("ADMIN".equalsIgnoreCase(creatorRole)) {
+            // Log activity for admin
+            logActivityAdmin("Retailer Created", "Retailer's email: " + email, creatorEmail);
+        } else if ("DISTRIBUTOR".equalsIgnoreCase(creatorRole)) {
+            // Log activity for distributor
+            logActivity("Retailer Created", "Retailer's email : " + email, creatorEmail);
+        } else {
+            // Optional: Handle other roles or unknown roles
+            System.out.println("Unknown role for creator: " + creatorEmail);
+        }
         return retailer;
     }
     public void logActivityAdmin(String type, String description, String adminEmail) {
