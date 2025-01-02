@@ -189,12 +189,25 @@ document.addEventListener("DOMContentLoaded", function() {
   const doneButton1 = document.getElementById("upiDoneButton1");
 
   // Bank Transfer Done Button
+   let isBankAccountAvailable = false;
+    let isUPIAccountAvailable = false;
+     // Update the flags based on the availability of accounts
+      function checkAccountAvailability() {
+        isBankAccountAvailable = document.getElementById("bankAccountsContainer").innerHTML.trim() !== "<p>No Active Bank Account Available. Please Select Another Option.</p>";
+        isUPIAccountAvailable = document.getElementById("upiAccountsContainer").innerHTML.trim() !== "<p>No Active UPI Account Available. Please Select Another Option.</p>";
+      }
+
   doneButton.addEventListener("click", function() {
     const transactionID = document.getElementById("bankTransactionID1").value; // Use the correct ID for bank transaction
     const amount = document.getElementById("payableAmount").textContent.match(/\d+/)[0];
     const email = sessionStorage.getItem('userEmail'); // Replace with the actual session email value
     const tokenAmount = document.getElementById('inputTokenAmount').value;
 
+ // Validate account availability
+    if (!isBankAccountAvailable) {
+      alert("Cannot create request as no bank account is selected.");
+      return;
+    }
     if (!transactionID) {
       alert("Please enter the transaction ID.");
       return;
@@ -242,6 +255,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const email = sessionStorage.getItem('userEmail'); // Replace with the actual session email value
     const tokenAmount = document.getElementById('inputTokenAmount').value;
 
+ // Validate account availability
+    if (!isUPIAccountAvailable) {
+      alert("Cannot create request as no UPI account is selected.");
+      return;
+    }
     if (!transactionID) {
       alert("Please enter the transaction ID.");
       return;
