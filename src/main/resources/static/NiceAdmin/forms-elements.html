@@ -228,45 +228,64 @@
               <div class="row mb-3">
                 <label for="inputName" class="col-sm-2 col-form-label">Name</label>
                 <div class="col-sm-10">
-                  <input type="text" class="form-control" id="inputName">
+                  <input type="text" class="form-control" id="inputName" placeholder="Please enter your full name">
                 </div>
               </div>
+
               <div class="row mb-3">
                 <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
                 <div class="col-sm-10">
-                  <input type="email" class="form-control" id="inputEmail">
+                  <input type="email" class="form-control" id="inputEmail" placeholder="Please enter your personal email">
                 </div>
               </div>
+
               <div class="row mb-3">
                 <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
                 <div class="col-sm-10">
-                  <input type="password" class="form-control" id="inputPassword">
+                  <input type="password" class="form-control" id="inputPassword" placeholder="Enter your password">
                 </div>
               </div>
+
               <div class="row mb-3">
-                <label for="inputNumber" class="col-sm-2 col-form-label">Number</label>
+                <label for="inputNumber" class="col-sm-2 col-form-label">Mobile Number</label>
                 <div class="col-sm-10">
-                  <input type="number" class="form-control" id="inputNumber">
+                  <input type="text" class="form-control" id="inputNumber" placeholder="Please enter your personal mobile number">
                 </div>
               </div>
+
               <div class="row mb-3">
-                <label for="companyName" class="col-sm-2 col-form-label">Company</label>
+                <label for="shopName" class="col-sm-2 col-form-label">Shop Name</label>
                 <div class="col-sm-10">
-                  <input type="text" class="form-control" id="companyName">
+                  <input type="text" class="form-control" id="shopName" placeholder="Please enter your shop name">
                 </div>
               </div>
+
               <div class="row mb-3">
-                <label for="designation" class="col-sm-2 col-form-label">Designation</label>
+                <label for="shopAddress" class="col-sm-2 col-form-label">Shop Address</label>
                 <div class="col-sm-10">
-                  <input type="text" class="form-control" id="designation">
+                  <input type="text" class="form-control" id="shopAddress" placeholder="Please enter full address of shop with phone number">
                 </div>
               </div>
+
               <div class="row mb-3">
-                <label for="companyAddress" class="col-sm-2 col-form-label">Company Address</label>
-                <div class="col-sm-10">
-                  <input type="text" class="form-control" id="companyAddress">
+                <label for="panCardNo" class="col-sm-2 col-form-label">PAN Card Number</label>
+                <div class="col-sm-4">
+                  <input type="text" class="form-control" id="panCardNo" placeholder="Enter your PAN card number">
+                </div>
+
+                <label for="aadharCardNo" class="col-sm-2 col-form-label">Aadhar Card Number</label>
+                <div class="col-sm-4">
+                  <input type="text" class="form-control" id="aadharCardNo" placeholder="Enter your Aadhar card number">
                 </div>
               </div>
+
+              <div class="row mb-3">
+                <label for="statePincode" class="col-sm-2 col-form-label">State Pin Code</label>
+                <div class="col-sm-3">
+                  <input type="text" class="form-control" id="statePincode" placeholder="Enter pin code">
+                </div>
+              </div>
+
               <div class="row mb-3">
                 <label class="col-sm-2 col-form-label"></label>
                 <div class="col-sm-10">
@@ -274,6 +293,22 @@
                 </div>
               </div>
             </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="successModalLabel">Message</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="modalMessage">
+            <!-- Message will go here -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           </div>
         </div>
       </div>

@@ -360,7 +360,7 @@ document.getElementById('createRetailerForm').addEventListener('submit', functio
     }
 
     // Send data to the API
-    fetch('/api/admin/distributor/create', {
+    fetch('/api/admin/retailer/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -381,18 +381,21 @@ document.getElementById('createRetailerForm').addEventListener('submit', functio
         })
     })
         .then(response => response.json())
-        .then(data => {
-        if (data.message) {
-            alert(`Success: ${data.message}`);
-            document.querySelector('form').reset();
-        } else if (data.error) {
-            alert(`Error: ${data.error}`);
-        }
-    })
-        .catch(error => {
-        alert(`Error: ${error}`);
-    });
-});
+           .then(data => {
+               if (data.message) {
+                   document.getElementById('modalMessage').innerText = data.message;
+                   new bootstrap.Modal(document.getElementById('successModal')).show();
+                   document.querySelector('form').reset(); // Clear the form
+               } else if (data.error) {
+                   document.getElementById('modalMessage').innerText = data.error;
+                   new bootstrap.Modal(document.getElementById('successModal')).show();
+               }
+           })
+           .catch(error => {
+               document.getElementById('modalMessage').innerText = `Something went wrong: ${error}`;
+               new bootstrap.Modal(document.getElementById('successModal')).show();
+           });
+        });
 
 //----------------------------------fetch UserName Api ----------------------------------
 
