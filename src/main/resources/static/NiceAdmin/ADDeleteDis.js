@@ -363,6 +363,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
 //---------------------------------------Delte Api-----------------------------------
 document.addEventListener('DOMContentLoaded', function () {
+    // Common Variables
+    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+    const modalMessage = document.getElementById('modalMessage');
+
+    // Deactivate Distributor Form Elements
     const deleteDistributorForm = document.getElementById('deleteDistributorForm');
     const confirmationSection = document.getElementById('confirmationSection');
     const distributorTableBody = document.getElementById('distributorTableBody');
@@ -370,59 +375,165 @@ document.addEventListener('DOMContentLoaded', function () {
     const cancelDeleteButton = document.getElementById('cancelDelete');
     const inputEmail = document.getElementById('inputEmail');
 
+    // Activate Distributor Form Elements
+    const activateDistributorForm = document.getElementById('deleteDistributorForm1');
+    const confirmationSection1 = document.getElementById('confirmationSection1');
+    const distributorTableBody1 = document.getElementById('distributorTableBody1');
+    const confirmDeleteButton1 = document.getElementById('confirmDelete1');
+    const cancelDeleteButton1 = document.getElementById('cancelDelete1');
+    const inputEmail1 = document.getElementById('inputEmail1');
+
+    // Helper Function to Fetch Creator Email
+    function fetchCreatorEmail(email) {
+        return fetch(`/api/admin/distributor/get-creator-email?email=${encodeURIComponent(email)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch creator email.');
+                }
+                return response.text(); // Assuming response is plain text
+            });
+    }
+
+    // Helper Function to Fetch Distributor Info and Token Count
+    function fetchDistributorInfo(email, tableBody, confirmationSection, confirmButton) {
+        fetch(`/api/admin/distributor/userInfo?email=${encodeURIComponent(email)}`)
+            .then(response => response.json())
+            .then(distributor => {
+                // Fetch Token Count
+                fetch(`/api/admin/token/count?identifier=${distributor.phoneNumber}`)
+                    .then(response => response.json())
+                    .then(tokenData => {
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td>${distributor.id}</td>
+                                <td>${distributor.name}</td>
+                                <td>${distributor.email}</td>
+                                <td>${distributor.company || '-'}</td>
+                                <td>${tokenData.tokenCount || '-'}</td>
+                                <td>${distributor.phoneNumber}</td>
+                            </tr>
+                        `;
+                        confirmationSection.style.display = 'block';
+                        confirmButton.dataset.distributorEmail = email;
+                    });
+            })
+            .catch(error => {
+                console.error('Error fetching distributor data:', error);
+                modalMessage.textContent = 'Error fetching distributor data.';
+                successModal.show();
+            });
+    }
+
+    // Handle Deactivate Distributor Form
     deleteDistributorForm.addEventListener('submit', function (e) {
         e.preventDefault();
         const email = inputEmail.value.trim();
 
         if (email) {
-            // Fetch distributor info and display in the confirmation section
-            fetch(`/api/admin/distributor/userInfo?email=${encodeURIComponent(email)}`)
-                .then(response => response.json())
-                .then(distributor => {
-                // Assuming token data is fetched here
-                fetch(`/api/admin/token/count?identifier=${distributor.phoneNumber}`)
-                    .then(response => response.json())
-                    .then(tokenData => {
-                    distributorTableBody.innerHTML = `
-                                <tr>
-                                    <td>${distributor.id}</td>
-                                    <td>${distributor.name}</td>
-                                    <td>${distributor.email}</td>
-                                    <td>${distributor.company || '-'}</td>
-                                    <td>${tokenData.tokenCount}</td>
-                                    <td>${distributor.phoneNumber}</td>
-                                </tr>
-                            `;
-                    confirmationSection.style.display = 'block';
+            fetchCreatorEmail(email)
+                .then(creatorEmail => {
+                    confirmDeleteButton.dataset.creatorEmail = creatorEmail;
+                    fetchDistributorInfo(email, distributorTableBody, confirmationSection, confirmDeleteButton);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    modalMessage.textContent = 'Failed to fetch creator email.';
+                    successModal.show();
                 });
-            })
-                .catch(error => console.error('Error fetching distributor data:', error));
         }
     });
 
+    // Confirm Deactivation
     confirmDeleteButton.addEventListener('click', function () {
-        const email = inputEmail.value.trim();
+        const email = confirmDeleteButton.dataset.distributorEmail;
+        const creatorEmail = confirmDeleteButton.dataset.creatorEmail;
 
-        if (email) {
-            // Delete the distributor
-            fetch(`/api/admin/distributor/delete?email=${encodeURIComponent(email)}`, {
+        if (email && creatorEmail) {
+            fetch(`/api/admin/distributor/delete?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}`, {
                 method: 'POST'
             })
                 .then(response => response.json())
                 .then(data => {
-                alert(data.message);
-                confirmationSection.style.display = 'none';
-                distributorTableBody.innerHTML = ''; // Clear the table
-                inputEmail.value = ''; // Clear the form
-            })
-                .catch(error => console.error('Error deleting distributor:', error));
+                    modalMessage.textContent = data.message || 'Distributor deactivated successfully!';
+                    successModal.show();
+                    confirmationSection.style.display = 'none';
+                    distributorTableBody.innerHTML = '';
+                    inputEmail.value = '';
+                })
+                .catch(error => {
+                    console.error('Error deactivating distributor:', error);
+                    modalMessage.textContent = 'Failed to deactivate distributor.';
+                    successModal.show();
+                });
         }
     });
 
+    // Cancel Deactivation
     cancelDeleteButton.addEventListener('click', function () {
         confirmationSection.style.display = 'none';
-        distributorTableBody.innerHTML = ''; // Clear the table
-        inputEmail.value = ''; // Clear the form
+        distributorTableBody.innerHTML = '';
+        inputEmail.value = '';
+    });
+
+    // Handle Activate Distributor Form
+    activateDistributorForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const email = inputEmail1.value.trim();
+
+        if (email) {
+            fetchCreatorEmail(email)
+                .then(creatorEmail => {
+                    confirmDeleteButton1.dataset.creatorEmail = creatorEmail;
+                    fetchDistributorInfo(email, distributorTableBody1, confirmationSection1, confirmDeleteButton1);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    modalMessage.textContent = 'Failed to fetch creator email.';
+                    successModal.show();
+                });
+        }
+    });
+
+    // Confirm Activation
+    confirmDeleteButton1.addEventListener('click', function () {
+        const email = confirmDeleteButton1.dataset.distributorEmail;
+        const creatorEmail = confirmDeleteButton1.dataset.creatorEmail;
+
+        if (email && creatorEmail) {
+            fetch(`/api/admin/distributor/activate-distributor?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}`, {
+                method: 'POST'
+            })
+               .then(response => {
+                               if (!response.ok) {
+                                   throw new Error('Failed to activate distributor.');
+                               }
+                               return response.text(); // Handle plain text response
+                           })
+                 .then(text => {
+                                modalMessage.textContent = text || 'Distributor activated successfully!';
+                                successModal.show();
+                                confirmationSection1.style.display = 'none';
+                                distributorTableBody1.innerHTML = '';
+                                inputEmail1.value = '';
+                            })
+                            .catch(error => {
+                                console.error('Error activating distributor:', error);
+                                modalMessage.textContent = 'Failed to activate distributor.';
+                                successModal.show();
+                            });
+        }
+    });
+
+    // Cancel Activation
+    cancelDeleteButton1.addEventListener('click', function () {
+        confirmationSection1.style.display = 'none';
+        distributorTableBody1.innerHTML = '';
+        inputEmail1.value = '';
+    });
+
+    // Refresh Page After Modal Close
+    document.getElementById('successModal').addEventListener('hidden.bs.modal', function () {
+        location.reload();
     });
 });
 //----------------------------------Logout Api ----------------------------------

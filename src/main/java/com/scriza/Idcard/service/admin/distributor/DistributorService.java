@@ -160,6 +160,39 @@ public class DistributorService {
             throw new RuntimeException("distributor not found");
         }
     }
+    //activate Distributor
+    public void activateDistributor(String email, String creatorEmail) {
+        // Fetch the retailer (distributor) and the creator (admin)
+        User retailer = userRepository.findByEmail(email);
+        User creator = userRepository.findByEmail(creatorEmail);
+
+        // Check if the creator has admin privileges
+        if (!Objects.equals(creator.getRole(), "ADMIN")) {
+            throw new RuntimeException("Creator's email has no Admin Privilege.");
+        }
+        if (retailer.isStatus()) {
+            throw new RuntimeException("Distributor is already activated.");
+        }
+
+        // If the retailer exists, activate them
+        if (retailer != null) {
+            retailer.setStatus(true);  // Set distributor's status to active
+            userRepository.save(retailer);  // Save the changes to the retailer
+
+            // Log the activation activity
+            logActivity("DISTRIBUTOR_ACTIVATION", "Activated distributor: " + email, creator.getEmail());
+        } else {
+            throw new RuntimeException("Distributor not found");
+        }
+    }
+    public String getCreatorEmailByUserEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            return user.getCreatorEmail();
+        } else {
+            throw new RuntimeException("User not found with the provided email.");
+        }
+    }
     public void logActivity(String type, String description, String adminEmail) {
         ActivityAdmin activity = new ActivityAdmin();
         activity.setType(type);

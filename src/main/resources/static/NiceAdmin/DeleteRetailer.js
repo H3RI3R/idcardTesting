@@ -528,70 +528,50 @@ document.getElementById('deleteRetailerForm').addEventListener('submit', functio
 });
 document.getElementById('confirmDelete').addEventListener('click', function () {
     const email = document.getElementById('inputEmail').value;
-    const sessionEmail = sessionStorage.getItem('userEmail'); // Replace with the actual session email
+    const sessionEmail = sessionStorage.getItem('userEmail');
 
-    // Fetch the user's role
     fetch(`/api/admin/retailer/user-role?email=${sessionEmail}`)
         .then(response => response.json())
         .then(roleData => {
             if (roleData && roleData.role) {
                 const role = roleData.role;
 
-                // Confirm deletion
                 fetch(`/api/admin/retailer/delete?email=${email}&creatorEmail=${sessionEmail}&requestingUserRole=${role}`, {
                     method: 'POST',
                 })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.error) {
-                            // Error case (e.g., retailer already deactivated)
-                            swal({
-                                title: "Error",
-                                text: data.error,
-                                icon: "error",
-                            });
-                        } else if (data.message) {
-                            // Success case
-                            document.getElementById('modalMessage').textContent = data.message || 'Retailer deactivated successfully!';
-                            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                            successModal.show();
+                        const modalMessage = document.getElementById('modalMessage');
+                        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
 
-                            // Reset the form and hide the confirmation section
+                        if (data.error) {
+                            modalMessage.textContent = data.error || "An error occurred.";
+                            successModal.show();
+                        } else if (data.message) {
+                            modalMessage.textContent = data.message || 'Retailer deactivated successfully!';
+                            successModal.show();
                             document.getElementById('deleteRetailerForm').reset();
                             document.getElementById('confirmationSection').style.display = 'none';
                         } else {
-                            // Unexpected response
-                            swal({
-                                title: "Error",
-                                text: "Unexpected response from the server.",
-                                icon: "error",
-                            });
+                            modalMessage.textContent = "Unexpected response from the server.";
+                            successModal.show();
                         }
                     })
                     .catch(error => {
-                        // Network or server error
-                        swal({
-                            title: "Error",
-                            text: "An error occurred while processing the request.",
-                            icon: "error",
-                        });
+                        document.getElementById('modalMessage').textContent = "An error occurred while processing the request.";
+                        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                        successModal.show();
                     });
             } else {
-                // User role fetch failed
-                swal({
-                    title: "Error",
-                    text: "Failed to fetch user role.",
-                    icon: "error",
-                });
+                document.getElementById('modalMessage').textContent = "Failed to fetch user role.";
+                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
             }
         })
         .catch(error => {
-            // Network or server error for user role
-            swal({
-                title: "Error",
-                text: "An error occurred while fetching user role.",
-                icon: "error",
-            });
+            document.getElementById('modalMessage').textContent = "An error occurred while fetching user role.";
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
         });
 });
 
@@ -599,6 +579,123 @@ document.getElementById('cancelDelete').addEventListener('click', function() {
     // Reset the form and hide the confirmation section
     document.getElementById('deleteRetailerForm').reset();
     document.getElementById('confirmationSection').style.display = 'none';
+});
+
+
+//----------------------activate reatiler form -------------------
+// Activate Retailer Form Submission
+document.getElementById('deleteDistributorForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const retailerEmail = document.getElementById('inputEmail1').value; // Get retailer email from the form
+    const sessionEmail = sessionStorage.getItem('userEmail'); // Get the current user's email from session storage
+
+    if (!retailerEmail) {
+        alert("Please enter a retailer email.");
+        return;
+    }
+
+    // Step 1: Fetch retailer details and token amount
+    fetch(`/api/admin/distributor/userInfo?email=${retailerEmail}`)
+        .then(response => response.json())
+        .then(userData => {
+            if (userData && userData.email) {
+                // Fetch token amount for the retailer
+                fetch(`/api/admin/token/tokens?email=${sessionEmail}`)
+                    .then(response => response.json())
+                    .then(tokenData => {
+                        let tokenAmount = 0;
+                        const tokenInfo = tokenData.find(token => token.userEmail === retailerEmail);
+                        if (tokenInfo) {
+                            tokenAmount = tokenInfo.tokenAmount;
+                        }
+
+                        // Display retailer details and token amount in the confirmation section
+                        const retailerTableBody = document.getElementById('retailerTableBody1');
+                        retailerTableBody.innerHTML = ''; // Clear any previous content
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${userData.id}</td>
+                            <td>${userData.name || 'N/A'}</td>
+                            <td>${userData.email}</td>
+                            <td>${userData.company || 'N/A'}</td>
+                            <td>${tokenAmount}</td>
+                            <td>${userData.phoneNumber || 'N/A'}</td>
+                        `;
+                        retailerTableBody.appendChild(row);
+
+                        // Show the confirmation section
+                        document.getElementById('confirmationSection1').style.display = 'block';
+                    })
+                    .catch(error => {
+                        alert("An error occurred while fetching token data.");
+                    });
+            } else {
+                alert("Retailer not found.");
+            }
+        })
+        .catch(error => {
+            alert("An error occurred while fetching retailer details.");
+        });
+});
+
+// Handle confirmation of activation
+document.getElementById('confirmDelete1').addEventListener('click', function() {
+    const retailerEmail = document.getElementById('inputEmail1').value; // Get retailer email from the form
+    const sessionEmail = sessionStorage.getItem('userEmail'); // Get the current user's email from session storage
+
+    // Step 2: Fetch creator email using the current user's email
+    fetch(`/api/admin/distributor/get-creator-email?email=${sessionEmail}`)
+        .then(response => response.text()) // Since it's plain text (email), we use .text() here
+        .then(creatorEmail => {
+            if (creatorEmail) {
+                // Step 3: Activate the retailer using the retailer email and creator email
+                fetch(`/api/admin/retailer/activate-retailer?email=${retailerEmail}&creatorEmail=${creatorEmail}`, {
+                    method: 'POST',
+                })
+                    .then(response => response.text()) // Handle plain text response from the server
+                    .then(apiResponse => {
+                        const modalMessage = document.getElementById('modalMessage');
+                        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+
+                        // Display the API response in the modal
+                        modalMessage.textContent = apiResponse || "Retailer activated successfully!"; // If API response is empty, show default message
+
+                        // Show the modal
+                        successModal.show();
+
+                        // Reset the form and hide the confirmation section
+                        document.getElementById('deleteDistributorForm').reset();
+                        document.getElementById('confirmationSection1').style.display = 'none';
+                    })
+                    .catch(error => {
+                        // Handle network or server error
+                        const modalMessage = document.getElementById('modalMessage');
+                        modalMessage.textContent = "An error occurred while processing the request.";
+                        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                        successModal.show();
+                    });
+            } else {
+                // Handle missing creator email
+                const modalMessage = document.getElementById('modalMessage');
+                modalMessage.textContent = "Failed to fetch creator email.";
+                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+            }
+        })
+        .catch(error => {
+            // Handle network or server error for fetching creator email
+            const modalMessage = document.getElementById('modalMessage');
+            modalMessage.textContent = "An error occurred while fetching creator email.";
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+        });
+});
+
+// Handle cancellation of activation
+document.getElementById('cancelDelete1').addEventListener('click', function() {
+    // Hide the confirmation section and reset the form
+    document.getElementById('confirmationSection1').style.display = 'none';
 });
 //----------------------------------Logout Api ----------------------------------
 
