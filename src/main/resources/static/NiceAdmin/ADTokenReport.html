@@ -30,42 +30,60 @@
   <link href="assets/css/style.css" rel="stylesheet">
 
 <style>
+  /* Container for the table */
   .table-container {
     position: relative;
-    max-height: 1000px; /* Adjust this value to set the desired height */
-    overflow: hidden;
+    max-height: 700px; /* Adjust this value to set the desired height */
+    overflow-x: auto; /* Allow horizontal scrolling */
+    overflow-y: auto; /* Allow vertical scrolling */
+    width: 100%; /* Ensure the container spans full width */
   }
 
+  /* Ensures table takes full width and does not shrink */
   .table-container table {
     width: 100%;
+    table-layout: auto; /* Let columns adjust width dynamically */
     border-collapse: collapse;
   }
 
+  /* Fixed header styling */
   .table-container thead {
     position: sticky;
     top: 0;
     background: #fff;
     z-index: 10;
+    box-shadow: 0 2px 2px -2px #888888;
   }
 
+  /* Table rows in the body */
   .table-container tbody {
     display: block;
-    max-height: 400px; /* Adjust this value to set the desired height for the body */
+    max-height: 400px; /* Adjust the max height for the body */
     overflow-y: auto;
   }
 
+  /* Ensuring table rows behave properly */
   .table-container thead, .table-container tbody tr {
     display: table;
     width: 100%;
-    table-layout: fixed;
+    table-layout: fixed; /* Ensure table layout does not change dynamically */
   }
 
+  /* Cell content that overflows will be hidden */
   .table-container tbody td {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-/*  ------------------------------------------------------------*/
+
+  /* Ensure table columns are properly aligned */
+  .table-container .table th, .table-container .table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+
+  /* Make the table responsive to window resizing */
   .card-body {
     height: 700px; /* Set the height for the card body */
     display: flex;
@@ -77,11 +95,7 @@
     overflow: hidden; /* Prevent overflowing content */
   }
 
-  .table-responsive {
-    overflow-y: auto; /* Enable vertical scrolling */
-    max-height: 100%; /* Ensure the table container uses the full height of the card-body */
-  }
-
+  /* Ensure the table doesn't break or squash */
   .table {
     width: 100%; /* Ensure the table takes the full width of its container */
     border-collapse: collapse;
@@ -111,7 +125,17 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-/*-------------------------button----------------------------------------------*/
+
+  /* Ensure the table is horizontally scrollable when window is resized */
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Enables smooth scrolling for iOS devices */
+  }
+
+  .table-container table {
+    min-width: 1000px; /* Set a minimum width for the table */
+  }
+  /*-------------------------button----------------------------------------------*/
 
 </style>
 
@@ -335,10 +359,8 @@
     <div class="row">
       <div class="col-lg-12">
         <div class="card">
-          <div class="card-body" style="height:700px">
+          <div class="card-body">
             <h5 class="card-title">Recent Activity <span>| Today</span></h5>
-
-
 
             <!-- Table container with search and entries per page options -->
             <div class="table-container">
@@ -359,7 +381,6 @@
                 </thead>
                 <tbody id="activity-table-body">
                 <!-- Activity rows will be dynamically inserted here -->
-
                 </tbody>
               </table>
             </div>
