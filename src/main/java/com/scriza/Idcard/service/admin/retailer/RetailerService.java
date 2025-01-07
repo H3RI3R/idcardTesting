@@ -130,7 +130,7 @@ private ActivityRepository activityRepository;
     }
     public List<User> listRetailersByCreator(String creatorEmail) {
         // Validate creatorEmail
-        User creator = userRepository.findByEmail(creatorEmail);
+        List<User> creator = userRepository.findByCreatorEmail(creatorEmail);
         if (creator == null) {
             throw new RuntimeException("Creator's email not found.");
         }
@@ -180,26 +180,32 @@ private ActivityRepository activityRepository;
             throw new RuntimeException("Retailer not found.");
         }
 
-        // Check if the retailer is already activated
+        // Check if the retailer is already activated (status should be true if activated)
         if (retailer.isStatus()) {
             throw new RuntimeException("Retailer is already activated.");
         }
 
         // Determine the role of the requesting user
         String requestingUserRole = creator.getRole();
-        if ("ADMIN".equals(requestingUserRole)) {
-            activateRetailer(retailer); // Activate retailer
-            logActivityAdmin("RETAILER_ACTIVATION", "Activated retailer: " + email, creatorEmail);
-        } else if ("DISTRIBUTOR".equals(requestingUserRole)) {
-            // Ensure the distributor is authorized to activate this retailer
-            if (creatorEmail.equals(retailer.getCreatorEmail())) {
-                activateRetailer(retailer); // Activate retailer
-            } else {
-                throw new RuntimeException("Unauthorized to activate this retailer.");
-            }
-        } else {
-            throw new RuntimeException("Invalid role for activation.");
+        switch (requestingUserRole) {
+            case "ADMIN":
+                activate(retailer);
+                logActivityAdmin("RETAILER_ACTIVATION", "Activated retailer: " + email, creatorEmail);
+                break;
+            case "DISTRIBUTOR":
+                if (creatorEmail.equals(retailer.getCreatorEmail())) {
+                    activate(retailer);
+                } else {
+                    throw new RuntimeException("Unauthorized to activate this retailer.");
+                }
+                break;
+            default:
+                throw new RuntimeException("Invalid role for activation.");
         }
+    }
+    private void activate(User retailer) {
+        retailer.setStatus(true); // Activate retailer by setting status to true
+        userRepository.save(retailer); // Save changes to database
     }
 
 

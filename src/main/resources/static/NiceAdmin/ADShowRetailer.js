@@ -448,7 +448,7 @@ document.addEventListener('DOMContentLoaded', function() {
             row.innerHTML = `
                     <td>${retailer.id}</td>
                     <td>${retailer.name || 'N/A'}</td>
-                    <td>${retailer.designation || 'N/A'}</td>
+                    <td>${retailer.creatorEmail || 'N/A'}</td>
                     <td>${retailer.email}</td>
                     <td>${retailer.phoneNumber || 'N/A'}</td>
                     <td>${retailer.companyAddress || 'N/A'}</td>

@@ -380,8 +380,10 @@ document.addEventListener("DOMContentLoaded", function() {
     // Call the function on page load
     fetchUserName();
 });
+//----------------------------------Show Token retiler  Api ----------------------------------
 
-//---------------------------------------Delte Api-----------------------------------
+
+//----------------------------------Show Table Api ----------------------------------
 
 //---------------------------------- Api ----------------------------------
 document.addEventListener('DOMContentLoaded', function () {
@@ -392,36 +394,36 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    // Fetch all distributors (including deactivated ones)
-    fetch(`/api/admin/distributor/list`)
+    // Fetch all retailers (including deactivated ones)
+    fetch(`/api/admin/retailer/listAllRetailer?adminEmail=${userEmail}`)
         .then(response => response.json())
-        .then(distributors => {
-            if (distributors && distributors.length > 0) {
-                populateDistributorTable(distributors); // Populate the table with distributor data
+        .then(retailers => {
+            if (retailers && retailers.length > 0) {
+                populateRetailerTable(retailers); // Populate the table with retailer data
             } else {
-                alert('No distributors found.');
+                alert('No retailers found.');
             }
         })
-        .catch(error => console.error('Error fetching distributor data:', error));
+        .catch(error => console.error('Error fetching retailer data:', error));
 
-    // Function to populate the table with distributor data
-    function populateDistributorTable(distributors) {
-        const tableBody = document.getElementById('deactivatedUsersTableBody');
+    // Function to populate the table with retailer data
+    function populateRetailerTable(retailers) {
+        const tableBody = document.getElementById('deactivatedRetailersTableBody');
         tableBody.innerHTML = ''; // Clear any existing rows
-
-        distributors.forEach(distributor => {
-            if (distributor.role === 'DISTRIBUTOR') {  // Only show distributors
+        retailers.forEach(retailerData => {
+            const retailer = retailerData.user;
+            if (retailer.role === 'RETAILER') {  // Only show retailers
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${distributor.name}</td>
-                    <td>${distributor.email}</td>
-                    <td>${distributor.company || '-'}</td>
-                    <td>${distributor.phoneNumber}</td>
-                    <td>${distributor.statePincode}</td>
-                    <td>${distributor.status ? 'Active' : 'Inactive'}</td>  <!-- Show Status -->
+                    <td>${retailer.name}</td>
+                    <td>${retailer.email}</td>
+                    <td>${retailer.company || '-'}</td>
+                    <td>${retailer.phoneNumber}</td>
+                    <td>${retailer.statePincode}</td>
+                    <td>${retailer.status ? 'Active' : 'Inactive'}</td>  <!-- Show Status -->
                     <td>
-                        <button class="btn btn-success" onclick="activateUser('${distributor.email}', '${distributor.creatorEmail}')">Activate</button>
-                        <button class="btn btn-danger" onclick="deactivateUser('${distributor.email}', '${distributor.creatorEmail}')">Deactivate</button>
+                        <button class="btn btn-success" onclick="activateRetailer('${retailer.email}', '${retailer.creatorEmail}')">Activate</button>
+                        <button class="btn btn-danger" onclick="deactivateRetailer('${retailer.email}', '${retailer.creatorEmail}')">Deactivate</button>
                     </td>
                 `;
                 tableBody.appendChild(row);
@@ -429,63 +431,41 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Function to handle activation of a distributor user
-    window.activateUser = function (email, creatorEmail) {
-        fetch(`/api/admin/distributor/activate-distributor?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}`, {
+    // Function to handle activation of a retailer user
+    window.activateRetailer = function (email, creatorEmail) {
+        fetch(`/api/admin/retailer/activate-retailer?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}`, {
             method: 'POST'
         })
-        .then(response => {
-            // Check if the response is JSON or plain text
-            if (response.headers.get('content-type').includes('application/json')) {
-                return response.json();  // Parse as JSON if content-type is JSON
-            } else {
-                return response.text();  // Otherwise, return as text
-            }
-        })
+        .then(response => response.json())
         .then(data => {
-            // Handle plain text response (like "Distributor activated successfully." or other messages)
-            if (typeof data === 'string') {
-                if (data.includes("Distributor activated successfully.")) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: 'Distributor activated successfully!',
-                    }).then(() => {
-                        // After showing the success alert, refresh the table to reflect the new status
-                        fetch(`/api/admin/distributor/list`)
-                            .then(response => response.json())
-                            .then(distributors => populateDistributorTable(distributors)); // Update the table
-                    });
-                } else if (data.includes("Distributor is already activated.")) {
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'Info!',
-                        text: 'Distributor is already activated.',
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: 'Unexpected error occurred.',
-                    });
-                }
-            }
-            // Handle JSON response (in case the response is in JSON format)
-            else if (data.message === "Distributor activated successfully.") {
+            // Handle the response based on the status
+            if (data.status === "success") {
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
-                    text: 'Distributor activated successfully!',
+                    text: 'Retailer activated successfully!',
                 }).then(() => {
                     // After showing the success alert, refresh the table to reflect the new status
-                    fetch(`/api/admin/distributor/list`)
+                    fetch(`/api/admin/retailer/listAllRetailer?adminEmail=${userEmail}`)
                         .then(response => response.json())
-                        .then(distributors => populateDistributorTable(distributors)); // Update the table
+                        .then(retailers => populateRetailerTable(retailers)); // Update the table
+                });
+            } else if (data.status === "error" && data.message === "Retailer is already activated.") {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Info!',
+                    text: 'Retailer is already activated.',
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Unexpected error occurred.',
                 });
             }
         })
         .catch(error => {
-            console.error('Error activating user:', error);
+            console.error('Error activating retailer:', error);
             Swal.fire({
                 icon: 'error',
                 title: 'Error!',
@@ -494,63 +474,59 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     };
 
-    // Function to handle deactivation of a distributor user
-  window.deactivateUser = function (email, creatorEmail) {
-          fetch(`/api/admin/distributor/delete?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}`, {
-              method: 'POST'
-          })
-          .then(response => response.json())
-          .then(data => {
-              // Check if the response is an object with a message or error field
-              if (data.message === "Distributor deactivated successfully") {
-                  Swal.fire({
-                      title: 'Success!',
-                      text: 'Distributor deactivated successfully.',
-                      icon: 'success',
-                      confirmButtonText: 'OK'
-                  }).then(() => {
-                      fetch(`/api/admin/distributor/list`)  // Refresh the table after deactivation
-                          .then(response => response.json())
-                          .then(distributors => populateDistributorTable(distributors)); // Update the table
-                  });
-              } else if (data.error === "Distributor is already deactivated.") {
-                  Swal.fire({
-                      title: 'Info!',
-                      text: 'Distributor is already deactivated.',
-                      icon: 'info',
-                      confirmButtonText: 'OK'
-                  });
-              } else {
-                  // Handle unexpected error if any
-                  Swal.fire({
-                      title: 'Error!',
-                      text: 'Unexpected error occurred.',
-                      icon: 'error',
-                      confirmButtonText: 'OK'
-                  });
-              }
-          })
-          .catch(error => {
-              console.error('Error deactivating user:', error);
-              Swal.fire({
-                  title: 'Error!',
-                  text: 'Error deactivating user.',
-                  icon: 'error',
-                  confirmButtonText: 'OK'
-              });
-          });
-      };
-
+    // Function to handle deactivation of a retailer user
+    window.deactivateRetailer = function (email, creatorEmail) {
+        fetch(`/api/admin/retailer/delete?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}&requestingUserRole=DISTRIBUTOR`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response based on the status
+            if (data.message === "Retailer Deactivated successfully") {
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Retailer deactivated successfully.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    fetch(`/api/admin/retailer/listAllRetailer?adminEmail=${userEmail}`)
+                        .then(response => response.json())
+                        .then(retailers => populateRetailerTable(retailers)); // Update the table
+                });
+            } else if (data.error === "Retailer is already deactivated.") {
+                Swal.fire({
+                    title: 'Info!',
+                    text: 'Retailer is already deactivated.',
+                    icon: 'info',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Unexpected error occurred.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error deactivating retailer:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: 'Error deactivating retailer.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        });
+    };
 
     // Search functionality
     document.getElementById('searchInput').addEventListener('input', function () {
         const searchQuery = this.value.toLowerCase();
-        const rows = document.querySelectorAll('#deactivatedUsersTableBody tr');
-
+        const rows = document.querySelectorAll('#deactivatedRetailersTableBody tr');
         rows.forEach(row => {
             const cells = row.getElementsByTagName('td');
             const rowData = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
-
             if (rowData.includes(searchQuery)) {
                 row.style.display = '';
             } else {

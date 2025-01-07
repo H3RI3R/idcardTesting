@@ -3,6 +3,26 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('userEmail').innerText = userEmail;
     document.getElementById('userEmail1').innerText = userEmail;});
 
+//------------------------------------ userRole api  ---------------------------------------
+
+const userEmail = sessionStorage.getItem('userEmail');
+  function fetchUserInfo(email) {
+    if (!email) {
+
+      return;
+    }
+    const apiUrl = `/api/admin/distributor/userInfo?email=${email}`;
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+                document.getElementById("userRole").innerText = data.role || "N/A";
+      })
+      .catch(error => {
+        console.error("Error fetching user info:", error);
+        alert("An error occurred while fetching user information.");
+      });
+  }
+  fetchUserInfo(userEmail);
 //------------------------------------ Active page fucntion ---------------------------------------
 /**
 * Template Name: NiceAdmin
@@ -361,341 +381,163 @@ document.addEventListener("DOMContentLoaded", function() {
     fetchUserName();
 });
 //----------------------------------Show Token retiler  Api ----------------------------------
-document.addEventListener('DOMContentLoaded', function () {
-    const creatorEmail = sessionStorage.getItem('userEmail'); // Replace with actual user email or get from session
-    const retailerTableBody = document.getElementById('retailerTableBody');
-    const tokenTableBody = document.getElementById('tokenTableBody');
 
-    // Fetch retailers data
-    fetch(`/api/admin/retailer/list-by-creator?creatorEmail=${creatorEmail}`)
-        .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-        .then(data => {
-        if (data && Array.isArray(data.retailers)) {
-            const retailers = data.retailers;
-
-            // Populate retailer table
-            retailers.forEach(retailer => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                        <td>${retailer.id || 'null'}</td>
-                        <td>${retailer.name || 'null'}</td>
-                        <td>${retailer.designation || 'null'}</td>
-                        <td>${retailer.email || 'null'}</td>
-                        <td>${retailer.phoneNumber || 'null'}</td>
-                        <td>${retailer.companyAddress || 'null'}</td>
-                        <td>${retailer.password || 'null'}</td>
-                    `;
-                retailerTableBody.appendChild(row);
-            });
-
-            // Fetch tokens data
-            fetch(`/api/admin/token/tokens?email=${creatorEmail}`)
-                .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-                .then(tokens => {
-                // Create a map of tokens for quick lookup
-                const tokenMap = new Map();
-                tokens.forEach(token => {
-                    tokenMap.set(token.userEmail, token.tokenAmount);
-                });
-
-                // Populate token table
-                retailers.forEach(retailer => {
-                    const tokenAmount = tokenMap.get(retailer.email) || 'null';
-                    const tokenRow = document.createElement('tr');
-                    tokenRow.innerHTML = `
-                                <td>${retailer.name || 'null'}</td>
-                                <td>${retailer.email || 'null'}</td>
-                                <td>${retailer.phoneNumber || 'null'}</td>
-                                <td>${tokenAmount}</td>
-                            `;
-                    tokenTableBody.appendChild(tokenRow);
-                });
-            })
-                .catch(error => console.error('Error fetching token data:', error));
-        } else {
-            console.error('Expected an array of retailers but got:', data);
-        }
-    })
-        .catch(error => console.error('Error fetching retailer data:', error));
-});
 
 //----------------------------------Show Table Api ----------------------------------
 
-document.addEventListener('DOMContentLoaded', function() {
-    const creatorEmail = sessionStorage.getItem('userEmail'); // Get the creatorEmail from session storage
-
-    if (creatorEmail) {
-        fetch(`/api/admin/retailer/list-by-creator?creatorEmail=${creatorEmail}`)
-            .then(response => response.json())
-            .then(data => {
-            const retailerTableBody = document.getElementById('retailerTableBody');
-
-            data.retailers.forEach(retailer => {
-                // Handle null or empty fields
-                const name = retailer.name || "null";
-                const designation = retailer.designation || "null";
-                const email = retailer.email || "null";
-                const phoneNumber = retailer.phoneNumber || "null";
-                const companyAddress = retailer.companyAddress || "null";
-                const password = retailer.password || "null";
-
-                // Create a new table row
-                const row = document.createElement('tr');
-
-                // Insert cells into the row
-                row.innerHTML = `
-                        <td>${retailer.id}</td>
-                        <td>${name}</td>
-                        <td>${designation}</td>
-                        <td>${email}</td>
-                        <td>${phoneNumber}</td>
-                        <td>${companyAddress}</td>
-                        <td>${password}</td>
-                    `;
-
-                // Append the row to the table body
-                retailerTableBody.appendChild(row);
-            });
-        })
-            .catch(error => {
-            console.error('Error fetching retailers:', error);
-        });
-    } else {
-        console.error('Creator email not found in session storage.');
-    }
-});
-//---------------------------------------Delte Api-----------------------------------
-document.getElementById('deleteRetailerForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const email = document.getElementById('inputEmail').value;
-    const sessionEmail = sessionStorage.getItem('userEmail'); // Replace with the actual session email
-
-    // Fetch the user details
-    fetch(`/api/admin/distributor/userInfo?email=${email}`)
-        .then(response => response.json())
-        .then(userData => {
-            if (userData && userData.email) {
-                // Fetch the token amount for the user
-                fetch(`/api/admin/token/tokens?email=${sessionEmail}`)
-                    .then(response => response.json())
-                    .then(tokenData => {
-                        let tokenAmount = 0;
-                        // Find the tokenAmount corresponding to the entered email
-                        const tokenInfo = tokenData.find(token => token.userEmail === email);
-                        if (tokenInfo) {
-                            tokenAmount = tokenInfo.tokenAmount;
-                        }
-
-                        // Display user data in the table
-                    const retailerTableBody = document.getElementById('retailerTableBody');
-                    if (retailerTableBody) {
-                        retailerTableBody.innerHTML = ''; // Clear any previous content
-
-                        // Proceed with appending new rows
-                        const tokenInfo = tokenData.find(token => token.userEmail === email);
-                        let tokenAmount = tokenInfo ? tokenInfo.tokenAmount : 0;
-
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                                <td>${userData.id}</td>
-                                <td>${userData.name || 'N/A'}</td>
-                                <td>${userData.email}</td>
-                                <td>${userData.company || 'N/A'}</td>
-                                 <td>${tokenAmount}</td>
-                                <td>${userData.phoneNumber || 'N/A'}</td>
-                                    `;
-                        retailerTableBody.appendChild(row);
-                    } else {
-                        console.error('retailerTableBody element not found');
-                    }
-                        // Show the confirmation section
-                        document.getElementById('confirmationSection').style.display = 'block';
-                    });
-            } else {
-                alert('User not found');
-            }
-        });
-});
-document.getElementById('confirmDelete').addEventListener('click', function () {
-    const email = document.getElementById('inputEmail').value;
-    const sessionEmail = sessionStorage.getItem('userEmail');
-
-    fetch(`/api/admin/retailer/user-role?email=${sessionEmail}`)
-        .then(response => response.json())
-        .then(roleData => {
-            if (roleData && roleData.role) {
-                const role = roleData.role;
-
-                fetch(`/api/admin/retailer/delete?email=${email}&creatorEmail=${sessionEmail}&requestingUserRole=${role}`, {
-                    method: 'POST',
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        const modalMessage = document.getElementById('modalMessage');
-                        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-
-                        if (data.error) {
-                            modalMessage.textContent = data.error || "An error occurred.";
-                            successModal.show();
-                        } else if (data.message) {
-                            modalMessage.textContent = data.message || 'Retailer deactivated successfully!';
-                            successModal.show();
-                            document.getElementById('deleteRetailerForm').reset();
-                            document.getElementById('confirmationSection').style.display = 'none';
-                        } else {
-                            modalMessage.textContent = "Unexpected response from the server.";
-                            successModal.show();
-                        }
-                    })
-                    .catch(error => {
-                        document.getElementById('modalMessage').textContent = "An error occurred while processing the request.";
-                        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                        successModal.show();
-                    });
-            } else {
-                document.getElementById('modalMessage').textContent = "Failed to fetch user role.";
-                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                successModal.show();
-            }
-        })
-        .catch(error => {
-            document.getElementById('modalMessage').textContent = "An error occurred while fetching user role.";
-            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-            successModal.show();
-        });
-});
-
-document.getElementById('cancelDelete').addEventListener('click', function() {
-    // Reset the form and hide the confirmation section
-    document.getElementById('deleteRetailerForm').reset();
-    document.getElementById('confirmationSection').style.display = 'none';
-});
-
-
-//----------------------activate reatiler form -------------------
-// Activate Retailer Form Submission
-document.getElementById('deleteDistributorForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    const retailerEmail = document.getElementById('inputEmail1').value; // Get retailer email from the form
-    const sessionEmail = sessionStorage.getItem('userEmail'); // Get the current user's email from session storage
-
-    if (!retailerEmail) {
-        alert("Please enter a retailer email.");
+//---------------------------------- Api ----------------------------------
+document.addEventListener('DOMContentLoaded', function () {
+    // Fetch the email from sessionStorage
+    const userEmail = sessionStorage.getItem('userEmail');
+    if (!userEmail) {
+        alert('You are on a guest profile!');
         return;
     }
 
-    // Step 1: Fetch retailer details and token amount
-    fetch(`/api/admin/distributor/userInfo?email=${retailerEmail}`)
+    // Fetch all retailers for the creator email
+    fetch(`/api/admin/retailer/list-by-creator?creatorEmail=${userEmail}`)
         .then(response => response.json())
-        .then(userData => {
-            if (userData && userData.email) {
-                // Fetch token amount for the retailer
-                fetch(`/api/admin/token/tokens?email=${sessionEmail}`)
-                    .then(response => response.json())
-                    .then(tokenData => {
-                        let tokenAmount = 0;
-                        const tokenInfo = tokenData.find(token => token.userEmail === retailerEmail);
-                        if (tokenInfo) {
-                            tokenAmount = tokenInfo.tokenAmount;
-                        }
-
-                        // Display retailer details and token amount in the confirmation section
-                        const retailerTableBody = document.getElementById('retailerTableBody1');
-                        retailerTableBody.innerHTML = ''; // Clear any previous content
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${userData.id}</td>
-                            <td>${userData.name || 'N/A'}</td>
-                            <td>${userData.email}</td>
-                            <td>${userData.company || 'N/A'}</td>
-                            <td>${tokenAmount}</td>
-                            <td>${userData.phoneNumber || 'N/A'}</td>
-                        `;
-                        retailerTableBody.appendChild(row);
-
-                        // Show the confirmation section
-                        document.getElementById('confirmationSection1').style.display = 'block';
-                    })
-                    .catch(error => {
-                        alert("An error occurred while fetching token data.");
-                    });
+        .then(data => {
+            const retailers = data.retailers;
+            if (retailers && retailers.length > 0) {
+                populateRetailerTable(retailers); // Populate the table with retailer data
             } else {
-                alert("Retailer not found.");
+                alert('No retailers found.');
+            }
+        })
+        .catch(error => console.error('Error fetching retailer data:', error));
+
+    // Function to populate the table with retailer data
+    function populateRetailerTable(retailers) {
+        const tableBody = document.getElementById('deactivatedRetailersTableBody');
+        tableBody.innerHTML = ''; // Clear any existing rows
+        retailers.forEach(retailer => {
+            if (retailer.role === 'RETAILER') {  // Only show retailers
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${retailer.name}</td>
+                    <td>${retailer.email}</td>
+                    <td>${retailer.company || '-'}</td>
+                    <td>${retailer.phoneNumber}</td>
+                    <td>${retailer.statePincode}</td>
+                    <td>${retailer.status ? 'Active' : 'Inactive'}</td>  <!-- Show Status -->
+                    <td>
+                        <button class="btn btn-success" onclick="activateRetailer('${retailer.email}', '${retailer.creatorEmail}')">Activate</button>
+                        <button class="btn btn-danger" onclick="deactivateRetailer('${retailer.email}', '${retailer.creatorEmail}')">Deactivate</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            }
+        });
+    }
+
+    // Function to handle activation of a retailer user
+    window.activateRetailer = function (email, creatorEmail) {
+        fetch(`/api/admin/retailer/activate-retailer?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response based on the status
+            if (data.status === "success") {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Retailer activated successfully!',
+                }).then(() => {
+                    // After showing the success alert, refresh the table to reflect the new status
+                    fetch(`/api/admin/retailer/list-by-creator?creatorEmail=${userEmail}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            populateRetailerTable(data.retailers); // Update the table
+                        });
+                });
+            } else if (data.status === "error" && data.message === "Retailer is already activated.") {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Info!',
+                    text: 'Retailer is already activated.',
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Unexpected error occurred.',
+                });
             }
         })
         .catch(error => {
-            alert("An error occurred while fetching retailer details.");
+            console.error('Error activating retailer:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Something went wrong.',
+            });
         });
-});
+    };
 
-// Handle confirmation of activation
-document.getElementById('confirmDelete1').addEventListener('click', function() {
-    const retailerEmail = document.getElementById('inputEmail1').value; // Get retailer email from the form
-    const sessionEmail = sessionStorage.getItem('userEmail'); // Get the current user's email from session storage
-
-    // Step 2: Fetch creator email using the current user's email
-    fetch(`/api/admin/distributor/get-creator-email?email=${sessionEmail}`)
-        .then(response => response.text()) // Since it's plain text (email), we use .text() here
-        .then(creatorEmail => {
-            if (creatorEmail) {
-                // Step 3: Activate the retailer using the retailer email and creator email
-                fetch(`/api/admin/retailer/activate-retailer?email=${retailerEmail}&creatorEmail=${creatorEmail}`, {
-                    method: 'POST',
-                })
-                    .then(response => response.text()) // Handle plain text response from the server
-                    .then(apiResponse => {
-                        const modalMessage = document.getElementById('modalMessage');
-                        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-
-                        // Display the API response in the modal
-                        modalMessage.textContent = apiResponse || "Retailer activated successfully!"; // If API response is empty, show default message
-
-                        // Show the modal
-                        successModal.show();
-
-                        // Reset the form and hide the confirmation section
-                        document.getElementById('deleteDistributorForm').reset();
-                        document.getElementById('confirmationSection1').style.display = 'none';
-                    })
-                    .catch(error => {
-                        // Handle network or server error
-                        const modalMessage = document.getElementById('modalMessage');
-                        modalMessage.textContent = "An error occurred while processing the request.";
-                        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                        successModal.show();
-                    });
+    // Function to handle deactivation of a retailer user
+    window.deactivateRetailer = function (email, creatorEmail) {
+        fetch(`/api/admin/retailer/delete?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}&requestingUserRole=DISTRIBUTOR`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response based on the status
+            if (data.message === "Retailer Deactivated successfully") {
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Retailer deactivated successfully.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    fetch(`/api/admin/retailer/list-by-creator?creatorEmail=${userEmail}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            populateRetailerTable(data.retailers); // Update the table
+                        });
+                });
+            } else if (data.error === "Retailer is already deactivated.") {
+                Swal.fire({
+                    title: 'Info!',
+                    text: 'Retailer is already deactivated.',
+                    icon: 'info',
+                    confirmButtonText: 'OK'
+                });
             } else {
-                // Handle missing creator email
-                const modalMessage = document.getElementById('modalMessage');
-                modalMessage.textContent = "Failed to fetch creator email.";
-                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                successModal.show();
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Unexpected error occurred.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             }
         })
         .catch(error => {
-            // Handle network or server error for fetching creator email
-            const modalMessage = document.getElementById('modalMessage');
-            modalMessage.textContent = "An error occurred while fetching creator email.";
-            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-            successModal.show();
+            console.error('Error deactivating retailer:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: 'Error deactivating retailer.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         });
-});
+    };
 
-// Handle cancellation of activation
-document.getElementById('cancelDelete1').addEventListener('click', function() {
-    // Hide the confirmation section and reset the form
-    document.getElementById('confirmationSection1').style.display = 'none';
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function () {
+        const searchQuery = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#deactivatedRetailersTableBody tr');
+        rows.forEach(row => {
+            const cells = row.getElementsByTagName('td');
+            const rowData = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
+            if (rowData.includes(searchQuery)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
 });
 //----------------------------------Logout Api ----------------------------------
 

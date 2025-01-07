@@ -1,4 +1,5 @@
 package com.scriza.Idcard.controller.admin.retailer;
+import com.scriza.Idcard.Configuration.ApiResponse;
 import com.scriza.Idcard.Entity.IdCard;
 import com.scriza.Idcard.Entity.User;
 import com.scriza.Idcard.Entity.admin.Token.Token;
@@ -94,17 +95,20 @@ public class RetailerController {
         }
     }
     @PostMapping("/activate-retailer")
-    public ResponseEntity<String> activateRetailer(
+    public ResponseEntity<ApiResponse> activateRetailer(
             @RequestParam String email,
             @RequestParam String creatorEmail) {
 
         try {
-            // Call the service method to activate the distributor
             retailerService.activateRetailer(email, creatorEmail);
 
-            return ResponseEntity.ok("Retailer activated successfully.");
+            // Return a JSON response with message and status
+            ApiResponse response = new ApiResponse("Retailer activated successfully.", "success");
+            return ResponseEntity.ok(response);  // HTTP status 200 OK
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            // Return a JSON response with the error message and status
+            ApiResponse response = new ApiResponse(e.getMessage(), "error");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);  // HTTP status 400 Bad Request
         }
     }
 
