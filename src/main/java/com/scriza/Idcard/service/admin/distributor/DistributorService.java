@@ -146,18 +146,34 @@ public class DistributorService {
         return distributor;
     }
 
-    public void deleteRetailer(String email , String creatorEmail) {
+    public void deleteRetailer(String email, String creatorEmail) {
+        // Find the retailer and creator from the database using their emails
         User retailer = userRepository.findByEmail(email);
         User creator = userRepository.findByEmail(creatorEmail);
-        if(!Objects.equals(creator.getRole(), "ADMIN")){
-            throw new RuntimeException("Creators email has no Admin Privilege.");
+
+        // Check if the creator has the "ADMIN" role
+        if (!Objects.equals(creator.getRole(), "ADMIN")) {
+            throw new RuntimeException("Creator's email has no Admin Privileges.");
         }
+
+        // Check if the retailer exists
         if (retailer != null) {
+            // If the retailer is already deactivated (status == false), throw an informative exception
+            if (!retailer.isStatus()) { // Assuming 'isStatus' returns the status of the user
+                throw new RuntimeException("Distributor is already deactivated.");
+            }
+
+            // Deactivate the retailer (set status to false)
             retailer.setStatus(false);
-            userRepository.save(retailer);
+            userRepository.save(retailer); // Save the updated retailer
+
+            // Log the activity
             logActivity("DISTRIBUTOR_DEACTIVATION", "Deactivated distributor: " + email, retailer.getCreatorEmail());
+
+            // Return a success message
+            System.out.println("Distributor successfully deactivated.");
         } else {
-            throw new RuntimeException("distributor not found");
+            throw new RuntimeException("Distributor not found.");
         }
     }
     //activate Distributor

@@ -416,119 +416,77 @@ function getSessionEmail() {
 }
 //----------------------------------Show Token retiler  Api ----------------------------------
 document.addEventListener('DOMContentLoaded', function () {
-    const creatorEmail = sessionStorage.getItem('userEmail'); // Replace with actual user email or get from session
+    const creatorEmail = sessionStorage.getItem('userEmail'); // Get the creatorEmail from session storage
     const retailerTableBody = document.getElementById('retailerTableBody');
     const tokenTableBody = document.getElementById('tokenTableBody');
 
-    // Fetch retailers data
-    fetch(`/api/admin/retailer/list-by-creator?creatorEmail=${creatorEmail}`)
-        .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-        .then(data => {
-        if (data && Array.isArray(data.retailers)) {
-            const retailers = data.retailers;
-
-            // Populate retailer table
-            retailers.forEach(retailer => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                        <td>${retailer.id || 'null'}</td>
-                        <td>${retailer.name || 'null'}</td>
-                        <td>${retailer.designation || 'null'}</td>
-                        <td>${retailer.email || 'null'}</td>
-                        <td>${retailer.phoneNumber || 'null'}</td>
-                        <td>${retailer.companyAddress || 'null'}</td>
-
-                    `;
-                retailerTableBody.appendChild(row);
-            });
-
-            // Fetch tokens data
-            fetch(`/api/admin/token/tokens?email=${creatorEmail}`)
-                .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-                .then(tokens => {
-                // Create a map of tokens for quick lookup
-                const tokenMap = new Map();
-                tokens.forEach(token => {
-                    tokenMap.set(token.userEmail, token.tokenAmount);
-                });
-
-                // Populate token table
-                retailers.forEach(retailer => {
-                    const tokenAmount = tokenMap.get(retailer.email) || 'null';
-                    const tokenRow = document.createElement('tr');
-                    tokenRow.innerHTML = `
-                                <td>${retailer.name || 'null'}</td>
-                                <td>${retailer.email || 'null'}</td>
-                                <td>${retailer.phoneNumber || 'null'}</td>
-                                <td>${tokenAmount}</td>
-                            `;
-                    tokenTableBody.appendChild(tokenRow);
-                });
-            })
-                .catch(error => console.error('Error fetching token data:', error));
-        } else {
-            console.error('Expected an array of retailers but got:', data);
-        }
-    })
-        .catch(error => console.error('Error fetching retailer data:', error));
-});
-
-//----------------------------------Show Table Api ----------------------------------
-
-document.addEventListener('DOMContentLoaded', function() {
-    const creatorEmail = sessionStorage.getItem('userEmail'); // Get the creatorEmail from session storage
+    // Clear existing rows before populating new data
+    retailerTableBody.innerHTML = '';
+    tokenTableBody.innerHTML = '';
 
     if (creatorEmail) {
+        // Fetch retailer data
         fetch(`/api/admin/retailer/list-by-creator?creatorEmail=${creatorEmail}`)
             .then(response => response.json())
             .then(data => {
-            const retailerTableBody = document.getElementById('retailerTableBody');
+                const retailers = data.retailers;
 
-            data.retailers.forEach(retailer => {
-                // Handle null or empty fields
-                const name = retailer.name || "null";
-                const designation = retailer.designation || "null";
-                const email = retailer.email || "null";
-                const phoneNumber = retailer.phoneNumber || "null";
-                const companyAddress = retailer.companyAddress || "null";
+                if (retailers && Array.isArray(retailers)) {
+                    // Create a map of retailers for quick lookup
+                    const retailerMap = new Map();
+                    retailers.forEach(retailer => {
+                        retailerMap.set(retailer.email, retailer);
+                    });
 
+                    // Populate retailer table
+                    retailers.forEach(retailer => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${retailer.id || 'null'}</td>
+                            <td>${retailer.name || 'null'}</td>
+                            <td>${retailer.designation || 'null'}</td>
+                            <td>${retailer.email || 'null'}</td>
+                            <td>${retailer.phoneNumber || 'null'}</td>
+                            <td>${retailer.companyAddress || 'null'}</td>
+                        `;
+                        retailerTableBody.appendChild(row);
+                    });
 
-                // Create a new table row
-                const row = document.createElement('tr');
+                    // Fetch token data
+                    fetch(`/api/admin/token/tokens?email=${creatorEmail}`)
+                        .then(response => response.json())
+                        .then(tokens => {
+                            // Create a map of tokens for quick lookup
+                            const tokenMap = new Map();
+                            tokens.forEach(token => {
+                                tokenMap.set(token.userEmail, token.tokenAmount);
+                            });
 
-                // Insert cells into the row
-                row.innerHTML = `
-                        <td>${retailer.id}</td>
-                        <td>${name}</td>
-                        <td>${designation}</td>
-                        <td>${email}</td>
-                        <td>${phoneNumber}</td>
-                        <td>${companyAddress}</td>
-
-                    `;
-
-                // Append the row to the table body
-                retailerTableBody.appendChild(row);
-            });
-        })
+                            // Populate token table
+                            retailers.forEach(retailer => {
+                                const tokenAmount = tokenMap.get(retailer.email) || 'null';
+                                const tokenRow = document.createElement('tr');
+                                tokenRow.innerHTML = `
+                                    <td>${retailer.name || 'null'}</td>
+                                    <td>${retailer.email || 'null'}</td>
+                                    <td>${retailer.phoneNumber || 'null'}</td>
+                                    <td>${tokenAmount}</td>
+                                `;
+                                tokenTableBody.appendChild(tokenRow);
+                            });
+                        })
+                        .catch(error => console.error('Error fetching token data:', error));
+                } else {
+                    console.error('No retailers found or data format is incorrect.');
+                }
+            })
             .catch(error => {
-            console.error('Error fetching retailers:', error);
-        });
+                console.error('Error fetching retailer data:', error);
+            });
     } else {
         console.error('Creator email not found in session storage.');
     }
 });
-
 //----------------------------------Logout Api ----------------------------------
 
 document.addEventListener("DOMContentLoaded", function() {

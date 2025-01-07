@@ -3,6 +3,23 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('userEmail').innerText = userEmail;
     document.getElementById('userEmail1').innerText = userEmail;});
 
+const userEmail = sessionStorage.getItem('userEmail');
+  function fetchUserInfo(email) {
+    if (!email) {
+      return;
+    }
+    const apiUrl = `/api/admin/distributor/userInfo?email=${email}`;
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+                document.getElementById("userRole").innerText = data.role || "N/A";
+      })
+      .catch(error => {
+        console.error("Error fetching user info:", error);
+        alert("An error occurred while fetching user information.");
+      });
+  }
+  fetchUserInfo(userEmail);
 //------------------------------------ Active page fucntion ---------------------------------------
 /**
 * Template Name: NiceAdmin
@@ -383,7 +400,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 row.innerHTML = `
                             <td>${distributor.id}</td>
                             <td>${distributor.name}</td>
-                            <td>${distributor.designation || 'N/A'}</td>
+                            <td>${distributor.creatorEmail || 'N/A'}</td>
                             <td>${distributor.email}</td>
                             <td>${distributor.phoneNumber}</td>
                             <td>${distributor.address || 'N/A'}</td>
@@ -410,14 +427,24 @@ document.getElementById('searchDistributorForm').addEventListener('submit', func
 
     // Fetch distributor info by email
     fetch(`/api/admin/distributor/userInfo?email=${email}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                // If the response is not ok (status code outside 200-299)
+                if (response.status === 400) {
+                    // Handle "No user found" case
+                    alert('No user found with the provided email.');
+                }
+                throw new Error('User not found or bad request');
+            }
+            return response.json();
+        })
         .then(distributor => {
-        // Fetch token count for the distributor
-        fetch(`/api/admin/token/count?identifier=${distributor.phoneNumber}`)
-            .then(response => response.json())
-            .then(tokenData => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
+            // Fetch token count for the distributor
+            fetch(`/api/admin/token/count?identifier=${distributor.phoneNumber}`)
+                .then(response => response.json())
+                .then(tokenData => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
                         <td>${distributor.id}</td>
                         <td>${distributor.name}</td>
                         <td>${distributor.email}</td>
@@ -425,11 +452,15 @@ document.getElementById('searchDistributorForm').addEventListener('submit', func
                         <td>${tokenData.tokenCount}</td>
                         <td>${distributor.phoneNumber}</td>
                     `;
-            distributorTable.appendChild(row);
-            confirmationSection.style.display = 'block';
+                    distributorTable.appendChild(row);
+                    confirmationSection.style.display = 'block';
+                })
+                .catch(error => console.error('Error fetching token data:', error));
+        })
+        .catch(error => {
+            console.error('Error fetching distributor data:', error);
+            // Optionally handle other errors here
         });
-    })
-        .catch(error => console.error('Error fetching distributor data:', error));
 
     // Clear the form input
     document.getElementById('inputEmail').value = '';

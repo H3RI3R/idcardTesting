@@ -111,23 +111,26 @@ document.addEventListener('DOMContentLoaded', function () {
   function fetchTokenAmount(transactionId) {
     return fetch(`/api/admin/tokenAmount/viewByTransactionId?transactionId=${transactionId}`)
       .then(response => response.json())
-      .then(data => data.tokenAmount)
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          return data[0].tokenAmount; // Access the first item of the array
+        } else {
+          throw new Error('Token amount not found in response.');
+        }
+      })
       .catch(error => {
         console.error('Error fetching token amount:', error);
         throw new Error('Failed to fetch token amount.');
       });
   }
-
   // Function to update transaction status and send tokens
   window.updateStatusAndSendToken = function (transactionId, recipientEmail) {
-    // Fetch the token amount for the given transactionId
     fetchTokenAmount(transactionId)
       .then(tokenAmount => {
-        if (tokenAmount <= 0) {
+        if (tokenAmount <= 0 || isNaN(tokenAmount)) {
           throw new Error('Invalid token amount.');
         }
 
-        // Update the transaction status
         return fetch(`/api/admin/distributor/updateTransactionStatus?transactionId=${transactionId}&status=Accepted`, {
           method: 'POST'
         })
@@ -137,7 +140,6 @@ document.addEventListener('DOMContentLoaded', function () {
             throw new Error(statusData.error || 'An error occurred while updating the status');
           }
 
-          // Send the token after updating status
           return fetch(`/api/admin/token/send?senderIdentifier=${userEmail}&amount=${tokenAmount}&recipient=${recipientEmail}`, {
             method: 'POST'
           });
@@ -152,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function () {
             text: 'Token sent successfully!',
             confirmButtonText: 'OK'
           }).then(() => {
-            fetchAndDisplayTransactions(); // Refresh the table after sending tokens
+            fetchAndDisplayTransactions();
           });
         } else {
           Swal.fire({
@@ -188,22 +190,24 @@ document.addEventListener("DOMContentLoaded", function() {
   const doneButton = document.getElementById("bankDoneButton1");
   const doneButton1 = document.getElementById("upiDoneButton1");
 
-  // Bank Transfer Done Button
-   let isBankAccountAvailable = false;
-    let isUPIAccountAvailable = false;
-     // Update the flags based on the availability of accounts
-      function checkAccountAvailability() {
-        isBankAccountAvailable = document.getElementById("bankAccountsContainer").innerHTML.trim() !== "<p>No Active Bank Account Available. Please Select Another Option.</p>";
-        isUPIAccountAvailable = document.getElementById("upiAccountsContainer").innerHTML.trim() !== "<p>No Active UPI Account Available. Please Select Another Option.</p>";
-      }
+  let isBankAccountAvailable = false;
+  let isUPIAccountAvailable = false;
 
+  // Function to update the flags based on account availability
+  function checkAccountAvailability() {
+    isBankAccountAvailable = document.getElementById("bankAccountsContainer").innerHTML.trim() !== "<p>No Active Bank Account Available. Please Select Another Option.</p>";
+    isUPIAccountAvailable = document.getElementById("upiAccountsContainer").innerHTML.trim() !== "<p>No Active UPI Account Available. Please Select Another Option.</p>";
+  }
+
+  // Bank Transfer Done Button
   doneButton.addEventListener("click", function() {
-    const transactionID = document.getElementById("bankTransactionID1").value; // Use the correct ID for bank transaction
+    checkAccountAvailability(); // Ensure flags are updated before validation
+
+    const transactionID = document.getElementById("bankTransactionID1").value;
     const amount = document.getElementById("payableAmount").textContent.match(/\d+/)[0];
-    const email = sessionStorage.getItem('userEmail'); // Replace with the actual session email value
+    const email = sessionStorage.getItem('userEmail');
     const tokenAmount = document.getElementById('inputTokenAmount').value;
 
- // Validate account availability
     if (!isBankAccountAvailable) {
       alert("Cannot create request as no bank account is selected.");
       return;
@@ -219,18 +223,15 @@ document.addEventListener("DOMContentLoaded", function() {
     .then(response => response.json())
     .then(data => {
       if (data.message) {
-        // Show alert and close modal after the transaction request is successful
         showAlert("Payment request submitted successfully.");
         closeModal('bankTransferModal1');
 
-        // Hit the createTokenAmount API after successful transaction request
         fetch(`/api/admin/tokenAmount/create?transactionId=${transactionID}&email=${email}&tokenAmount=${tokenAmount}&price=${amount}`, {
           method: 'POST'
         })
         .then(response => response.json())
         .then(data => {
           if (data) {
-            // Optionally show an alert or perform any action on successful token amount creation
             console.log("Token amount record created successfully", data);
           } else {
             console.log("Error: ", data);
@@ -250,12 +251,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // UPI Payment Done Button
   doneButton1.addEventListener("click", function() {
-    const transactionID = document.getElementById("upiTransactionID1").value; // Use the correct ID for UPI transaction
+    checkAccountAvailability(); // Ensure flags are updated before validation
+
+    const transactionID = document.getElementById("upiTransactionID1").value;
     const amount = document.getElementById("payableAmount").textContent.match(/\d+/)[0];
-    const email = sessionStorage.getItem('userEmail'); // Replace with the actual session email value
+    const email = sessionStorage.getItem('userEmail');
     const tokenAmount = document.getElementById('inputTokenAmount').value;
 
- // Validate account availability
     if (!isUPIAccountAvailable) {
       alert("Cannot create request as no UPI account is selected.");
       return;
@@ -271,18 +273,15 @@ document.addEventListener("DOMContentLoaded", function() {
     .then(response => response.json())
     .then(data => {
       if (data.message) {
-        // Show alert and close modal after the transaction request is successful
         showAlert("Payment request submitted successfully.");
         closeModal('upiModal1');
 
-        // Hit the createTokenAmount API after successful transaction request
         fetch(`/api/admin/tokenAmount/create?transactionId=${transactionID}&email=${email}&tokenAmount=${tokenAmount}&price=${amount}`, {
           method: 'POST'
         })
         .then(response => response.json())
         .then(data => {
           if (data) {
-            // Optionally show an alert or perform any action on successful token amount creation
             console.log("Token amount record created successfully", data);
           } else {
             console.log("Error: ", data);
@@ -304,7 +303,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const modal = document.getElementById(modalId);
     if (modal) {
       modal.style.display = 'none';
-      document.body.style.overflow = ''; // Re-enable scroll when modal is closed
+      document.body.style.overflow = '';
     }
   }
 
@@ -989,8 +988,6 @@ function filterActiveAccounts() {
     formData.append('email', email);
     formData.append('upiId', document.getElementById('upiId').value);
     formData.append('upiName', document.getElementById('upiAccountName').value);
-    formData.append('upiFathersName', document.getElementById('upiFathersName').value);
-    formData.append('upiMothersName', document.getElementById('upiMothersName').value);
     formData.append('upiProvider', 'Some UPI Provider'); // Example provider
     formData.append('address', document.getElementById('upiAddress').value);
 

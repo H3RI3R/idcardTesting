@@ -3,6 +3,24 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('userEmail').innerText = userEmail;
     document.getElementById('userEmail1').innerText = userEmail;});
 
+//------------------------------------  User role funciton ---------------------------------------
+const userEmail = sessionStorage.getItem('userEmail');
+  function fetchUserInfo(email) {
+    if (!email) {
+      return;
+    }
+    const apiUrl = `/api/admin/distributor/userInfo?email=${email}`;
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+                document.getElementById("userRole").innerText = data.role || "N/A";
+      })
+      .catch(error => {
+        console.error("Error fetching user info:", error);
+        alert("An error occurred while fetching user information.");
+      });
+  }
+  fetchUserInfo(userEmail);
 //------------------------------------ Active page fucntion ---------------------------------------
 /**
 * Template Name: NiceAdmin

@@ -5,6 +5,25 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('userEmail').innerText = userEmail;
     document.getElementById('userEmail1').innerText = userEmail;});
 
+//---------------------------------- user roleApi -----------------------------------
+ const userEmail = sessionStorage.getItem('userEmail');
+  function fetchUserInfo(email) {
+    if (!email) {
+      alert('You are on a guest profile');
+      return;
+    }
+    const apiUrl = `/api/admin/distributor/userInfo?email=${email}`;
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+                document.getElementById("userRole").innerText = data.role || "N/A";
+      })
+      .catch(error => {
+        console.error("Error fetching user info:", error);
+        alert("An error occurred while fetching user information.");
+      });
+  }
+  fetchUserInfo(userEmail);
 //---------------------------------- Table  Api -----------------------------------
 document.addEventListener('DOMContentLoaded', function() {
     const userEmail = sessionStorage.getItem('userEmail');
@@ -500,24 +519,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const adminEmail = sessionStorage.getItem('userEmail');
 
     if (adminEmail) {
-        // Fetch the list of distributors
-        fetch(`/api/admin/distributor/list?adminEmail=${encodeURIComponent(adminEmail)}`)
+        // Fetch the list of retailers using the new API
+        fetch(`http://localhost:8000/api/admin/retailer/list-by-creator?creatorEmail=${encodeURIComponent(adminEmail)}`)
             .then(response => response.json())
             .then(data => {
-            // Assuming data is an array of distributors
-            const distributors = data || [];
+                // Assuming the response has a 'retailers' array
+                const retailers = data.retailers || [];
 
-            // Calculate the number of distributors
-            const distributorCount = distributors.length;
+                // Calculate the number of retailers
+                const retailerCount = retailers.length;
 
-            // Update the sales card with the distributor count
-            document.getElementById('distributorCount').textContent = distributorCount;
-        })
+                // Update the sales card with the retailer count
+                document.getElementById('distributorCount').textContent = retailerCount;
+            })
             .catch(error => {
-            console.error('Error fetching distributor count:', error);
-            // Handle error case, possibly display 0
-            document.getElementById('distributorCount').textContent = '0';
-        });
+                console.error('Error fetching retailer count:', error);
+                // Handle error case, possibly display 0
+                document.getElementById('distributorCount').textContent = '0';
+            });
     } else {
         console.error('Admin email is not found in session storage.');
         // Handle case where adminEmail is not present

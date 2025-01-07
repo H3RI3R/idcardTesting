@@ -70,7 +70,7 @@
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                     <li class="dropdown-header">
                         <h6><span id="userEmail1"></span></h6>
-                        <span>Web Designer</span>
+                        <span id="userRole">Web Designer</span>
                     </li>
                     <li>
                         <hr class="dropdown-divider">
@@ -218,110 +218,36 @@
 
     <section class="section">
         <div class="row">
-            <div class="col-lg-10">
+            <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Deactivate Retailer Form</h5>
-                        <form id="deleteRetailerForm">
-                            <div class="row mb-3">
-                                <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="inputEmail" placeholder="Enter Retailer Email">
-                                </div>
+                        <h5 class="card-title">  RETAILER List </h5>
+                        <div class="row mb-3">
+                            <label for="searchInput" class="col-sm-2 col-form-label">Search</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="searchInput" placeholder="Search by Name, Email, Company, Phone, or StatePincode">
                             </div>
-                            <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label"></label>
-                                <div class="col-sm-10">
-                                    <button type="submit" class="btn btn-primary">Deactivate Retailer</button>
-                                </div>
-                            </div>
-                        </form>
-                        <h6 class="card-title">Activate Retailer Form</h6>
-                        <form id="deleteDistributorForm">
-                            <div class="row mb-3">
-                                <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="inputEmail1" placeholder="Enter Distributor Email">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label"></label>
-                                <div class="col-sm-10">
-                                    <button type="submit" class="btn btn-primary">Activate Retailer</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <div id="confirmationSection" style="display:none;">
-                    <div class="card-body pb-0">
-                        <h5 class="card-title">Retailer Details</h5>
-                        <table class="table table-borderless">
+                        </div>
+                        <table class="table table-bordered" id="deactivatedRetailersTable">
                             <thead>
                             <tr>
-                                <th scope="col">R.ID</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Business</th>
-                                <th scope="col">Token Amount</th>
-                                <th scope="col">Phone Number</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Company</th>
+                                <th>Phone Number</th>
+                                <th>State Pincode</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
-                            <tbody id="retailerTableBody">
+                            <tbody id="deactivatedRetailersTableBody">
                             <!-- Rows will be dynamically added here -->
                             </tbody>
                         </table>
-                        <div class="confirm-buttons">
-                            <button id="confirmDelete" class="btn btn-danger">Yes, Deactivate</button>
-                            <button id="cancelDelete" class="btn btn-secondary">No, Cancel</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="successModalLabel">Message</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body" id="modalMessage">
-                            <!-- Message will go here -->
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
                     </div>
                 </div>
             </div>
-
-                <div id="confirmationSection1" style="display:none;">
-                    <div class="card-body pb-0">
-                        <h5 class="card-title">Retailer Details</h5>
-                        <table class="table table-borderless">
-                            <thead>
-                            <tr>
-                                <th scope="col">R.ID</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Business</th>
-                                <th scope="col">Token Amount</th>
-                                <th scope="col">Phone Number</th>
-                            </tr>
-                            </thead>
-                            <tbody id="retailerTableBody1">
-                            <!-- Rows will be dynamically added here -->
-                            </tbody>
-                        </table>
-                        <div class="confirm-buttons">
-                            <button id="confirmDelete1" class="btn btn-danger">Yes, Activate</button>
-                            <button id="cancelDelete1" class="btn btn-secondary">No, Cancel</button>
-                        </div>
-                    </div>
-                </div>
         </div>
-        </div>
-
     </section>
 
 </main><!-- End #main -->
@@ -351,6 +277,7 @@
 <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
 <script src="assets/vendor/tinymce/tinymce.min.js"></script>
 <script src="assets/vendor/php-email-form/validate.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- Template Main JS File -->
 <!--  <script src="assets/js/main.js"></script>-->
