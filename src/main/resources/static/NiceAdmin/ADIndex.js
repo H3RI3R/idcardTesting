@@ -520,7 +520,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (adminEmail) {
         // Fetch the list of retailers using the new API
-        fetch(`http://localhost:8000/api/admin/retailer/list-by-creator?creatorEmail=${encodeURIComponent(adminEmail)}`)
+        fetch(`/api/admin/retailer/list-by-creator?creatorEmail=${encodeURIComponent(adminEmail)}`)
             .then(response => response.json())
             .then(data => {
                 // Assuming the response has a 'retailers' array
