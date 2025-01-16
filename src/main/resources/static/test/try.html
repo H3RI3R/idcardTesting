@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Google Pass</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .image-button {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .image-button img {
+            width: 100%;
+            max-width: 300px;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-button:hover img {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Download Your Google Pass</h1>
+
+    <!-- Button to trigger API call -->
+    <button class="image-button" onclick="generateGooglePass()">
+        <img src="image.png" alt="Download Google Pass">
+    </button>
+</div>
+
+<script>
+    // Function to call the API and handle the response
+    function generateGooglePass() {
+        // Define the required parameters
+        const issuerId = '3388000000022830383'; // Replace with actual issuer ID
+        const classSuffix = 'testpass123'; // Replace with actual class suffix
+        const objectSuffix = 'coustomer1'; // Replace with actual object suffix
+
+        // API endpoint
+        const apiUrl = `/generate-ticket-link?issuerId=${issuerId}&classSuffix=${classSuffix}&objectSuffix=${objectSuffix}`;
+
+        // Make an API call
+        fetch(apiUrl)
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('Failed to generate ticket link.');
+                }
+            })
+            .then(link => {
+                // Redirect the user to the generated link for downloading the pass
+                window.location.href = link;
+            })
+            .catch(error => {
+                // Handle errors and alert the user
+                console.error('Error:', error);
+                alert('An error occurred while generating the ticket link. Please try again.');
+            });
+    }
+</script>
+
+</body>
+</html>
