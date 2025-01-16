@@ -1,0 +1,56 @@
+{
+  "id": "ISSUER_ID.OBJECT_ID",
+  "classId": "ISSUER_ID.GENERIC_CLASS_ID",
+  "logo": {
+    "sourceUri": {
+      "uri": "https://storage.googleapis.com/wallet-lab-tools-codelab-artifacts-public/pass_google_logo.jpg"
+    },
+    "contentDescription": {
+      "defaultValue": {
+        "language": "en-US",
+        "value": "LOGO_IMAGE_DESCRIPTION"
+      }
+    }
+  },
+  "cardTitle": {
+    "defaultValue": {
+      "language": "en-US",
+      "value": "BADGE ID "
+    }
+  },
+  "subheader": {
+    "defaultValue": {
+      "language": "en-US",
+      "value": "Attendee"
+    }
+  },
+  "header": {
+    "defaultValue": {
+      "language": "en-US",
+      "value": "First , Last"
+    }
+  },
+  "textModulesData": [
+    {
+      "id": "email_id_",
+      "header": "Email ID ",
+      "body": "abc@xyz.com"
+    },
+    {
+      "id": "id",
+      "header": "ID",
+      "body": "#1"
+    },
+    {
+      "id": "group",
+      "header": "Group",
+      "body": "Modal"
+    }
+  ],
+  "barcode": {
+    "type": "BARCODE_TYPE_UNSPECIFIED",
+    "value": "BARCODE_VALUE",
+    "alternateText": ""
+  },
+  "hexBackgroundColor": "#9e9e9e"
+}

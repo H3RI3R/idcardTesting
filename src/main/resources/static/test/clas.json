@@ -1,0 +1,44 @@
+{
+  "id": "ISSUER_ID.CLASS_ID",
+  "classTemplateInfo": {
+    "cardTemplateOverride": {
+      "cardRowTemplateInfos": [
+        {
+          "twoItems": {
+            "startItem": {
+              "firstValue": {
+                "fields": [
+                  {
+                    "fieldPath": "object.textModulesData['email_id_']"
+                  }
+                ]
+              }
+            },
+            "endItem": {
+              "firstValue": {
+                "fields": [
+                  {
+                    "fieldPath": "object.textModulesData['id']"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "oneItem": {
+            "item": {
+              "firstValue": {
+                "fields": [
+                  {
+                    "fieldPath": "object.textModulesData['group']"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
