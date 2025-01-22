@@ -5,13 +5,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 //------------------------------------ userRole api  ---------------------------------------
 
-const userEmail = sessionStorage.getItem('userEmail');
-  function fetchUserInfo(email) {
+ const userEmail = sessionStorage.getItem('userEmail');
+ function fetchUserInfo(email) {
     if (!email) {
-
       return;
     }
-    const apiUrl = `/api/admin/distributor/userInfo?email=${email}`;
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
     fetch(apiUrl)
       .then(response => response.json())
       .then(data => {
@@ -22,7 +21,7 @@ const userEmail = sessionStorage.getItem('userEmail');
         alert("An error occurred while fetching user information.");
       });
   }
-  fetchUserInfo(userEmail);
+ fetchUserInfo(userEmail);
 //------------------------------------ Active page fucntion ---------------------------------------
 /**
 * Template Name: NiceAdmin
@@ -355,7 +354,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
 
         if (email) {
-            fetch(`/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+            fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
                 .then(response => response.json())
                 .then(data => {
                 const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
@@ -395,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Fetch all retailers (including deactivated ones)
-    fetch(`/api/admin/retailer/listAllRetailer?adminEmail=${userEmail}`)
+    fetch(`${API_URL}/api/admin/retailer/listAllRetailer?adminEmail=${userEmail}`)
         .then(response => response.json())
         .then(retailers => {
             if (retailers && retailers.length > 0) {
@@ -433,7 +432,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to handle activation of a retailer user
     window.activateRetailer = function (email, creatorEmail) {
-        fetch(`/api/admin/retailer/activate-retailer?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}`, {
+        fetch(`${API_URL}/api/admin/retailer/activate-retailer?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}`, {
             method: 'POST'
         })
         .then(response => response.json())
@@ -446,7 +445,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     text: 'Retailer activated successfully!',
                 }).then(() => {
                     // After showing the success alert, refresh the table to reflect the new status
-                    fetch(`/api/admin/retailer/listAllRetailer?adminEmail=${userEmail}`)
+                    fetch(`${API_URL}/api/admin/retailer/listAllRetailer?adminEmail=${userEmail}`)
                         .then(response => response.json())
                         .then(retailers => populateRetailerTable(retailers)); // Update the table
                 });
@@ -476,7 +475,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to handle deactivation of a retailer user
     window.deactivateRetailer = function (email, creatorEmail) {
-        fetch(`/api/admin/retailer/delete?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}&requestingUserRole=DISTRIBUTOR`, {
+        fetch(`${API_URL}/api/admin/retailer/delete?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}&requestingUserRole=DISTRIBUTOR`, {
             method: 'POST'
         })
         .then(response => response.json())
@@ -489,7 +488,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     icon: 'success',
                     confirmButtonText: 'OK'
                 }).then(() => {
-                    fetch(`/api/admin/retailer/listAllRetailer?adminEmail=${userEmail}`)
+                    fetch(`${API_URL}/api/admin/retailer/listAllRetailer?adminEmail=${userEmail}`)
                         .then(response => response.json())
                         .then(retailers => populateRetailerTable(retailers)); // Update the table
                 });

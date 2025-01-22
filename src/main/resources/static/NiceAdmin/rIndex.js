@@ -5,6 +5,25 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('userEmail').innerText = userEmail;
     document.getElementById('userEmail1').innerText = userEmail;});
 
+//---------------------------------- user roleApi -----------------------------------
+ const userEmail = sessionStorage.getItem('userEmail');
+  function fetchUserInfo(email) {
+    if (!email) {
+      alert('You are on a guest profile');
+      return;
+    }
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+                document.getElementById("userRole").innerText = data.role || "N/A";
+      })
+      .catch(error => {
+        console.error("Error fetching user info:", error);
+        alert("An error occurred while fetching user information.");
+      });
+  }
+  fetchUserInfo(userEmail);
 //---------------------------------- Table  Api -----------------------------------
 document.addEventListener("DOMContentLoaded", function() {
     const retailerTableBody = document.getElementById("retailerTableBody");
@@ -18,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        fetch(`/api/admin/retailer/idcard-history?retailerEmail=${encodeURIComponent(userEmail)}`)
+        fetch(`${API_URL}/api/admin/retailer/idcard-history?retailerEmail=${encodeURIComponent(userEmail)}`)
             .then(response => response.json())
             .then(data => {
             if (data.error) {
@@ -393,21 +412,21 @@ document.addEventListener('DOMContentLoaded', function() {
         const sessionEmail = sessionStorage.getItem('userEmail'); // Replace with actual session retrieval method
 
         // Step 1: Fetch sender's phone number
-        fetch(`/api/admin/token/getWalletAddress?email=${sessionEmail}`)
+        fetch(`${API_URL}/api/admin/token/getWalletAddress?email=${sessionEmail}`)
             .then(response => response.json())
             .then(senderData => {
             if (senderData && senderData.phoneNumber) {
                 const senderPhoneNumber = senderData.phoneNumber;
 
                 // Step 2: Fetch recipient information
-                fetch(`/api/admin/distributor/userInfo?email=${recipientEmail}`)
+                fetch(`${API_URL}/api/admin/distributor/userInfo?email=${recipientEmail}`)
                     .then(response => response.json())
                     .then(recipientData => {
                     if (recipientData && recipientData.email) {
                         const recipientPhoneNumber = recipientData.phoneNumber;
 
                         // Step 3: Fetch recipient's token amount
-                        fetch(`/api/admin/token/count?identifier=${recipientPhoneNumber}`)
+                        fetch(`${API_URL}/api/admin/token/count?identifier=${recipientPhoneNumber}`)
                             .then(response => response.json())
                             .then(tokenData => {
                             if (tokenData && tokenData.tokenCount !== undefined) {
@@ -431,7 +450,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                 // Step 5: Handle token sending on confirmation
                                 document.getElementById('confirmSend').addEventListener('click', function() {
-                                    fetch('/api/admin/token/send', {
+                                    fetch(`${API_URL}/api/admin/token/send`, {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/x-www-form-urlencoded'
@@ -497,7 +516,7 @@ document.addEventListener('DOMContentLoaded', function() {
 //---------------------------------- Activity  Api -----------------------------------
 document.addEventListener('DOMContentLoaded', function() {
     const userEmail = sessionStorage.getItem('userEmail');
-    const activityApiUrl = `/api/admin/retailer/recent-activities?userEmail=${encodeURIComponent(userEmail)}`;
+    const activityApiUrl = `${API_URL}/api/admin/retailer/recent-activities?userEmail=${encodeURIComponent(userEmail)}`;
 
     // Function to fetch and display activities
     function fetchAndDisplayActivities() {
@@ -591,7 +610,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
 
         if (email) {
-            fetch(`/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+            fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
                 .then(response => response.json())
                 .then(data => {
                 const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
@@ -625,13 +644,13 @@ function fetchDistributorName() {
 
     if (userEmail) {
         // Step 2: First API call to get the creatorEmail
-        fetch(`/api/admin/distributor/userInfo?email=${userEmail}`)
+        fetch(`${API_URL}/api/admin/distributor/userInfo?email=${userEmail}`)
             .then(response => response.json())
             .then(data => {
                 const creatorEmail = data.creatorEmail;
 
                 // Step 3: Second API call to get the distributor's name using the creatorEmail
-                return fetch(`/api/admin/distributor/userInfo?email=${creatorEmail}`);
+                return fetch(`${API_URL}/api/admin/distributor/userInfo?email=${creatorEmail}`);
             })
             .then(response => response.json())
             .then(data => {
@@ -656,7 +675,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (userEmail) {
         function updateTokenSalesCount() {
-            fetch(`/api/admin/retailer/recent-activities?userEmail=${encodeURIComponent(userEmail)}`)
+            fetch(`${API_URL}/api/admin/retailer/recent-activities?userEmail=${encodeURIComponent(userEmail)}`)
                 .then(response => response.json())
                 .then(data => {
                 // Check if the response contains ID_CARD_CREATION activities
@@ -694,7 +713,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (userEmail) {
         // Define the API endpoint to get wallet address and phone number
-        const getWalletAddressUrl = `/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
+        const getWalletAddressUrl = `${API_URL}/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
 
         // Fetch wallet address and phone number
         fetch(getWalletAddressUrl)
@@ -709,7 +728,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (phoneNumber && walletAddress) {
                     // Fetch token count using the phone number
-                    const getTokenCountUrl = `/api/admin/token/count?identifier=${encodeURIComponent(phoneNumber)}`;
+                    const getTokenCountUrl = `${API_URL}/api/admin/token/count?identifier=${encodeURIComponent(phoneNumber)}`;
 
                     return fetch(getTokenCountUrl);
                 } else {

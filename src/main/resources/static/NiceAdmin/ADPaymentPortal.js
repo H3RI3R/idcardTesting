@@ -1,3 +1,21 @@
+ const userEmail = sessionStorage.getItem('userEmail');
+  function fetchUserInfo(email) {
+    if (!email) {
+      alert('You are on a guest profile');
+      return;
+    }
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+                document.getElementById("userRole").innerText = data.role || "N/A";
+      })
+      .catch(error => {
+        console.error("Error fetching user info:", error);
+        alert("An error occurred while fetching user information.");
+      });
+  }
+  fetchUserInfo(userEmail);
 //---------------------table apis-----------------------
 document.addEventListener('DOMContentLoaded', function () {
   const userEmail = sessionStorage.getItem('userEmail'); // Fetch session storage userEmail
@@ -7,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Fetch and display transactions
   function fetchAndDisplayTransactions() {
-    fetch(`/api/admin/distributor/getTransactionRequests?creatorEmail=${userEmail}&userEmail=${userEmail}`)
+    fetch(`${API_URL}/api/admin/distributor/getTransactionRequests?creatorEmail=${userEmail}&userEmail=${userEmail}`)
       .then(response => response.json())
       .then(data => {
         transactionTableBody.innerHTML = ''; // Clear the table body
@@ -70,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Function to update transaction status (only refresh table and show alert)
   window.updateStatus = function (transactionId, status) {
-    fetch(`/api/admin/distributor/updateTransactionStatus?transactionId=${transactionId}&status=${status}`, {
+    fetch(`${API_URL}/api/admin/distributor/updateTransactionStatus?transactionId=${transactionId}&status=${status}`, {
       method: 'POST'
     })
       .then(response => response.json())
@@ -108,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Function to fetch token amount
   function fetchTokenAmount(transactionId) {
-    return fetch(`/api/admin/tokenAmount/viewByTransactionId?transactionId=${transactionId}`)
+    return fetch(`${API_URL}/api/admin/tokenAmount/viewByTransactionId?transactionId=${transactionId}`)
       .then(response => response.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
@@ -130,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function () {
           throw new Error('Invalid token amount.');
         }
 
-        return fetch(`/api/admin/distributor/updateTransactionStatus?transactionId=${transactionId}&status=Accepted`, {
+        return fetch(`${API_URL}/api/admin/distributor/updateTransactionStatus?transactionId=${transactionId}&status=Accepted`, {
           method: 'POST'
         })
         .then(response => response.json())
@@ -139,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function () {
             throw new Error(statusData.error || 'An error occurred while updating the status');
           }
 
-          return fetch(`/api/admin/token/send?senderIdentifier=${userEmail}&amount=${tokenAmount}&recipient=${recipientEmail}`, {
+          return fetch(`${API_URL}/api/admin/token/send?senderIdentifier=${userEmail}&amount=${tokenAmount}&recipient=${recipientEmail}`, {
             method: 'POST'
           });
         });
@@ -201,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Create Transaction Request API call
-        fetch(`/api/admin/distributor/createTransactionRequest?email=${email}&amount=${amount}&transactionId=${transactionID}`, {
+        fetch(`${API_URL}/api/admin/distributor/createTransactionRequest?email=${email}&amount=${amount}&transactionId=${transactionID}`, {
           method: 'POST'
         })
           .then(response => response.json())
@@ -234,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
 
         if (email) {
-          fetch(`/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+          fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
             .then(response => response.json())
             .then(data => {
             const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
@@ -320,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // ------------------------------------------ Account API ----------------------------------------------------------
- const userEmail = sessionStorage.getItem('userEmail');
+// const userEmail = sessionStorage.getItem('userEmail');
  let selectedAccountId = null; // Variable to hold the currently selected account ID
  let currentIdentifier = ''; // To store the current identifier
  let currentName = ''; // To store the current name
@@ -328,7 +346,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
  // Function to fetch API data and populate the table
  function fetchAndDisplayAccounts() {
-     fetch(`/api/admin/bank/view?email=${userEmail}`)
+     fetch(`${API_URL}/api/admin/bank/view?email=${userEmail}`)
          .then(response => response.json())
          .then(data => {
              const tableBody = document.getElementById('accountTableBody');
@@ -415,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function () {
      }
 
      // Prepare the API URL with the parameters for both changes
-     let apiUrl = `/api/admin/bank/modify?email=${userEmail}&identifier=${currentIdentifier}`;
+     let apiUrl = `${API_URL}/api/admin/bank/modify?email=${userEmail}&identifier=${currentIdentifier}`;
 
      // Append parameters conditionally based on what was changed
      if (isIdentifierChanged) {
@@ -468,7 +486,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
  // Function to deactivate the account after confirmation
  function deactivateAccount() {
-     fetch(`/api/admin/bank/updateStatus?email=${userEmail}&identifier=${selectedIdentifier}&status=DEACTIVE`, {
+     fetch(`${API_URL}/api/admin/bank/updateStatus?email=${userEmail}&identifier=${selectedIdentifier}&status=DEACTIVE`, {
          method: 'POST',
          headers: {
              'Content-Type': 'application/json'
@@ -501,7 +519,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
  // Function to activate the account after confirmation
  function activateAccount() {
-     fetch(`/api/admin/bank/updateStatus?email=${userEmail}&identifier=${selectedIdentifier}&status=ACTIVE`, {
+     fetch(`${API_URL}/api/admin/bank/updateStatus?email=${userEmail}&identifier=${selectedIdentifier}&status=ACTIVE`, {
          method: 'POST',
          headers: {
              'Content-Type': 'application/json'
@@ -553,7 +571,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to handle the actual deletion
     function handleDelete() {
       const userEmail = sessionStorage.getItem('userEmail');
-      const apiUrl = `/api/admin/bank/delete?email=${userEmail}&identifier=${currentDeleteAccountIdentifier}`;
+      const apiUrl = `${API_URL}/api/admin/bank/delete?email=${userEmail}&identifier=${currentDeleteAccountIdentifier}`;
 
       fetch(apiUrl, {
         method: 'DELETE',
@@ -705,7 +723,7 @@ function filterActiveAccounts() {
           console.log('Request body:', requestBody.toString()); // Debugging log
 
           // Send the POST request to the API
-          fetch('/api/admin/bank/save', {
+          fetch(`${API_URL}/api/admin/bank/save`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
@@ -767,7 +785,7 @@ function filterActiveAccounts() {
         formData.append('qrCodeFile', qrCodeFile);
       }
 
-      fetch('/api/admin/bank/save', {
+      fetch(`${API_URL}/api/admin/bank/save`, {
         method: 'POST',
         body: formData
       })
@@ -805,7 +823,7 @@ function filterActiveAccounts() {
 
     if (userEmail) {
         // Define the API endpoint to get wallet address and phone number
-        const getWalletAddressUrl = `/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
+        const getWalletAddressUrl = `${API_URL}/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
 
         // Fetch wallet address and phone number
         fetch(getWalletAddressUrl)
@@ -820,7 +838,7 @@ function filterActiveAccounts() {
 
                 if (phoneNumber && walletAddress) {
                     // Fetch token count using the phone number
-                    const getTokenCountUrl = `/api/admin/token/count?identifier=${encodeURIComponent(phoneNumber)}`;
+                    const getTokenCountUrl = `${API_URL}/api/admin/token/count?identifier=${encodeURIComponent(phoneNumber)}`;
 
                     return fetch(getTokenCountUrl);
                 } else {
@@ -850,7 +868,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const userEmail = sessionStorage.getItem('userEmail');
 
         if (userEmail) {
-            const getWalletAddressUrl = `/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
+            const getWalletAddressUrl = `${API_URL}/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
 
             fetch(getWalletAddressUrl)
                 .then(response => response.json())
@@ -862,7 +880,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const walletAddress = data.walletAddress;
 
                         if (phoneNumber && walletAddress) {
-                            const getTokenCountUrl = `/api/admin/token/count?identifier=${encodeURIComponent(phoneNumber)}`;
+                            const getTokenCountUrl = `${API_URL}/api/admin/token/count?identifier=${encodeURIComponent(phoneNumber)}`;
 
                             return fetch(getTokenCountUrl);
                         } else {
@@ -903,14 +921,14 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        const walletAddressUrl = `/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
+        const walletAddressUrl = `${API_URL}/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
 
         fetch(walletAddressUrl)
             .then(response => response.json())
             .then(data => {
                 const walletAddress = data.walletAddress;
 
-                const apiUrl = '/api/admin/token/create';
+                const apiUrl = `${API_URL}/api/admin/token/create`;
                 const params = new URLSearchParams();
                 params.append('walletAddress', walletAddress);
                 params.append('email', userEmail);
@@ -970,7 +988,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to fetch rates and populate the table
     function fetchRates() {
         const email = sessionStorage.getItem('userEmail');
-        fetch(`/api/admin/token/viewRate?email=${encodeURIComponent(email)}`)
+        fetch(`${API_URL}/api/admin/token/viewRate?email=${encodeURIComponent(email)}`)
             .then(response => response.json())
             .then(data => populateTable(data))
             .catch(error => Swal.fire('Error', 'Error fetching rates: ' + error.message, 'error'));
@@ -1013,7 +1031,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const rate = inputs[2].value;
             const email = sessionStorage.getItem('userEmail');
 
-            fetch(`/api/admin/token/modifyRate?email=${encodeURIComponent(email)}&newRate=${rate}&newMinRange=${minRange}&newMaxRange=${maxRange}&oldMinRange=${oldMinRange}&oldMaxRange=${oldMaxRange}`, {
+            fetch(`${API_URL}/api/admin/token/modifyRate?email=${encodeURIComponent(email)}&newRate=${rate}&newMinRange=${minRange}&newMaxRange=${maxRange}&oldMinRange=${oldMinRange}&oldMaxRange=${oldMaxRange}`, {
                 method: 'PUT'
             })
             .then(response => {
@@ -1041,7 +1059,7 @@ document.addEventListener('DOMContentLoaded', function () {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`/api/admin/token/deleteRate?email=${encodeURIComponent(email)}&minRange=${minRange}&maxRange=${maxRange}`, { method: 'DELETE' })
+                fetch(`${API_URL}/api/admin/token/deleteRate?email=${encodeURIComponent(email)}&minRange=${minRange}&maxRange=${maxRange}`, { method: 'DELETE' })
                     .then(response => {
                         if (response.ok) {
                             Swal.fire('Deleted!', 'Rate deleted successfully', 'success');
@@ -1082,7 +1100,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const email = sessionStorage.getItem('userEmail');
 
         // Call the create API
-        fetch(`/api/admin/token/createRate?email=${encodeURIComponent(email)}&rate=${rate}&minRange=${minRange}&maxRange=${maxRange}`, {
+        fetch(`${API_URL}/api/admin/token/createRate?email=${encodeURIComponent(email)}&rate=${rate}&minRange=${minRange}&maxRange=${maxRange}`, {
             method: 'POST'
         })
         .then(response => {

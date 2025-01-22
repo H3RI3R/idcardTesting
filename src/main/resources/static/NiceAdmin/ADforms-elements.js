@@ -324,7 +324,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
 })();
 //-------------------------------------------------------
-
+ function fetchUserInfo(email) {
+   if (!email) {
+     alert('You are on a guest profile');
+     return;
+   }
+   const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
+   fetch(apiUrl)
+     .then(response => response.json())
+     .then(data => {
+               document.getElementById("userRole").innerText = data.role || "N/A";
+     })
+     .catch(error => {
+       console.error("Error fetching user info:", error);
+       alert("An error occurred while fetching user information.");
+     });
+ }
+ const userEmail = sessionStorage.getItem('userEmail');
+ fetchUserInfo(userEmail);
 //------------------------------------Create retailer api ---------------------------------------
 document.getElementById('createRetailerForm').addEventListener('submit', function(event) {
     event.preventDefault();
@@ -360,7 +377,7 @@ document.getElementById('createRetailerForm').addEventListener('submit', functio
     }
 
     // Send data to the API
-    fetch('/api/admin/retailer/create', {
+    fetch(`${API_URL}/api/admin/retailer/create`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -405,7 +422,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
 
         if (email) {
-            fetch(`/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+            fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
                 .then(response => response.json())
                 .then(data => {
                 const userName = data.name || 'Guest'; // Use 'Guest' if no name is found

@@ -4,12 +4,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('userEmail1').innerText = userEmail;});
 
 //------------------------------------  User role funciton ---------------------------------------
-const userEmail = sessionStorage.getItem('userEmail');
-  function fetchUserInfo(email) {
+ const userEmail = sessionStorage.getItem('userEmail');
+ function fetchUserInfo(email) {
     if (!email) {
       return;
     }
-    const apiUrl = `/api/admin/distributor/userInfo?email=${email}`;
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
     fetch(apiUrl)
       .then(response => response.json())
       .then(data => {
@@ -379,7 +379,7 @@ if (!name || !email || !password || !phoneNumber || !company || !companyAddress 
         return;
     }
          // Send data to the API
-         fetch('/api/admin/distributor/create', {
+         fetch(`${API_URL}/api/admin/distributor/create`, {
              method: 'POST',
              headers: {
                  'Content-Type': 'application/x-www-form-urlencoded'
@@ -422,7 +422,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
 
         if (email) {
-            fetch(`/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+            fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
                 .then(response => response.json())
                 .then(data => {
                 const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
