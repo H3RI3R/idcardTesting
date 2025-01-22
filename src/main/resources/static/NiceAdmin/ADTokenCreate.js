@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Fetch the wallet address
-        const walletAddressUrl = `/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
+        const walletAddressUrl = `${API_URL}/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
 
         fetch(walletAddressUrl)
             .then(response => response.json())
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const walletAddress = data.walletAddress;
 
             // Prepare data for token creation API
-            const apiUrl = '/api/admin/token/create';
+            const apiUrl = `${API_URL}/api/admin/token/create`;
             const params = new URLSearchParams();
             params.append('walletAddress', walletAddress);
             params.append('email', userEmail);

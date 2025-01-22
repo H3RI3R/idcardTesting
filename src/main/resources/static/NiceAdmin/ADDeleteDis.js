@@ -3,15 +3,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('userEmail').innerText = userEmail;
     document.getElementById('userEmail1').innerText = userEmail;});
 
-//------------------------------------ userRole api  ---------------------------------------
-
-const userEmail = sessionStorage.getItem('userEmail');
-  function fetchUserInfo(email) {
+ const userEmail = sessionStorage.getItem('userEmail');
+ function fetchUserInfo(email) {
     if (!email) {
 
       return;
     }
-    const apiUrl = `/api/admin/distributor/userInfo?email=${email}`;
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
     fetch(apiUrl)
       .then(response => response.json())
       .then(data => {
@@ -345,7 +343,76 @@ const userEmail = sessionStorage.getItem('userEmail');
 })();
 //-------------------------------------------------------
 
-//------------------------------------Create retailer api ---------------------------------------
+//------------------------------------Create Distributor api ---------------------------------------
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById("createRetailerForm");
+
+    form.addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Get the values from the form inputs
+        const name = document.getElementById("inputName").value;
+        const email = document.getElementById("inputEmail").value;
+        const password = document.getElementById("inputPassword").value;
+    const phoneNumber = document.getElementById('inputNumber').value.trim();
+    const company = document.getElementById('shopName').value.trim();
+    const companyAddress = document.getElementById('shopAddress').value.trim();
+    const panCardNo = document.getElementById('panCardNo').value.trim();
+    const aadharCardNo = document.getElementById('aadharCardNo').value.trim();
+    const statePincode = document.getElementById('statePincode').value.trim();
+        const creatorEmail = sessionStorage.getItem("userEmail"); // Retrieve creator's email from session storage
+
+if (!name || !email || !password || !phoneNumber || !company || !companyAddress  || !statePincode || !panCardNo || !aadharCardNo) {
+        alert("Error: All fields must be filled out.");
+        return;
+    }
+
+    const phoneNumberPattern = /^\d{10}$/;
+    if (!phoneNumberPattern.test(phoneNumber)) {
+        alert("Error: Phone number must be exactly 10 digits.");
+        return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        alert("Error: Please enter a valid email address.");
+        return;
+    }
+         // Send data to the API
+         fetch(`${API_URL}/api/admin/distributor/create`, {
+             method: 'POST',
+             headers: {
+                 'Content-Type': 'application/x-www-form-urlencoded'
+             },
+             body: new URLSearchParams({
+                 name: name,
+                 email: email,
+                 password: password,
+                 phoneNumber: phoneNumber,
+                 company: company,
+                 companyAddress: companyAddress,
+                 creatorEmail: creatorEmail,
+                 statePincode: statePincode,
+                 panCardNo:panCardNo,
+                 aadharCardNo:aadharCardNo
+
+             })
+         })
+             .then(response => response.json())
+             .then(data => {
+             if (data.message) {
+                 alert(`Success: ${data.message}`);
+                 document.querySelector('form').reset();
+             } else if (data.error) {
+                 alert(`Error: ${data.error}`);
+             }
+         })
+             .catch(error => {
+             alert(`Error: ${error}`);
+         });
+    });
+});
+
 //----------------------------------fetch UserName Api ----------------------------------
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -355,7 +422,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
 
         if (email) {
-            fetch(`/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+            fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
                 .then(response => response.json())
                 .then(data => {
                 const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
@@ -393,7 +460,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Fetch all distributors (including deactivated ones)
-    fetch(`/api/admin/distributor/list`)
+    fetch(`${API_URL}/api/admin/distributor/list`)
         .then(response => response.json())
         .then(distributors => {
             if (distributors && distributors.length > 0) {
@@ -431,7 +498,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to handle activation of a distributor user
     window.activateUser = function (email, creatorEmail) {
-        fetch(`/api/admin/distributor/activate-distributor?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}`, {
+        fetch(`${API_URL}/api/admin/distributor/activate-distributor?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}`, {
             method: 'POST'
         })
         .then(response => {
@@ -452,7 +519,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         text: 'Distributor activated successfully!',
                     }).then(() => {
                         // After showing the success alert, refresh the table to reflect the new status
-                        fetch(`/api/admin/distributor/list`)
+                        fetch(`${API_URL}/api/admin/distributor/list`)
                             .then(response => response.json())
                             .then(distributors => populateDistributorTable(distributors)); // Update the table
                     });
@@ -478,7 +545,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     text: 'Distributor activated successfully!',
                 }).then(() => {
                     // After showing the success alert, refresh the table to reflect the new status
-                    fetch(`/api/admin/distributor/list`)
+                    fetch(`${API_URL}/api/admin/distributor/list`)
                         .then(response => response.json())
                         .then(distributors => populateDistributorTable(distributors)); // Update the table
                 });
@@ -496,7 +563,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to handle deactivation of a distributor user
   window.deactivateUser = function (email, creatorEmail) {
-          fetch(`/api/admin/distributor/delete?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}`, {
+          fetch(`${API_URL}/api/admin/distributor/delete?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}`, {
               method: 'POST'
           })
           .then(response => response.json())
@@ -509,7 +576,7 @@ document.addEventListener('DOMContentLoaded', function () {
                       icon: 'success',
                       confirmButtonText: 'OK'
                   }).then(() => {
-                      fetch(`/api/admin/distributor/list`)  // Refresh the table after deactivation
+                      fetch(`${API_URL}/api/admin/distributor/list`)  // Refresh the table after deactivation
                           .then(response => response.json())
                           .then(distributors => populateDistributorTable(distributors)); // Update the table
                   });

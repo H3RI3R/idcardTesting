@@ -249,7 +249,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             /* Provide alternative source and posted for the media dialog */
-
             if (meta.filetype === 'media') {
                 callback('movie.mp4', {
                     source2: 'alt.ogg',
@@ -327,7 +326,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
 })();
 //-------------------------------------------------------
-
+ function fetchUserInfo(email) {
+   if (!email) {
+     alert('You are on a guest profile');
+     return;
+   }
+   const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
+   fetch(apiUrl)
+     .then(response => response.json())
+     .then(data => {
+               document.getElementById("userRole").innerText = data.role || "N/A";
+     })
+     .catch(error => {
+       console.error("Error fetching user info:", error);
+       alert("An error occurred while fetching user information.");
+     });
+ }
+ const userEmail = sessionStorage.getItem('userEmail');
+ fetchUserInfo(userEmail);
 //------------------------------------Create retailer api ---------------------------------------
 //----------------------------------fetch UserName Api ----------------------------------
 
@@ -338,7 +354,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
 
         if (email) {
-            fetch(`/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+            fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
                 .then(response => response.json())
                 .then(data => {
                 const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
@@ -374,12 +390,12 @@ document.getElementById('deleteRetailerForm').addEventListener('submit', async f
 
     try {
         // Fetch retailer information
-        const retailerResponse = await fetch(`/api/admin/distributor/userInfo?email=${encodeURIComponent(email)}`);
+        const retailerResponse = await fetch(`${API_URL}/api/admin/distributor/userInfo?email=${encodeURIComponent(email)}`);
         const retailerData = await retailerResponse.json();
 
         if (retailerResponse.ok && retailerData) {
             // Fetch token amount
-            const tokenResponse = await fetch(`/api/admin/token/tokens?email=${encodeURIComponent(sessionEmail)}`);
+            const tokenResponse = await fetch(`${API_URL}/api/admin/token/tokens?email=${encodeURIComponent(sessionEmail)}`);
             const tokenData = await tokenResponse.json();
 
             // Find the retailer's token amount
@@ -431,7 +447,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Fetch the list of all retailers including token amount
-    fetch(`/api/admin/retailer/listAllRetailer?adminEmail=${encodeURIComponent(adminEmail)}`)
+    fetch(`${API_URL}/api/admin/retailer/listAllRetailer?adminEmail=${encodeURIComponent(adminEmail)}`)
         .then(response => {
         if (!response.ok) {
             throw new Error(`Network response was not ok: ${response.statusText}`);

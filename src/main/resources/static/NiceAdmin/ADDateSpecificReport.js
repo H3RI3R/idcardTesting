@@ -1,3 +1,7 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const userEmail = sessionStorage.getItem('userEmail');
+    document.getElementById('userEmail').innerText = userEmail;
+    document.getElementById('userEmail1').innerText = userEmail;});
 //----------------------------------Logout Api ----------------------------------
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -17,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
 
         if (email) {
-            fetch(`/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+            fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
                 .then(response => response.json())
                 .then(data => {
                 const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
@@ -42,6 +46,23 @@ document.addEventListener("DOMContentLoaded", function() {
     // Call the function on page load
     fetchUserName();
 });
+ const userEmail = sessionStorage.getItem('userEmail');
+ function fetchUserInfo(email) {
+    if (!email) {
+      return;
+    }
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+                document.getElementById("userRole").innerText = data.role || "N/A";
+      })
+      .catch(error => {
+        console.error("Error fetching user info:", error);
+        alert("An error occurred while fetching user information.");
+      });
+  }
+  fetchUserInfo(userEmail);
 
 //------------------------Token report Activity api --------------------------
 document.addEventListener("DOMContentLoaded", function() {
@@ -53,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Function to fetch activities with date range filter
     function fetchActivities(startDate = '', endDate = '') {
-        let url = `/api/admin/distributor/AdminActivity?adminEmail=${userEmail}`;
+        let url = `${API_URL}/api/admin/distributor/AdminActivity?adminEmail=${userEmail}`;
         if (startDate && endDate) {
             url += `&startDate=${startDate}&endDate=${endDate}`;
         }

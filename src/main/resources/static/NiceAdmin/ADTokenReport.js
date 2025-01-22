@@ -1,3 +1,7 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const userEmail = sessionStorage.getItem('userEmail');
+    document.getElementById('userEmail').innerText = userEmail;
+    document.getElementById('userEmail1').innerText = userEmail;});
 //----------------------------------Logout Api ----------------------------------
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -17,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
 
         if (email) {
-            fetch(`/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+            fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
                 .then(response => response.json())
                 .then(data => {
                 const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
@@ -42,12 +46,28 @@ document.addEventListener("DOMContentLoaded", function() {
     // Call the function on page load
     fetchUserName();
 });
-
+ const userEmail = sessionStorage.getItem('userEmail');
+ function fetchUserInfo(email) {
+    if (!email) {
+      return;
+    }
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+                document.getElementById("userRole").innerText = data.role || "N/A";
+      })
+      .catch(error => {
+        console.error("Error fetching user info:", error);
+        alert("An error occurred while fetching user information.");
+      });
+  }
+  fetchUserInfo(userEmail);
     //------------------------Token report Activity API --------------------------
     // JavaScript to fetch and populate table data
 async function fetchAdminActivities() {
     const adminEmail = sessionStorage.getItem('userEmail');
-    const activityResponse = await fetch(`/api/admin/distributor/AdminActivity?adminEmail=${encodeURIComponent(adminEmail)}`);
+    const activityResponse = await fetch(`${API_URL}/api/admin/distributor/AdminActivity?adminEmail=${encodeURIComponent(adminEmail)}`);
     const activities = await activityResponse.json();
 
     const tableDataPromises = activities.map(async (activity) => {
@@ -60,13 +80,13 @@ async function fetchAdminActivities() {
 
         if (type === 'TOKEN_CREATION') {
             identifier = adminEmail;
-            userInfoUrl = `/api/admin/distributor/userInfo?email=${encodeURIComponent(identifier)}`;
+            userInfoUrl = `${API_URL}/api/admin/distributor/userInfo?email=${encodeURIComponent(identifier)}`;
         } else if (type === 'TOKEN_SENT') {
             // Ensure description is not null and has at least 10 digits
             if (description && /\d{10}$/.test(description)) {
                 const phoneNumber = description.match(/\d{10}$/)[0];
                 identifier = phoneNumber;
-                userInfoUrl = `/api/admin/distributor/userInfo?email=${encodeURIComponent(identifier)}`;
+                userInfoUrl = `${API_URL}/api/admin/distributor/userInfo?email=${encodeURIComponent(identifier)}`;
             } else {
                 console.error('Description is not valid for TOKEN_SENT type.');
                 return null;

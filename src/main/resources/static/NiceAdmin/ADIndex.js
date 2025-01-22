@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
       alert('You are on a guest profile');
       return;
     }
-    const apiUrl = `/api/admin/distributor/userInfo?email=${email}`;
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
     fetch(apiUrl)
       .then(response => response.json())
       .then(data => {
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const userEmail = sessionStorage.getItem('userEmail');
 
     if (userEmail) {
-        const fetchUsersUrl = `/api/admin/distributor/users?adminEmail=${encodeURIComponent(userEmail)}`;
+        const fetchUsersUrl = `${API_URL}/api/admin/distributor/users?adminEmail=${encodeURIComponent(userEmail)}`;
 
         fetch(fetchUsersUrl)
             .then(response => response.ok ? response.json() : Promise.reject('Unauthorized access'))
@@ -400,7 +400,7 @@ document.addEventListener('DOMContentLoaded', function() {
 //---------------------------------- Activity  Api -----------------------------------
 document.addEventListener('DOMContentLoaded', function() {
     const userEmail = sessionStorage.getItem('userEmail');
-    const activityApiUrl = `/api/admin/distributor/AdminActivity?adminEmail=${userEmail}`;
+    const activityApiUrl = `${API_URL}/api/admin/distributor/AdminActivity?adminEmail=${userEmail}`;
 
     // Function to fetch and display activities
     function fetchAndDisplayActivities() {
@@ -488,7 +488,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if (email) {
             fetch(`
-               /api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+               ${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
                 .then(response => response.json())
                 .then(data => {
                 const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
@@ -520,7 +520,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (adminEmail) {
         // Fetch the list of retailers using the new API
-        fetch(`/api/admin/retailer/list-by-creator?creatorEmail=${encodeURIComponent(adminEmail)}`)
+        fetch(`${API_URL}/api/admin/retailer/list-by-creator?creatorEmail=${encodeURIComponent(adminEmail)}`)
             .then(response => response.json())
             .then(data => {
                 // Assuming the response has a 'retailers' array
@@ -550,14 +550,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (userEmail) {
         // Step 1: Fetch user info
-        fetch(`/api/admin/distributor/userInfo?email=${userEmail}`)
+        fetch(`${API_URL}/api/admin/distributor/userInfo?email=${userEmail}`)
             .then(response => response.json())
             .then(userInfo => {
             const phoneNumber = userInfo.phoneNumber;
 
             if (phoneNumber) {
                 // Step 2: Fetch total transferred tokens using the phone number
-                fetch(`/api/admin/token/transferred/total?senderIdentifier=${phoneNumber}`)
+                fetch(`${API_URL}/api/admin/token/transferred/total?senderIdentifier=${phoneNumber}`)
                     .then(response => response.json())
                     .then(tokenInfo => {
                     const totalTransferredTokens = tokenInfo.totalTransferredTokens;
@@ -583,7 +583,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (userEmail) {
         // Define the API endpoint to get wallet address and phone number
-        const getWalletAddressUrl = `/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
+        const getWalletAddressUrl = `${API_URL}/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
 
         // Fetch wallet address and phone number
         fetch(getWalletAddressUrl)
@@ -598,7 +598,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (phoneNumber && walletAddress) {
                     // Fetch token count using the phone number
-                    const getTokenCountUrl = `/api/admin/token/count?identifier=${encodeURIComponent(phoneNumber)}`;
+                    const getTokenCountUrl = `${API_URL}/api/admin/token/count?identifier=${encodeURIComponent(phoneNumber)}`;
 
                     return fetch(getTokenCountUrl);
                 } else {
