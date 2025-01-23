@@ -27,56 +27,63 @@ public class BankService {
     public void saveBank(String email,
                          String accountNumber,
                          String accountOwnerFullName,
-                         String fathersName,
-                         String mothersName,
                          String address,
                          String ifscCode,
                          String upiId,
                          String upiName,
-                         String upiFathersName,
                          String phoneNumber,
                          String upiProvider,
                          byte[] qrCodeBytes) {
 
         Bank bank = new Bank();
         bank.setEmail(email);
-
-        // Determine the type based on identifier
-        String type = null;
         String identifier = null;
+        String type = null;
+
         if (accountNumber != null) {
+            // Check for duplicate account numbers
+            if (bankRepository.findByIdentifier(accountNumber) != null) {
+                throw new RuntimeException("This account number is already in the database.");
+            }
             identifier = accountNumber;
             type = "Bank Account";
-            bank.setIdentifier(identifier);
+            bank.setIdentifier(accountNumber);
             bank.setName(accountOwnerFullName);
-            bank.setFathersName(fathersName);
-            bank.setMothersName(mothersName);
             bank.setAddress(address);
             bank.setIfscCode(ifscCode);
+
         } else if (upiId != null) {
+            // Check for duplicate UPI IDs
+            if (bankRepository.findByIdentifier(upiId) != null) {
+                throw new RuntimeException("This UPI ID is already in the database.");
+            }
             identifier = upiId;
             type = "UPI Account";
-            bank.setIdentifier(identifier);
+            bank.setIdentifier(upiId);
             bank.setName(upiName);
-            bank.setFathersName(upiFathersName);
             bank.setPhoneNumber(phoneNumber);
             bank.setUpiProvider(upiProvider);
             bank.setQrCode(qrCodeBytes);
+
+        } else {
+            // Ensure either accountNumber or upiId is provided
+            throw new RuntimeException("No identifier provided, either UPI ID or Account Number is required.");
         }
 
-        // Set the type and status
-        if (type != null) {
-            bank.setType(type);
-            bank.setStatus("Deactive");  // Default status is "Deactive"
-        }
+        // Set default status and account type
+        bank.setStatus("Deactive");
+        bank.setType(type);
 
-        // Ensure only one active account of each type
+        // Deactivate other accounts of the same type for this user, if activating
         if ("ACTIVE".equalsIgnoreCase(bank.getStatus())) {
-            deactivateOtherAccounts(email, type);
+            deactivateOtherAccounts(email, bank.getType());
         }
 
+        // Save the new bank account
         bankRepository.save(bank);
     }
+
+
     @Transactional
     public void deactivateOtherAccounts(String email, String type) {
         List<Bank> activeAccounts = bankRepository.findByEmailAndTypeAndStatus(email, type, "ACTIVE");

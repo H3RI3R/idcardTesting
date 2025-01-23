@@ -1,17 +1,34 @@
-
-
 document.addEventListener('DOMContentLoaded', function() {
     const userEmail = sessionStorage.getItem('userEmail');
     document.getElementById('userEmail').innerText = userEmail;
     document.getElementById('userEmail1').innerText = userEmail;});
 
+//---------------------------------- user roleApi -----------------------------------
+ const userEmail = sessionStorage.getItem('userEmail');
+  function fetchUserInfo(email) {
+    if (!email) {
+      alert('You are on a guest profile');
+      return;
+    }
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+                document.getElementById("userRole").innerText = data.role || "N/A";
+      })
+      .catch(error => {
+        console.error("Error fetching user info:", error);
+        alert("An error occurred while fetching user information.");
+      });
+  }
+  fetchUserInfo(userEmail);
 //---------------------------------- Table  Api -----------------------------------
 document.addEventListener('DOMContentLoaded', async function () {
     const userEmail = sessionStorage.getItem('userEmail'); // Get the user email from the session
     const retailerTableBody = document.getElementById('retailerTableBody'); // Reference to the table body
 
     // Fetch retailers created by the distributor
-    const retailerListUrl = `/api/admin/retailer/list-by-creator?creatorEmail=${encodeURIComponent(userEmail)}`;
+    const retailerListUrl = `${API_URL}/api/admin/retailer/list-by-creator?creatorEmail=${encodeURIComponent(userEmail)}`;
 
     try {
         const response = await fetch(retailerListUrl);
@@ -22,7 +39,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             retailerTableBody.innerHTML = '';
 
             const retailerPromises = data.retailers.map(async (retailer) => {
-                const tokenCountUrl = `/api/admin/distributor/totalAcceptedTokens?userEmail=${encodeURIComponent(retailer.email)}`;
+                const tokenCountUrl = `${API_URL}/api/admin/distributor/totalAcceptedTokens?userEmail=${encodeURIComponent(retailer.email)}`;
 
                 try {
                     const tokenResponse = await fetch(tokenCountUrl);
@@ -511,8 +528,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 //});
 //---------------------------------- Activity  Api -----------------------------------
 document.addEventListener('DOMContentLoaded', function() {
-    const userEmail = sessionStorage.getItem('userEmail'); // Get the user email from the session
-    const distributorActivityApiUrl = `/api/admin/distributor/distributor?distributorEmail=${userEmail}`;
+    const userEmail = sessionStorage.getItem('userEmail');
+    const distributorActivityApiUrl = `${API_URL}/api/admin/distributor/distributor?distributorEmail=${userEmail}`;
 
     // Function to fetch and display distributor activities
     function fetchAndDisplayDistributorActivities() {
@@ -596,7 +613,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
 
         if (email) {
-            fetch(`/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+            fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
                 .then(response => response.json())
                 .then(data => {
                 const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
@@ -627,7 +644,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const creatorEmail = sessionStorage.getItem('userEmail');
 
     // Fetch the list of retailers created by the distributor
-    fetch(`/api/admin/retailer/list-by-creator?creatorEmail=${encodeURIComponent(creatorEmail)}`)
+    fetch(`${API_URL}/api/admin/retailer/list-by-creator?creatorEmail=${encodeURIComponent(creatorEmail)}`)
         .then(response => response.json())
         .then(data => {
         // Extract the retailers array from the response
@@ -652,14 +669,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (userEmail) {
         // Step 1: Fetch user info
-        fetch(`/api/admin/distributor/userInfo?email=${userEmail}`)
+        fetch(`${API_URL}/api/admin/distributor/userInfo?email=${userEmail}`)
             .then(response => response.json())
             .then(userInfo => {
             const phoneNumber = userInfo.phoneNumber;
 
             if (phoneNumber) {
                 // Step 2: Fetch total transferred tokens using the phone number
-                fetch(`/api/admin/token/transferred/total?senderIdentifier=${phoneNumber}`)
+                fetch(`${API_URL}/api/admin/token/transferred/total?senderIdentifier=${phoneNumber}`)
                     .then(response => response.json())
                     .then(tokenInfo => {
                     const totalTransferredTokens = tokenInfo.totalTransferredTokens;
@@ -685,7 +702,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (userEmail) {
         // Define the API endpoint to get wallet address and phone number
-        const getWalletAddressUrl = `/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
+        const getWalletAddressUrl = `${API_URL}/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
 
         // Fetch wallet address and phone number
         fetch(getWalletAddressUrl)
@@ -700,7 +717,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (phoneNumber && walletAddress) {
                     // Fetch token count using the phone number
-                    const getTokenCountUrl = `/api/admin/token/count?identifier=${encodeURIComponent(phoneNumber)}`;
+                    const getTokenCountUrl = `${API_URL}/api/admin/token/count?identifier=${encodeURIComponent(phoneNumber)}`;
 
                     return fetch(getTokenCountUrl);
                 } else {
@@ -724,9 +741,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-
-
-
+//---------------------------------- Alert & gneerate QR code Function  ----------------------------------
 
 
 //----------------------------------Logout Api ----------------------------------

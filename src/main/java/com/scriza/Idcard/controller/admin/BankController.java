@@ -1,5 +1,6 @@
 package com.scriza.Idcard.controller.admin;
 
+import com.scriza.Idcard.Configuration.ApiResponse;
 import com.scriza.Idcard.Entity.admin.Bank;
 import com.scriza.Idcard.Entity.admin.distributor.ActivityDis;
 import com.scriza.Idcard.Repository.admin.BankRepository;
@@ -28,43 +29,51 @@ BankController {
     @Autowired
     private ActivityRepositoryDis activityRepositoryDis;
     @PostMapping("/save")
-    public ResponseEntity<String> saveBank(
+    public ResponseEntity<ApiResponse> saveBank(
             @RequestParam String email,
             @RequestParam(required = false) String accountNumber,
             @RequestParam(required = false) String reEnterAccountNumber,
             @RequestParam(required = false) String accountOwnerFullName,
-            @RequestParam(required = false) String fathersName,
-            @RequestParam(required = false) String mothersName,
             @RequestParam(required = false) String address,
             @RequestParam(required = false) String ifscCode,
             @RequestParam(required = false) String upiId,
             @RequestParam(required = false) String upiName,
-            @RequestParam(required = false) String upiFathersName,
             @RequestParam(required = false) String phoneNumber,
             @RequestParam(required = false) String upiProvider,
             @RequestParam(required = false) MultipartFile qrCodeFile) {
         try {
-            // Validate Account Number
+            // Validate that account numbers match, if provided
             if (accountNumber != null && !accountNumber.equals(reEnterAccountNumber)) {
-                return ResponseEntity.badRequest().body("Account numbers do not match.");
+                ApiResponse response = new ApiResponse("Account numbers do not match.", "failed");
+                return ResponseEntity.badRequest().body(response);
             }
 
-            // Save the QR Code as binary data
+            // Convert QR code file to byte array if uploaded
             byte[] qrCodeBytes = null;
             if (qrCodeFile != null && !qrCodeFile.isEmpty()) {
                 qrCodeBytes = qrCodeFile.getBytes();
             }
 
-            // Call service to save bank/UPI details
-            bankService.saveBank(email, accountNumber, accountOwnerFullName, fathersName, mothersName, address, ifscCode, upiId, upiName, upiFathersName, phoneNumber, upiProvider, qrCodeBytes);
+            // Determine account type (Bank or UPI) and save the data
+            String accountType = (accountNumber != null) ? "Bank Account" : "UPI Account";
+            bankService.saveBank(email, accountNumber, accountOwnerFullName, address, ifscCode, upiId, upiName, phoneNumber, upiProvider, qrCodeBytes);
 
-            // Log the activity for saving a bank
-            String type = (accountNumber != null) ? "Bank Account" : "UPI Account";
-            logActivityDis(type.equals("UPI_ACCOUNT") ? "UPI_ID" : "ACCOUNT_NUMBER", "Saved " + (type.equals("UPI_ACCOUNT") ? "UPI ID" : "Account Number"), email);
+            // Log the activity and return success response
+            String logMessage = "Saved " + accountType;
+            logActivityDis(accountType.equals("UPI Account") ? "UPI_ID" : "ACCOUNT_NUMBER", logMessage, email);
 
-            return ResponseEntity.ok("Bank saved successfully");
+            ApiResponse response = new ApiResponse(accountType + " saved successfully", "success");
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            // Handle known runtime exceptions (e.g., duplicate entries)
+            ApiResponse response = new ApiResponse("Error: " + e.getMessage(), "failed");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+            // Handle unexpected exceptions
+            ApiResponse response = new ApiResponse("An unexpected error occurred: " + e.getMessage(), "failed");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
