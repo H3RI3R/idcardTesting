@@ -1,4 +1,3 @@
-
 //----------------------------------User Details  Api ----------------------------------
 document.addEventListener('DOMContentLoaded', function() {
     // Assuming the user email is stored in session storage
@@ -9,26 +8,45 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-    const apiUrl = `/api/admin/distributor/userInfo?email=${encodeURIComponent(userEmail)}`;
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${encodeURIComponent(userEmail)}`;
 
     // Fetch the user information
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-        // Populate the profile details with the data from the API
-        document.getElementById('nameFull').textContent = data.name || 'N/A';
-        document.getElementById('company').textContent = data.company || 'N/A';
-        document.getElementById('designation').textContent = data.designation || 'N/A';
-        document.getElementById('role').textContent = data.designation || 'N/A';
-        document.getElementById('address').textContent = data.address || 'N/A';
-        document.getElementById('phone').textContent = data.phoneNumber || 'N/A';
-        document.getElementById('email').textContent = data.email || 'N/A';
-    })
+            // Populate the profile details with the data from the API
+            document.getElementById('nameFull').textContent = data.name || 'N/A';
+            document.getElementById('company').textContent = data.company || 'N/A';
+            document.getElementById('designation').textContent = data.designation || 'N/A';
+            document.getElementById('role').textContent = data.designation || 'N/A';
+            document.getElementById('address').textContent = data.address || 'N/A';
+            document.getElementById('phone').textContent = data.phoneNumber || 'N/A';
+            document.getElementById('email').textContent = data.email || 'N/A';
+        })
         .catch(error => {
-        console.error('Error fetching user information:', error);
-        // Handle error (optional)
-    });
+            console.error('Error fetching user information:', error);
+            // Handle error (optional)
+        });
 });
+
+const userEmail = sessionStorage.getItem('userEmail');
+function fetchUserInfo(email) {
+    if (!email) {
+        return;
+    }
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("userRole").innerText = data.role || "N/A";
+            document.getElementById("role").innerText = data.role || "N/A";
+        })
+        .catch(error => {
+            console.error("Error fetching user info:", error);
+            alert("An error occurred while fetching user information.");
+        });
+}
+fetchUserInfo(userEmail);
 
 //----------------------------------User name Api ----------------------------------
 
@@ -41,39 +59,39 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // API URL with user email
-    const apiUrl = `/api/admin/distributor/name?email=${encodeURIComponent(userEmail)}`;
+     const apiUrl = `${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(userEmail)}`;
 
     // Fetch the user data from the API
     fetch(apiUrl)
         .then(response => {
-        if (!response.ok) {
-            throw new Error(`Network response was not ok: ${response.statusText}`);
-        }
-        return response.json();
-    })
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.statusText}`);
+            }
+            return response.json();
+        })
         .then(data => {
-        // Update the HTML elements with the fetched data
-        const name = data.name || 'Guest'; // Default to 'Guest' if name is not available
+            // Update the HTML elements with the fetched data
+            const name = data.name || 'Guest'; // Default to 'Guest' if name is not available
 
-        document.getElementById('userEmail1').textContent = name;
-        document.getElementById('userEmail').textContent =name;
-        document.getElementById('nameFull').textContent = name;
-        document.getElementById('profileName').textContent = name;
-    })
+            document.getElementById('userEmail1').textContent = name;
+            document.getElementById('userEmail').textContent = name;
+            document.getElementById('nameFull').textContent = name;
+            document.getElementById('profileName').textContent = name;
+        })
         .catch(error => {
-        console.error('Error fetching user data:', error);
-    });
+            console.error('Error fetching user data:', error);
+        });
 });
 
 
 //---------------------------------- toggleSidebar  method -----------------------------------
 /**
-* Template Name: NiceAdmin
-* Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-* Updated: Apr 20 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
+ * Template Name: NiceAdmin
+ * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+ * Updated: Apr 20 2024 with Bootstrap v5.3.3
+ * Author: BootstrapMade.com
+ * License: https://bootstrapmade.com/license/
+ */
 
 (function() {
     "use strict";
@@ -337,15 +355,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     Array.prototype.slice.call(needsValidation)
         .forEach(function(form) {
-        form.addEventListener('submit', function(event) {
-            if (!form.checkValidity()) {
-                event.preventDefault()
-                event.stopPropagation()
-            }
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
 
-            form.classList.add('was-validated')
-        }, false)
-    })
+                form.classList.add('was-validated')
+            }, false)
+        })
 
     /**
      * Initiate Datatables

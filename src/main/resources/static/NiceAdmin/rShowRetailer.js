@@ -1,16 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     const userEmail = sessionStorage.getItem('userEmail');
     document.getElementById('userEmail').innerText = userEmail;
-    document.getElementById('userEmail1').innerText = userEmail;});
+    document.getElementById('userEmail1').innerText = userEmail;
+});
 
 //------------------------------------ Active page fucntion ---------------------------------------
 /**
-* Template Name: NiceAdmin
-* Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-* Updated: Apr 20 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
+ * Template Name: NiceAdmin
+ * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+ * Updated: Apr 20 2024 with Bootstrap v5.3.3
+ * Author: BootstrapMade.com
+ * License: https://bootstrapmade.com/license/
+ */
 
 (function() {
     "use strict";
@@ -338,7 +339,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
 
         if (email) {
-            fetch(`/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+            fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
                 .then(response => response.json())
                 .then(data => {
                 const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
@@ -386,7 +387,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     function fetchIdCardById(id) {
-        fetch(`/api/admin/retailer/idcard?id=${encodeURIComponent(id)}`)
+        fetch(`${API_URL}/api/admin/retailer/idcard?id=${encodeURIComponent(id)}`)
             .then(response => response.json())
             .then(data => {
             if (data.error) {
@@ -433,7 +434,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const retailerEmail = sessionStorage.getItem('userEmail');
 
     if (retailerEmail) {
-        fetch(`/api/admin/retailer/idcard-history?retailerEmail=${encodeURIComponent(retailerEmail)}`)
+        fetch(`${API_URL}/api/admin/retailer/idcard-history?retailerEmail=${encodeURIComponent(retailerEmail)}`)
             .then(response => response.json())
             .then(data => {
             if (data.idCardHistory && Array.isArray(data.idCardHistory)) {
@@ -486,3 +487,23 @@ document.addEventListener("DOMContentLoaded", function() {
         window.location.href = './login.html'; // Redirect to login page or any other page
     });
 });
+
+//------------------------------------ userRole api  ---------------------------------------
+const userEmail = sessionStorage.getItem('userEmail');
+  function fetchUserInfo(email) {
+    if (!email) {
+
+      return;
+    }
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+                document.getElementById("userRole").innerText = data.role || "N/A";
+      })
+      .catch(error => {
+        console.error("Error fetching user info:", error);
+        alert("An error occurred while fetching user information.");
+      });
+  }
+  fetchUserInfo(userEmail);

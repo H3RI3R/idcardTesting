@@ -1,243 +1,294 @@
-
+//------------------------------------ userRole api  ---------------------------------------
+const userEmail = sessionStorage.getItem('userEmail');
+function fetchUserInfo(email) {
+  if (!email) {
+    return;
+  }
+  const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
+  fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById("userRole").innerText = data.role || "N/A";
+    })
+    .catch(error => {
+      console.error("Error fetching user info:", error);
+      alert("An error occurred while fetching user information.");
+    });
+}
+fetchUserInfo(userEmail);
 //  ------------------------------table api of status ------------------------------------------
 document.addEventListener("DOMContentLoaded", function() {
-  const transactionTableBody = document.getElementById("transactionTableBody");
-  const searchTransactionId = document.getElementById("searchTransactionId");
-  const refreshButton = document.getElementById("refreshButton");
-  const userEmail = sessionStorage.getItem('userEmail');
+    const transactionTableBody = document.getElementById("transactionTableBody");
+    const searchTransactionId = document.getElementById("searchTransactionId");
+    const refreshButton = document.getElementById("refreshButton");
+    const userEmail = sessionStorage.getItem('userEmail');
 
-  function fetchTransactionRequests() {
-    fetch(`/api/admin/distributor/getTransactionRequests?creatorEmail=${userEmail}`)
-      .then(response => response.json())
-      .then(data => {
-      displayTransactions(data);
-    })
-      .catch(error => {
-      console.error('Error fetching transaction requests:', error);
-    });
-  }
-
-  function displayTransactions(transactions) {
-    transactionTableBody.innerHTML = ''; // Clear the table body
-
-    transactions.forEach((transaction, index) => {
-      const date = new Date(transaction.timestamp).toLocaleDateString();
-      const amount = Math.round(transaction.amount);
-      const statusImage = getStatusImage(transaction.status);
-      const row = `
-            <tr>
-                <td>${index + 1}</td>
-                <td>${date}</td>
-                <td>${amount}</td>
-                <td><img src="${statusImage}" alt="${transaction.status}" width="60" height="30"></td> <!-- Adjusted size -->
-                <td>${transaction.transactionId}</td>
-            </tr>
-        `;
-      transactionTableBody.insertAdjacentHTML('beforeend', row);
-    });
-  }
-
-  function getStatusImage(status) {
-    switch (status.toLowerCase()) {
-      case 'pending':
-        return 'assets/img/pending.png';
-      case 'rejected':
-        return 'assets/img/rejected.png';
-      case 'accepted':
-        return 'assets/img/success.png';
-      default:
-        return '';
+    function fetchTransactionRequests() {
+        fetch(`${API_URL}/api/admin/distributor/getTransactionRequests?creatorEmail=${userEmail}`)
+            .then(response => {
+                if (response.status === 204) {
+                    // Handle 204 No Content response
+                    console.log("No transaction requests found.")
+                    displayTransactions([]); // Display empty table
+                    return Promise.resolve(); // Resolve promise to stop execution here
+                }
+                if(!response.ok){
+                   throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if(data){
+                  displayTransactions(data);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching transaction requests:', error);
+            });
     }
-  }
 
-  // Search functionality
-  searchTransactionId.addEventListener("input", function() {
-    const filter = searchTransactionId.value.toLowerCase();
-    const rows = transactionTableBody.getElementsByTagName("tr");
+    function displayTransactions(transactions) {
+         transactionTableBody.innerHTML = ''; // Clear the table body
+        if(!transactions || transactions.length === 0){
+             const row = `<tr><td colspan="5">No Transaction Found.</td></tr>`
+             transactionTableBody.insertAdjacentHTML('beforeend', row);
+             return;
+        }
 
-    Array.from(rows).forEach(row => {
-      const transactionId = row.cells[4].textContent.toLowerCase();
-      if (transactionId.includes(filter)) {
-        row.style.display = "";
-      } else {
-        row.style.display = "none";
-      }
+
+        transactions.forEach((transaction, index) => {
+            const date = new Date(transaction.timestamp).toLocaleDateString();
+            const amount = Math.round(transaction.amount);
+            const statusImage = getStatusImage(transaction.status);
+            const row = `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${date}</td>
+                    <td>${amount}</td>
+                    <td><img src="${statusImage}" alt="${transaction.status}" width="60" height="30"></td> <!-- Adjusted size -->
+                    <td>${transaction.transactionId}</td>
+                </tr>
+            `;
+            transactionTableBody.insertAdjacentHTML('beforeend', row);
+        });
+    }
+
+    function getStatusImage(status) {
+        switch (status.toLowerCase()) {
+            case 'pending':
+                return 'assets/img/pending.png';
+            case 'rejected':
+                return 'assets/img/rejected.png';
+            case 'accepted':
+                return 'assets/img/success.png';
+            default:
+                return '';
+        }
+    }
+
+    // Search functionality
+    searchTransactionId.addEventListener("input", function() {
+        const filter = searchTransactionId.value.toLowerCase();
+        const rows = transactionTableBody.getElementsByTagName("tr");
+
+        Array.from(rows).forEach(row => {
+            const transactionId = row.cells[4].textContent.toLowerCase();
+            if (transactionId.includes(filter)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
     });
-  });
 
-  // Refresh button functionality
-  refreshButton.addEventListener("click", function() {
+    // Refresh button functionality
+    refreshButton.addEventListener("click", function() {
+        fetchTransactionRequests();
+    });
+
+    // Initial fetch
     fetchTransactionRequests();
-  });
-
-  // Initial fetch
-  fetchTransactionRequests();
 });
 //  ------------------------------Create transection request api------------------------------------------
+//  ------------------------------Create transection request api------------------------------------------
 document.addEventListener("DOMContentLoaded", function () {
-  const doneButton = document.getElementById("bankDoneButton1");
-  const doneButton1 = document.getElementById("upiDoneButton1");
+    const doneButton = document.getElementById("bankDoneButton1");
+    const doneButton1 = document.getElementById("upiDoneButton1");
 
-  let isBankAccountAvailable = false;
-  let isUPIAccountAvailable = false;
+    let isBankAccountAvailable = false;
+    let isUPIAccountAvailable = false;
 
-  // Function to update the flags based on account availability
-  function checkAccountAvailability() {
-    isBankAccountAvailable = document.getElementById("bankAccountsContainer").innerHTML.trim() !== "<p>No Active Bank Account Available. Please Select Another Option.</p>";
-    isUPIAccountAvailable = document.getElementById("upiAccountsContainer").innerHTML.trim() !== "<p>No Active UPI Account Available. Please Select Another Option.</p>";
-  }
-
-  // Function to check if the transaction ID is unique
-  function isTransactionIdUnique(transactionID, callback) {
-    const creatorEmail = sessionStorage.getItem('userEmail');
-    fetch(`/api/admin/distributor/getTransactionRequests?creatorEmail=${creatorEmail}`)
-      .then(response => response.json())
-      .then(data => {
-        const transactionExists = data.some(request => request.transactionId === transactionID);
-        callback(!transactionExists); // Pass true if unique, false otherwise
-      })
-      .catch(error => {
-        console.error("Error fetching transaction requests:", error);
-        showAlert("Error fetching existing requests. Please try again.");
-      });
-  }
-
-  // Bank Transfer Done Button
-  doneButton.addEventListener("click", function () {
-    checkAccountAvailability(); // Ensure flags are updated before validation
-
-    const transactionID = document.getElementById("bankTransactionID1").value;
-    const amount = document.getElementById("payableAmount").textContent.match(/\d+/)[0];
-    const email = sessionStorage.getItem('userEmail');
-    const tokenAmount = document.getElementById('inputTokenAmount').value;
-
-    if (!isBankAccountAvailable) {
-      alert("Cannot create request as no bank account is selected.");
-      return;
-    }
-    if (!transactionID) {
-      alert("Please enter the transaction ID.");
-      return;
+    // Function to update the flags based on account availability
+    function checkAccountAvailability() {
+        isBankAccountAvailable = document.getElementById("bankAccountsContainer").innerHTML.trim() !== "<p>No Active Bank Account Available. Please Select Another Option.</p>";
+        isUPIAccountAvailable = document.getElementById("upiAccountsContainer").innerHTML.trim() !== "<p>No Active UPI Account Available. Please Select Another Option.</p>";
     }
 
-    // Check if transaction ID is unique
-    isTransactionIdUnique(transactionID, function (isUnique) {
-      if (!isUnique) {
-        swal("Error", "This transaction ID request already exists.", "error");
-        return;
-      }
-
-      // Proceed with request if transaction ID is unique
-      fetch(`/api/admin/distributor/createTransactionRequest?email=${email}&amount=${amount}&transactionId=${transactionID}`, {
-        method: 'POST'
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.message) {
-            showAlert("Payment request submitted successfully.");
-            closeModal('bankTransferModal1');
-
-            fetch(`/api/admin/tokenAmount/create?transactionId=${transactionID}&email=${email}&tokenAmount=${tokenAmount}&price=${amount}`, {
-              method: 'POST'
-            })
-              .then(response => response.json())
-              .then(data => {
-                if (data) {
-                  console.log("Token amount record created successfully", data);
-                } else {
-                  console.log("Error: ", data);
+    // Function to check if the transaction ID is unique
+    function isTransactionIdUnique(transactionID, callback) {
+        const creatorEmail = sessionStorage.getItem('userEmail');
+        fetch(`${API_URL}/api/admin/distributor/getTransactionRequests?creatorEmail=${creatorEmail}`)
+            .then(response => {
+               if (response.status === 204) {
+                    // Handle 204 No Content response (no existing transactions)
+                     callback(true); //  no existing requests (unique)
+                      return Promise.resolve(); // Resolve to stop
                 }
-              })
-              .catch(error => {
-                console.error("Error creating token amount:", error);
-              });
-          } else {
-            showAlert("Error: " + (data.error || "Unknown error"));
-          }
-        })
-        .catch(error => {
-          showAlert("Error: " + error.message);
+                if(!response.ok){
+                   throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+               if(data){
+                    const transactionExists = data.some(request => request.transactionId === transactionID);
+                    callback(!transactionExists); // Pass true if unique, false otherwise
+                }
+
+            })
+            .catch(error => {
+                console.error("Error fetching transaction requests:", error);
+                 showAlert("Error fetching existing requests. Please try again.");
+                 callback(false)
+            });
+    }
+
+    // Bank Transfer Done Button
+    doneButton.addEventListener("click", function () {
+        checkAccountAvailability(); // Ensure flags are updated before validation
+
+        const transactionID = document.getElementById("bankTransactionID1").value;
+        const amount = document.getElementById("payableAmount").textContent.match(/\d+/)[0];
+        const email = sessionStorage.getItem('userEmail');
+        const tokenAmount = document.getElementById('inputTokenAmount').value;
+
+        if (!isBankAccountAvailable) {
+            alert("Cannot create request as no bank account is selected.");
+            return;
+        }
+        if (!transactionID) {
+            alert("Please enter the transaction ID.");
+            return;
+        }
+
+        // Check if transaction ID is unique
+        isTransactionIdUnique(transactionID, function (isUnique) {
+            if (!isUnique) {
+                swal("Error", "This transaction ID request already exists.", "error");
+                return;
+            }
+
+            // Proceed with request if transaction ID is unique
+            fetch(`${API_URL}/api/admin/distributor/createTransactionRequest?email=${email}&amount=${amount}&transactionId=${transactionID}`, {
+                method: 'POST'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        showAlert("Payment request submitted successfully.");
+                        closeModal('bankTransferModal1');
+
+                        fetch(`${API_URL}/api/admin/tokenAmount/create?transactionId=${transactionID}&email=${email}&tokenAmount=${tokenAmount}&price=${amount}`, {
+                            method: 'POST'
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data) {
+                                    console.log("Token amount record created successfully", data);
+                                } else {
+                                    console.log("Error: ", data);
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error creating token amount:", error);
+                            });
+                    } else {
+                        showAlert("Error: " + (data.error || "Unknown error"));
+                    }
+                })
+                .catch(error => {
+                    showAlert("Error: " + error.message);
+                });
         });
     });
-  });
 
-  // UPI Payment Done Button
-  doneButton1.addEventListener("click", function () {
-    checkAccountAvailability(); // Ensure flags are updated before validation
+    // UPI Payment Done Button
+    doneButton1.addEventListener("click", function () {
+        checkAccountAvailability(); // Ensure flags are updated before validation
 
-    const transactionID = document.getElementById("upiTransactionID1").value;
-    const amount = document.getElementById("payableAmount").textContent.match(/\d+/)[0];
-    const email = sessionStorage.getItem('userEmail');
-    const tokenAmount = document.getElementById('inputTokenAmount').value;
+        const transactionID = document.getElementById("upiTransactionID1").value;
+        const amount = document.getElementById("payableAmount").textContent.match(/\d+/)[0];
+        const email = sessionStorage.getItem('userEmail');
+        const tokenAmount = document.getElementById('inputTokenAmount').value;
 
-    if (!isUPIAccountAvailable) {
-      alert("Cannot create request as no UPI account is selected.");
-      return;
-    }
-    if (!transactionID) {
-      alert("Please enter the transaction ID.");
-      return;
-    }
+        if (!isUPIAccountAvailable) {
+            alert("Cannot create request as no UPI account is selected.");
+            return;
+        }
+        if (!transactionID) {
+            alert("Please enter the transaction ID.");
+            return;
+        }
 
-    // Check if transaction ID is unique
-    isTransactionIdUnique(transactionID, function (isUnique) {
-      if (!isUnique) {
-        swal("Error", "This transaction ID request already exists.", "error");
-        return;
-      }
+        // Check if transaction ID is unique
+        isTransactionIdUnique(transactionID, function (isUnique) {
+            if (!isUnique) {
+                swal("Error", "This transaction ID request already exists.", "error");
+                return;
+            }
 
-      // Proceed with request if transaction ID is unique
-      fetch(`/api/admin/distributor/createTransactionRequest?email=${email}&amount=${amount}&transactionId=${transactionID}`, {
-        method: 'POST'
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.message) {
-            showAlert("Payment request submitted successfully.");
-            closeModal('upiModal1');
-
-            fetch(`/api/admin/tokenAmount/create?transactionId=${transactionID}&email=${email}&tokenAmount=${tokenAmount}&price=${amount}`, {
-              method: 'POST'
+            // Proceed with request if transaction ID is unique
+            fetch(`${API_URL}/api/admin/distributor/createTransactionRequest?email=${email}&amount=${amount}&transactionId=${transactionID}`, {
+                method: 'POST'
             })
-              .then(response => response.json())
-              .then(data => {
-                if (data) {
-                  console.log("Token amount record created successfully", data);
-                } else {
-                  console.log("Error: ", data);
-                }
-              })
-              .catch(error => {
-                console.error("Error creating token amount:", error);
-              });
-          } else {
-            showAlert("Error: " + (data.error || "Unknown error"));
-          }
-        })
-        .catch(error => {
-          showAlert("Error: " + error.message);
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        showAlert("Payment request submitted successfully.");
+                        closeModal('upiModal1');
+
+                        fetch(`${API_URL}/api/admin/tokenAmount/create?transactionId=${transactionID}&email=${email}&tokenAmount=${tokenAmount}&price=${amount}`, {
+                            method: 'POST'
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data) {
+                                    console.log("Token amount record created successfully", data);
+                                } else {
+                                    console.log("Error: ", data);
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error creating token amount:", error);
+                            });
+                    } else {
+                        showAlert("Error: " + (data.error || "Unknown error"));
+                    }
+                })
+                .catch(error => {
+                    showAlert("Error: " + error.message);
+                });
         });
     });
-  });
 
-  function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-      modal.style.display = 'none';
-      document.body.style.overflow = '';
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
     }
-  }
 
-  function showAlert(message) {
-    const alert = document.getElementById("paymentAlert");
-    const alertMessage = document.getElementById("alertMessage");
-    if (alert && alertMessage) {
-      alertMessage.textContent = message;
-      alert.classList.remove("d-none");
-    } else {
-      console.error("Alert elements not found in the DOM");
+    function showAlert(message) {
+        const alert = document.getElementById("paymentAlert");
+        const alertMessage = document.getElementById("alertMessage");
+        if (alert && alertMessage) {
+            alertMessage.textContent = message;
+            alert.classList.remove("d-none");
+        } else {
+            console.error("Alert elements not found in the DOM");
+        }
     }
-  }
 });
   //----------------------------------User name Api -----------------------------------
 
@@ -248,7 +299,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
 
       if (email) {
-        fetch(`/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+        fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
           .then(response => response.json())
           .then(data => {
           const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
@@ -297,13 +348,13 @@ document.addEventListener("DOMContentLoaded", function () {
    }
 
    // Fetch distributor user information to get the creator's email
-   fetch(`/api/admin/distributor/userInfo?email=${userEmail}`)
+   fetch(`${API_URL}/api/admin/distributor/userInfo?email=${userEmail}`)
      .then(response => response.json())
      .then(userInfo => {
        const creatorEmail = userInfo.creatorEmail;
 
        // Fetch the rate based on the creator's email
-       fetch(`/api/admin/token/viewRate?email=${creatorEmail}`)
+       fetch(`${API_URL}/api/admin/token/viewRate?email=${creatorEmail}`)
          .then(response => response.json())
          .then(rates => {
            let applicableRate = null;
@@ -365,13 +416,13 @@ document.addEventListener("DOMContentLoaded", function () {
    }
 
    // Fetch the distributor user information to get the creator's email
-   fetch(`/api/admin/distributor/userInfo?email=${userEmail}`)
+   fetch(`${API_URL}/api/admin/distributor/userInfo?email=${userEmail}`)
      .then(response => response.json())
      .then(userInfo => {
        const creatorEmail = userInfo.creatorEmail;
 
        // Fetch the bank/UPI accounts using the creator's email
-       fetch(`/api/admin/bank/view?email=${creatorEmail}`)
+       fetch(`${API_URL}/api/admin/bank/view?email=${creatorEmail}`)
          .then(response => response.json())
          .then(data => {
            // Filter accounts based on selected payment method and active status

@@ -1,16 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     const userEmail = sessionStorage.getItem('userEmail');
     document.getElementById('userEmail').innerText = userEmail;
-    document.getElementById('userEmail1').innerText = userEmail;});
+    document.getElementById('userEmail1').innerText = userEmail;
+});
 
 //------------------------------------ Active page fucntion ---------------------------------------
 /**
-* Template Name: NiceAdmin
-* Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-* Updated: Apr 20 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
+ * Template Name: NiceAdmin
+ * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+ * Updated: Apr 20 2024 with Bootstrap v5.3.3
+ * Author: BootstrapMade.com
+ * License: https://bootstrapmade.com/license/
+ */
 
 (function() {
     "use strict";
@@ -324,7 +325,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
 })();
 //-------------------------------------------------------
+//------------------------------------ userRole api  ---------------------------------------
+const userEmail = sessionStorage.getItem('userEmail');
+  function fetchUserInfo(email) {
+    if (!email) {
 
+      return;
+    }
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+                document.getElementById("userRole").innerText = data.role || "N/A";
+      })
+      .catch(error => {
+        console.error("Error fetching user info:", error);
+        alert("An error occurred while fetching user information.");
+      });
+  }
+  fetchUserInfo(userEmail);
 //----------------------------------fetch UserName Api ----------------------------------
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -334,7 +353,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
 
         if (email) {
-            fetch(`/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+            fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
                 .then(response => response.json())
                 .then(data => {
                 const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
@@ -378,7 +397,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        const apiUrl = `/api/admin/retailer/list-by-creator?creatorEmail=${encodeURIComponent(userEmail)}`;
+        const apiUrl = `${API_URL}/api/admin/retailer/list-by-creator?creatorEmail=${encodeURIComponent(userEmail)}`;
 
         fetch(apiUrl)
             .then(response => response.json())
@@ -418,7 +437,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const sessionUserEmail = sessionStorage.getItem('userEmail'); // Replace with actual session email fetching logic
 
     // API to fetch retailers under the distributor
-    fetch(`/api/admin/retailer/list-by-creator?creatorEmail=${sessionUserEmail}`)
+    fetch(`${API_URL}/api/admin/retailer/list-by-creator?creatorEmail=${sessionUserEmail}`)
         .then(response => response.json())
         .then(data => {
         const retailers = data.retailers;
@@ -426,7 +445,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         retailers.forEach(retailer => {
             // Fetch recent activities for each retailer
-            fetch(`/api/admin/retailer/recent-activities?userEmail=${retailer.email}`)
+            fetch(`${API_URL}/api/admin/retailer/recent-activities?userEmail=${retailer.email}`)
                 .then(response => response.json())
                 .then(activities => {
                 // Filter and count ID card creation activities
@@ -449,7 +468,7 @@ document.addEventListener("DOMContentLoaded", function() {
 function populateTokenUsageTable() {
     const creatorEmail = sessionStorage.getItem("userEmail");
 
-    fetch(`/api/admin/retailer/list-by-creator?creatorEmail=${creatorEmail}`)
+    fetch(`${API_URL}/api/admin/retailer/list-by-creator?creatorEmail=${creatorEmail}`)
         .then(response => response.json())
         .then(data => {
         const retailers = data.retailers;
@@ -459,7 +478,7 @@ function populateTokenUsageTable() {
             const phoneNumber = retailer.phoneNumber;
             const maskedPhoneNumber = phoneNumber ? 'x'.repeat(phoneNumber.length - 4) + phoneNumber.slice(-4) : 'N/A';
 
-            fetch(`/api/admin/retailer/recent-activities?userEmail=${retailer.email}`)
+            fetch(`${API_URL}/api/admin/retailer/recent-activities?userEmail=${retailer.email}`)
                 .then(response => response.json())
                 .then(activityData => {
                 // Count ID_CARD_CREATION activities to determine token usage
@@ -501,7 +520,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             // Fetch activities from API
-            const response = await fetch(`/api/admin/distributor/distributor?distributorEmail=${userEmail}`);
+            const response = await fetch(`${API_URL}/api/admin/distributor/distributor?distributorEmail=${userEmail}`);
             const activities = await response.json();
 
             // Get the activity list container
@@ -574,7 +593,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
 
-        const apiUrl = `/api/admin/token/transactions?email=${encodeURIComponent(userEmail)}`;
+        const apiUrl = `${API_URL}/api/admin/token/transactions?email=${encodeURIComponent(userEmail)}`;
 
         fetch(apiUrl)
             .then(response => response.json())

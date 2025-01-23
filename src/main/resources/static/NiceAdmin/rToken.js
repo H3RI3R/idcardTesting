@@ -1,21 +1,38 @@
-
-
 document.addEventListener('DOMContentLoaded', function() {
     const userEmail = sessionStorage.getItem('userEmail');
     document.getElementById('userEmail').innerText = userEmail;
-    document.getElementById('userEmail1').innerText = userEmail;});
+    document.getElementById('userEmail1').innerText = userEmail;
+});
 
+//------------------------------------ userRole api  ---------------------------------------
+const userEmail = sessionStorage.getItem('userEmail');
+function fetchUserInfo(email) {
+    if (!email) {
+        return;
+    }
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("userRole").innerText = data.role || "N/A";
+        })
+        .catch(error => {
+            console.error("Error fetching user info:", error);
+            alert("An error occurred while fetching user information.");
+        });
+}
+fetchUserInfo(userEmail);
 //---------------------------------- Table  Api -----------------------------------
 
 
 //---------------------------------- toggleSidebar  method -----------------------------------
 /**
-* Template Name: NiceAdmin
-* Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-* Updated: Apr 20 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
+ * Template Name: NiceAdmin
+ * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+ * Updated: Apr 20 2024 with Bootstrap v5.3.3
+ * Author: BootstrapMade.com
+ * License: https://bootstrapmade.com/license/
+ */
 
 (function() {
     "use strict";
@@ -335,8 +352,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 //---------------------------------- Activity  Api -----------------------------------
 
-//----------------------------------User name Api -----------------------------------
-
+//----------------------------------USerName Api ----------------------------------
 document.addEventListener("DOMContentLoaded", function() {
     // Function to fetch the user's name from the API
     function fetchUserName() {
@@ -344,7 +360,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
 
         if (email) {
-            fetch(`/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+            fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
                 .then(response => response.json())
                 .then(data => {
                 const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
@@ -376,7 +392,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (adminEmail) {
         // Fetch the list of distributors
-        fetch(`/api/admin/distributor/list?adminEmail=${encodeURIComponent(adminEmail)}`)
+        fetch(`${API_URL}/api/admin/distributor/list?adminEmail=${encodeURIComponent(adminEmail)}`)
             .then(response => response.json())
             .then(data => {
             // Assuming data is an array of distributors
@@ -405,7 +421,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (userEmail) {
         function updateTokenSalesCount() {
-            fetch(`/api/admin/retailer/recent-activities?userEmail=${encodeURIComponent(userEmail)}`)
+            fetch(`${API_URL}/api/admin/retailer/recent-activities?userEmail=${encodeURIComponent(userEmail)}`)
                 .then(response => response.json())
                 .then(data => {
                 // Check if the response contains ID_CARD_CREATION activities
@@ -445,7 +461,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (userEmail) {
         // Define the API endpoint to get wallet address and phone number
-        const getWalletAddressUrl = `/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
+        const getWalletAddressUrl = `${API_URL}/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
 
         // Fetch wallet address and phone number
         fetch(getWalletAddressUrl)
@@ -460,7 +476,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (phoneNumber && walletAddress) {
                     // Fetch token count using the phone number
-                    const getTokenCountUrl = `/api/admin/token/count?identifier=${encodeURIComponent(phoneNumber)}`;
+                    const getTokenCountUrl = `${API_URL}/api/admin/token/count?identifier=${encodeURIComponent(phoneNumber)}`;
 
                     return fetch(getTokenCountUrl);
                 } else {

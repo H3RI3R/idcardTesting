@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const userEmail = sessionStorage.getItem('userEmail');
     document.getElementById('userEmail').innerText = userEmail;
-    document.getElementById('userEmail1').innerText = userEmail;});
+    document.getElementById('userEmail1').innerText = userEmail;
+});
 
 //------------------------------------ userRole api  ---------------------------------------
 
@@ -11,7 +12,7 @@ const userEmail = sessionStorage.getItem('userEmail');
 
       return;
     }
-    const apiUrl = `/api/admin/distributor/userInfo?email=${email}`;
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
     fetch(apiUrl)
       .then(response => response.json())
       .then(data => {
@@ -25,12 +26,12 @@ const userEmail = sessionStorage.getItem('userEmail');
   fetchUserInfo(userEmail);
 //------------------------------------ Active page fucntion ---------------------------------------
 /**
-* Template Name: NiceAdmin
-* Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-* Updated: Apr 20 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
+ * Template Name: NiceAdmin
+ * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+ * Updated: Apr 20 2024 with Bootstrap v5.3.3
+ * Author: BootstrapMade.com
+ * License: https://bootstrapmade.com/license/
+ */
 
 (function() {
     "use strict";
@@ -355,7 +356,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
 
         if (email) {
-            fetch(`/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+            fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
                 .then(response => response.json())
                 .then(data => {
                 const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
@@ -395,14 +396,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Fetch all retailers for the creator email
-    fetch(`/api/admin/retailer/list-by-creator?creatorEmail=${userEmail}`)
+    fetch(`${API_URL}/api/admin/retailer/list-by-creator?creatorEmail=${userEmail}`)
         .then(response => response.json())
         .then(data => {
             const retailers = data.retailers;
             if (retailers && retailers.length > 0) {
                 populateRetailerTable(retailers); // Populate the table with retailer data
-            } else {
-                alert('No retailers found.');
             }
         })
         .catch(error => console.error('Error fetching retailer data:', error));
@@ -433,7 +432,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to handle activation of a retailer user
     window.activateRetailer = function (email, creatorEmail) {
-        fetch(`/api/admin/retailer/activate-retailer?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}`, {
+        fetch(`${API_URL}/api/admin/retailer/activate-retailer?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}`, {
             method: 'POST'
         })
         .then(response => response.json())
@@ -446,7 +445,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     text: 'Retailer activated successfully!',
                 }).then(() => {
                     // After showing the success alert, refresh the table to reflect the new status
-                    fetch(`/api/admin/retailer/list-by-creator?creatorEmail=${userEmail}`)
+                    fetch(`${API_URL}/api/admin/retailer/list-by-creator?creatorEmail=${userEmail}`)
                         .then(response => response.json())
                         .then(data => {
                             populateRetailerTable(data.retailers); // Update the table
@@ -478,7 +477,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to handle deactivation of a retailer user
     window.deactivateRetailer = function (email, creatorEmail) {
-        fetch(`/api/admin/retailer/delete?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}&requestingUserRole=DISTRIBUTOR`, {
+        fetch(`${API_URL}/api/admin/retailer/delete?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}&requestingUserRole=DISTRIBUTOR`, {
             method: 'POST'
         })
         .then(response => response.json())
@@ -491,7 +490,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     icon: 'success',
                     confirmButtonText: 'OK'
                 }).then(() => {
-                    fetch(`/api/admin/retailer/list-by-creator?creatorEmail=${userEmail}`)
+                    fetch(`${API_URL}/api/admin/retailer/list-by-creator?creatorEmail=${userEmail}`)
                         .then(response => response.json())
                         .then(data => {
                             populateRetailerTable(data.retailers); // Update the table
