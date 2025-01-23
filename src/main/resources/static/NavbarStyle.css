@@ -1,0 +1,84 @@
+
+    p.font {
+      text-align: center;
+      text-transform: uppercase;
+      color: #ADD8E6;
+      font-weight: bold;
+      font-family: 'Arial Black', Gadget, sans-serif;
+      transform: scale(2); /* Adjust the scale as needed */
+      text-shadow: 1px 1px #FF0000;
+      letter-spacing: 2px;
+      transform-origin: left top;
+    }
+
+
+            body {
+              background-color: #fbfbfb;
+            }
+            @media (min-width: 991.98px) {
+              main {
+                padding-left: 240px;
+              }
+            }
+
+            /* Sidebar */
+            .sidebar {
+              position: fixed;
+              top: 0;
+              bottom: 0;
+              left: 0;
+              padding: 58px 0 0; /* Height of navbar */
+              box-shadow: 0 2px 5px 0 rgb(0 0 0 / 5%), 0 2px 10px 0 rgb(0 0 0 / 5%);
+              width: 240px;
+              z-index: 600;
+            }
+
+            @media (max-width: 991.98px) {
+              .sidebar {
+                width: 100%;
+              }
+            }
+            .sidebar .active {
+              border-radius: 5px;
+              box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
+            }
+
+            .sidebar-sticky {
+              position: relative;
+              top: 0;
+              height: calc(100vh - 48px);
+              padding-top: 0.5rem;
+              overflow-x: hidden;
+              overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+            }
+            .font{
+            font-family: "Lucida Console", "Courier New", monospace;
+            }
+            .virtual-wallet-card {
+                  background: linear-gradient(135deg, #007bff 0%, #00b8ff 100%);
+                  color: white;
+                  border-radius: 15px;
+                  padding: 20px;
+                  width: 100%;
+                  max-width: 400px;
+                  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                }
+                .virtual-wallet-card h5 {
+                  font-size: 1.25rem;
+                  margin-bottom: 10px;
+                }
+                .virtual-wallet-card p {
+                  margin: 0;
+                }
+                .virtual-wallet-card .card-balance {
+                  font-size: 2rem;
+                  font-weight: bold;
+                  margin-bottom: 10px;
+                }
+                .virtual-wallet-card .card-details {
+                  font-size: 0.9rem;
+                  opacity: 0.9;
+                }
+                .virtual-wallet-card .refresh-btn {
+                  margin-top: 15px;
+                }

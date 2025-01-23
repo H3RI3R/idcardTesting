@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="assets/css/loginStyle.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+<div class="container">
+    <div class="image-container">
+        <img src="https://images.pexels.com/photos/2033997/pexels-photo-2033997.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" alt="Background Image">
+    </div>
+    <div class="form-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-control" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="login-button">Login</button>
+            <a href="#" id="forgotPasswordLink">Forgot your password?</a>
+        </form>
+        <form id="forgotPasswordForm" class="hidden">
+            <div class="input-group">
+                <label for="resetEmail">Enter your email</label>
+                <input type="email" id="resetEmail" name="resetEmail" required>
+            </div>
+            <button type="submit" class="login-button">Submit</button>
+        </form>
+
+        <form id="otpForm" class="hidden">
+            <div class="input-group">
+                <label for="otp">Enter OTP</label>
+                <input type="text" id="otp" name="otp" required>
+            </div>
+            <button type="submit" class="login-button">Verify OTP</button>
+        </form>
+
+        <form id="resetPasswordForm" class="hidden">
+            <div class="input-group">
+                <label for="newPassword">Enter New Password</label>
+                <input type="password" id="newPassword" name="newPassword" required>
+            </div>
+            <div class="input-group">
+                <label for="confirmPassword">Re-enter New Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <button type="submit" class="login-button">Reset Password</button>
+        </form>
+    </div>
+</div>
+
+<script>
+
+
+ document.getElementById('loginForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent the form from submitting the traditional way
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.message === 'Successful login') {
+          // Store email in session storage
+          sessionStorage.setItem('userEmail', email);
+          // Check the role and redirect accordingly
+          switch (data.role) {
+            case 'ADMIN':
+              window.location.href = './Adindex.html';
+              break;
+            case 'DISTRIBUTOR':
+              window.location.href = './index.html';
+              break;
+            case 'RETAILER':
+              window.location.href = './rindex.html';
+              break;
+            default:
+              alert('Unknown user role');
+          }
+        } else {
+          alert(data.error || 'Login failed. Please try again.');
+        }
+      })
+      .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+        alert('Login failed. Please try again.');
+      });
+    });
+</script>
+</body>
+</html>
