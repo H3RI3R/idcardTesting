@@ -1,11 +1,62 @@
+//------------------------------------ userRole api  ---------------------------------------
+const userEmail = sessionStorage.getItem('userEmail');
+function fetchUserInfo(email) {
+    if (!email) {
+        return;
+    }
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("userRole").innerText = data.role || "N/A";
+        })
+        .catch(error => {
+            console.error("Error fetching user info:", error);
+            alert("An error occurred while fetching user information.");
+        });
+}
+fetchUserInfo(userEmail);
+  //----------------------------------User name Api -----------------------------------
 
- //----------------------------------Submit button API -----------------------------------
+  document.addEventListener("DOMContentLoaded", function() {
+    // Function to fetch the user's name from the API
+    function fetchUserName() {
+      // Get the email from session data
+      const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
+
+      if (email) {
+        fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+          .then(response => response.json())
+          .then(data => {
+          const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
+          // Update the HTML elements with the fetched name
+          document.querySelector('.nav-profile .dropdown-toggle').textContent = userName;
+          document.querySelector('.dropdown-header h6').textContent = userName;
+        })
+          .catch(error => {
+          console.error('Error fetching name:', error);
+          // Fallback to 'Guest' in case of an error
+          document.querySelector('.nav-profile .dropdown-toggle').textContent = 'Guest';
+          document.querySelector('.dropdown-header h6').textContent = 'Guest';
+        });
+      } else {
+        console.error('No email found in session.');
+        // Fallback to 'Guest' if email is missing
+        document.querySelector('.nav-profile .dropdown-toggle').textContent = 'Guest';
+        document.querySelector('.dropdown-header h6').textContent = 'Guest';
+      }
+    }
+
+    // Call the function on page load
+    fetchUserName();
+  });
+//----------------------------------Submit button API -----------------------------------
 document.getElementById('idCardForm').addEventListener('submit', generateIdCard);
 
 async function generateIdCard(event) {
 
     event.preventDefault(); // Prevent the default form submission
- const selectedType = document.querySelector('input[name="employmentType"]:checked');
+    const selectedType = document.querySelector('input[name="employmentType"]:checked');
 
     if (!selectedType) {
         alert("Please select Employment Type before proceeding.");
@@ -38,7 +89,7 @@ async function generateIdCard(event) {
 
     try {
         // Send a POST request to the createIdCard API to generate the HTML content
-        const response = await fetch('/api/admin/retailer/createIdCard', {
+        const response = await fetch(`${API_URL}/api/admin/retailer/createIdCard`, {
             method: 'POST',
             body: formData
         });
@@ -215,7 +266,7 @@ async function generateIdCard(event) {
 
 async function saveUserIdCard(formData) {
     try {
-        const response = await fetch('/api/user-id-card/save', {
+        const response = await fetch(`${API_URL}/api/user-id-card/save`, {
             method: 'POST',
             body: formData
         });
@@ -236,7 +287,7 @@ document.getElementById('printButton').addEventListener('click', async function 
     try {
         // Step 1: Fetch retailerEmail from sessionStorage
         const retailerEmail = sessionStorage.getItem('userEmail');
-        const response = await fetch(`/api/user-id-card/${retailerEmail}`, {
+        const response = await fetch(`${API_URL}/api/user-id-card/${retailerEmail}`, {
             method: 'GET',
         });
         const data = await response.json();
@@ -261,7 +312,7 @@ document.getElementById('printButton').addEventListener('click', async function 
         formData.append('photo', photoFile);
 
         // Step 3: Send the FormData to the second API
-        const createIdCardResponse = await fetch('/api/admin/retailer/createIdCardFinal', {
+        const createIdCardResponse = await fetch(`${API_URL}/api/admin/retailer/createIdCardFinal`, {
             method: 'POST',
             body: formData,  // Send the form data
         });

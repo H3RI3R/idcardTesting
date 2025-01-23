@@ -1,16 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     const userEmail = sessionStorage.getItem('userEmail');
     document.getElementById('userEmail').innerText = userEmail;
-    document.getElementById('userEmail1').innerText = userEmail;});
+    document.getElementById('userEmail1').innerText = userEmail;
+});
 
 //------------------------------------ Active page fucntion ---------------------------------------
 /**
-* Template Name: NiceAdmin
-* Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-* Updated: Apr 20 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
+ * Template Name: NiceAdmin
+ * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+ * Updated: Apr 20 2024 with Bootstrap v5.3.3
+ * Author: BootstrapMade.com
+ * License: https://bootstrapmade.com/license/
+ */
 
 (function() {
     "use strict";
@@ -335,7 +336,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const email = sessionStorage.getItem('userEmail'); // Ensure this is how you fetch email from the session
 
         if (email) {
-            fetch(`/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
+            fetch(`${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(email)}`)
                 .then(response => response.json())
                 .then(data => {
                 const userName = data.name || 'Guest'; // Use 'Guest' if no name is found
@@ -370,12 +371,12 @@ document.getElementById('deleteRetailerForm').addEventListener('submit', async f
 
     try {
         // Fetch retailer information
-        const retailerResponse = await fetch(`/api/admin/distributor/userInfo?email=${encodeURIComponent(email)}`);
+        const retailerResponse = await fetch(`${API_URL}/api/admin/distributor/userInfo?email=${encodeURIComponent(email)}`);
         const retailerData = await retailerResponse.json();
 
         if (retailerResponse.ok && retailerData) {
             // Fetch token amount
-            const tokenResponse = await fetch(`/api/admin/token/tokens?email=${encodeURIComponent(sessionEmail)}`);
+            const tokenResponse = await fetch(`${API_URL}/api/admin/token/tokens?email=${encodeURIComponent(sessionEmail)}`);
             const tokenData = await tokenResponse.json();
 
             // Find the retailer's token amount
@@ -426,7 +427,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (creatorEmail) {
         // Fetch retailer data
-        fetch(`/api/admin/retailer/list-by-creator?creatorEmail=${creatorEmail}`)
+        fetch(`${API_URL}/api/admin/retailer/list-by-creator?creatorEmail=${creatorEmail}`)
             .then(response => response.json())
             .then(data => {
                 const retailers = data.retailers;
@@ -453,7 +454,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
 
                     // Fetch token data
-                    fetch(`/api/admin/token/tokens?email=${creatorEmail}`)
+                    fetch(`${API_URL}/api/admin/token/tokens?email=${creatorEmail}`)
                         .then(response => response.json())
                         .then(tokens => {
                             // Create a map of tokens for quick lookup
@@ -497,3 +498,22 @@ document.addEventListener("DOMContentLoaded", function() {
         window.location.href = './login.html'; // Redirect to login page or any other page
     });
 });
+//----------------------------------User Info Api ----------------------------------
+function fetchUserInfo(email) {
+   if (!email) {
+     alert('You are on a guest profile');
+     return;
+   }
+   const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
+   fetch(apiUrl)
+     .then(response => response.json())
+     .then(data => {
+               document.getElementById("userRole").innerText = data.role || "N/A";
+     })
+     .catch(error => {
+       console.error("Error fetching user info:", error);
+       alert("An error occurred while fetching user information.");
+     });
+ }
+ const userEmail = sessionStorage.getItem('userEmail');
+ fetchUserInfo(userEmail);
