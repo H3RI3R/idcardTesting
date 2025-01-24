@@ -672,14 +672,136 @@ function filterActiveAccounts() {
 }
 
     //---------------------------------------------Add Bank Account ---------------------------
-    document.addEventListener('DOMContentLoaded', function () {
-      const addBankForm = document.getElementById('addBankForm');
-      const addBankBtn = document.getElementById('addBankBtn');
+document.addEventListener('DOMContentLoaded', function () {
+  const addBankForm = document.getElementById('addBankForm');
+  const addBankBtn = document.getElementById('addBankBtn');
+ const addBankModal = document.getElementById('addBankModal'); // Get the modal element
+  if (addBankForm && addBankBtn) {
+    // Listen for the button click
+    addBankBtn.addEventListener('click', async function () {
+      console.log('Button clicked!'); // Check if the button click is registered
 
-      if (addBankForm && addBankBtn) {
-        // Listen for the button click
-        addBankBtn.addEventListener('click', function () {
-          console.log('Button clicked!'); // Check if the button click is registered
+      // Retrieve email from session storage
+      const email = sessionStorage.getItem('userEmail');
+      if (!email) {
+        console.error('Email not found in session storage.');
+        showErrorModal("User email not found.");
+        return;
+      }
+
+      // Gather form data
+      const accountNumber = document.getElementById('accountNumber').value.trim();
+      const reAccountNumber = document.getElementById('reAccountNumber').value.trim();
+      const accountOwnerFullName = document.getElementById('accountOwner').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const ifscCode = document.getElementById('ifscCode').value.trim();
+
+      // Validate account number match
+      if (accountNumber !== reAccountNumber) {
+        console.error('Account numbers do not match.');
+        showErrorModal("Account numbers do not match.");
+        return;
+      }
+
+      // Validate required fields
+      if (!accountNumber || !accountOwnerFullName || !address || !ifscCode) {
+        console.error('All fields are required.');
+        showErrorModal("All fields are required.");
+        return;
+      }
+
+      // Create the request body
+      const requestBody = new URLSearchParams({
+        email: email,
+        accountNumber: accountNumber,
+        reEnterAccountNumber: reAccountNumber,
+        accountOwnerFullName: accountOwnerFullName,
+        address: address,
+        ifscCode: ifscCode
+      });
+
+      console.log('Request body:', requestBody.toString()); // Debugging log
+
+      try {
+        // Send the POST request to the API
+        const response = await fetch(`${API_URL}/api/admin/bank/save`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: requestBody
+        });
+
+        const data = await response.json();
+        console.log('Response data:', data);
+
+        // Check the response status
+        if (response.ok && data.status === 'success') {
+          showSuccessModal();
+          addBankForm.reset(); // Reset the form after successful submission
+             if(addBankModal){
+                          bootstrap.Modal.getInstance(addBankModal).hide(); // Close the addUpiModal
+                         }
+        } else {
+          // Handle API error response
+          showErrorModal(data.message || "Failed to save bank details.");
+        }
+      } catch (error) {
+        console.error('Error:', error); // Debugging log
+        showErrorModal("An error occurred while saving the bank.");
+      }
+    });
+  } else {
+    console.error('addBankForm or addBankBtn element not found.');
+  }
+
+  // Show success modal
+  function showSuccessModal() {
+    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+    successModal.show();
+
+    // Optionally, refresh the page or reload the table after closing the modal
+    successModal._element.addEventListener('hidden.bs.modal', function () {
+//      location.reload(); // Refresh the page after closing
+  fetchAndDisplayAccounts();
+    });
+  }
+
+  // Show error modal
+  function showErrorModal(errorMessage) {
+    const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+    document.getElementById('errorModalBody').innerText = errorMessage;
+    errorModal.show();
+  }
+});
+    //---------------------------------Add Upi account apis--------------------------------------
+    document.addEventListener('DOMContentLoaded', function () {
+      const addUpiForm = document.getElementById('addUpiForm');
+      const addUpiModal = document.getElementById('addUpiModal'); // Get the modal element
+
+
+      if (addUpiForm) {
+        // Listen for form submission
+        addUpiForm.addEventListener('submit', async function (event) {
+          event.preventDefault(); // Prevent the default form submission
+
+          // Retrieve form inputs safely
+          const upiIdInput = document.getElementById('upiId');
+          const upiAccountNameInput = document.getElementById('upiAccountName');
+          const upiAddressInput = document.getElementById('upiAddress');
+          const upiQrCodeInput = document.getElementById('upiQrCode');
+
+          // Ensure inputs exist before accessing their values
+          if (!upiIdInput || !upiAccountNameInput || !upiAddressInput) {
+            console.error('One or more input elements are missing.');
+            showErrorModal("Some required fields are missing in the form.");
+            return;
+          }
+
+          // Gather form data
+          const upiId = upiIdInput.value.trim();
+          const upiAccountName = upiAccountNameInput.value.trim();
+          const upiAddress = upiAddressInput.value.trim();
 
           // Retrieve email from session storage
           const email = sessionStorage.getItem('userEmail');
@@ -689,133 +811,90 @@ function filterActiveAccounts() {
             return;
           }
 
-          // Gather form data
-          const accountNumber = document.getElementById('accountNumber').value.trim();
-          const reAccountNumber = document.getElementById('reAccountNumber').value.trim();
-          const accountOwnerFullName = document.getElementById('accountOwner').value.trim();
-          const address = document.getElementById('address').value.trim();
-          const ifscCode = document.getElementById('ifscCode').value.trim();
-
-          // Validate account number match
-          if (accountNumber !== reAccountNumber) {
-            console.error('Account numbers do not match.');
-            showErrorModal("Account numbers do not match.");
-            return;
-          }
-
           // Validate required fields
-          if (!accountNumber || !accountOwnerFullName  || !address || !ifscCode) {
-            console.error('All fields are required.');
-            showErrorModal("All fields are required.");
+          if (!upiId || !upiAccountName || !upiAddress) {
+            console.error('All required fields must be filled.');
+            showErrorModal("All required fields must be filled.");
             return;
           }
 
-          // Create the request body
-          const requestBody = new URLSearchParams({
-            email: email,
-            accountNumber: accountNumber,
-            reEnterAccountNumber: reAccountNumber,
-            accountOwnerFullName: accountOwnerFullName,
-            address: address,
-            ifscCode: ifscCode
-          });
+          // Create FormData object
+          const formData = new FormData();
+          formData.append('email', email);
+          formData.append('upiId', upiId);
+          formData.append('upiName', upiAccountName);
+          formData.append('upiProvider', 'Some UPI Provider'); // Example provider, customize as needed
+          formData.append('address', upiAddress);
 
-          console.log('Request body:', requestBody.toString()); // Debugging log
+          // Append the QR Code file if provided
+          if (upiQrCodeInput.files.length > 0) {
+            formData.append('qrCodeFile', upiQrCodeInput.files[0]);
+          }
 
-          // Send the POST request to the API
-          fetch(`${API_URL}/api/admin/bank/save`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: requestBody
-          })
-            .then(response => response.text()) // Convert to text to match the response format
-            .then(data => {
-            console.log('Response data:', data); // Debugging log
-            if (data === "Bank saved successfully") {
-              showSuccessModal();
-              addBankForm.reset(); // Optionally reset the form after successful submission
+          console.log('Submitting UPI form data...'); // Debugging log
+
+          try {
+            // Send the POST request to the API
+            const response = await fetch(`${API_URL}/api/admin/bank/save`, {
+              method: 'POST',
+              body: formData
+            });
+
+            const data = await response.json();
+            console.log('Response data:', data);
+
+            // Handle API response
+            if (response.ok && data.status === 'success') {
+               showSuccessModal();
+               addUpiForm.reset(); // Reset the form after successful submission
+               if(addUpiModal){
+                bootstrap.Modal.getInstance(addUpiModal).hide(); // Close the addUpiModal
+               }
+
             } else {
-              showErrorModal("Error: " + data);
+              showErrorModal(data.message || "Failed to save UPI account details.");
             }
-          })
-            .catch(error => {
+          } catch (error) {
             console.error('Error:', error); // Debugging log
-            showErrorModal("An error occurred while saving the bank.");
-          });
+            showErrorModal("An error occurred while saving the UPI account.");
+          }
         });
       } else {
-        console.error('addBankForm or addBankBtn element not found.');
+        console.error('addUpiForm element not found.');
       }
 
-      // Show success modal
-      function showSuccessModal() {
-        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-        successModal.show();
+ function showSuccessModal() {
+    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+    successModal.show();
 
-        // Optionally, refresh the page or reload the table after closing the modal
-        successModal._element.addEventListener('hidden.bs.modal', function () {
-          location.reload(); // Refresh the page after closing
-        });
-      }
+    // Optionally, refresh the page or reload the table after closing the modal
+    successModal._element.addEventListener('hidden.bs.modal', function () {
+//      location.reload(); // Refresh the page after closing
+      fetchAndDisplayAccounts();
 
-      // Show error modal
-      function showErrorModal(errorMessage) {
-        const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
-        document.getElementById('errorModalBody').innerText = errorMessage;
-        errorModal.show();
-      }
     });
-    //---------------------------------Add Upi account apis--------------------------------------
-    document.getElementById('addUpiForm').addEventListener('submit', function(event) {
-      event.preventDefault();
+  }
 
-      const formData = new FormData();
-      const email = sessionStorage.getItem('userEmail');
-      formData.append('email', email);
-      formData.append('upiId', document.getElementById('upiId').value);
-      formData.append('upiName', document.getElementById('upiAccountName').value);
-      formData.append('upiProvider', 'Some UPI Provider'); // Example provider
-      formData.append('address', document.getElementById('upiAddress').value);
+     // Remove leftover backdrops when the modal is closed
 
-      // Append the QR Code file
-      const qrCodeFile = document.getElementById('upiQrCode').files[0];
-      if (qrCodeFile) {
-        formData.append('qrCodeFile', qrCodeFile);
-      }
 
-      fetch(`${API_URL}/api/admin/bank/save`, {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => response.text())
-      .then(data => {
-        if (data.includes('Bank saved successfully')) {
-          // Show success alert and close modal
-          showAlert('success', 'Bank saved successfully');
-          const addUpiModal = bootstrap.Modal.getInstance(document.getElementById('addUpiModal'));
-          addUpiModal.hide();
-          fetchAndDisplayAccounts(); // Refresh the table
-        } else {
-          showAlert('danger', 'Failed to save bank details');
+
+    function showErrorModal(errorMessage) {
+      const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+
+      // Show the error modal
+      document.getElementById('errorModalBody').innerText = errorMessage;
+      errorModal.show();
+
+      // When the modal is hidden, remove any remaining backdrops
+      errorModal._element.addEventListener('hidden.bs.modal', function () {
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+          backdrop.remove(); // Remove leftover backdrop
         }
-      })
-      .catch(error => {
-        console.error('Error saving bank details:', error);
-        showAlert('danger', 'An error occurred while saving bank details');
       });
-    });
-
-    function showAlert(type, message) {
-      const alertContainer = document.getElementById('alertContainer');
-      alertContainer.className = `alert alert-${type}`;
-      alertContainer.textContent = message;
-      alertContainer.classList.remove('d-none');
-      setTimeout(() => {
-        alertContainer.classList.add('d-none');
-      }, 5000);
     }
+    });
  //   -------------------------------------Token count --------------------------------
     document.addEventListener('DOMContentLoaded', function() {
     // Fetch the user email from session storage
