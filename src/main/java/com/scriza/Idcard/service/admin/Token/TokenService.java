@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
@@ -300,16 +301,26 @@ public class TokenService {
         return receivedTransactions;
     }
     // Modify rate and range
+    @Transactional
     public Rate modifyRate(String email, double newRate, double newMinRange, double newMaxRange, double oldMinRange, double oldMaxRange) {
-        List<Rate> conflictingRates = rateRepository.findConflictingRates(null, email, newMinRange, newMaxRange);
-
-        if (oldMinRange == newMinRange && oldMaxRange == newMaxRange) {
-            conflictingRates.removeIf(rate -> rate.getMinRange() == oldMinRange && rate.getMaxRange() == oldMaxRange);
+        // Check if the rate range is valid
+        if (newMinRange >= newMaxRange) {
+            throw new RuntimeException("Invalid range: Minimum range must be less than maximum range.");
         }
 
+
+        // Check for conflicting ranges with existing ranges
+        List<Rate> conflictingRates = rateRepository.findConflictingRates(email, newMinRange, newMaxRange);
+
+
+        //If the user has not changed the min and max range then let us remove current rate from conflicting rate list
+        if(oldMinRange == newMinRange && oldMaxRange == newMaxRange){
+            conflictingRates.removeIf(rate -> rate.getMinRange() == oldMinRange && rate.getMaxRange() == oldMaxRange);
+        }
         if (!conflictingRates.isEmpty()) {
             throw new RuntimeException("New range conflicts with an existing range.");
         }
+
 
         Optional<Rate> optionalRate = rateRepository.findByMinRangeAndMaxRangeAndEmail(oldMinRange, oldMaxRange, email);
         if (optionalRate.isPresent()) {
@@ -323,10 +334,17 @@ public class TokenService {
         }
     }
 
+    @Transactional
     public Rate createRate(String email, double rate, double minRange, double maxRange) {
+
+        if(minRange >= maxRange) {
+            throw new RuntimeException("Invalid range: Minimum range must be less than maximum range.");
+        }
         if (isRangeConflicting(email, minRange, maxRange)) {
             throw new RuntimeException("Rate range conflicts with an existing range.");
         }
+
+
 
         Rate newRate = new Rate();
         newRate.setRate(rate);
@@ -337,10 +355,13 @@ public class TokenService {
         return rateRepository.save(newRate);
     }
 
+
     private boolean isRangeConflicting(String email, double minRange, double maxRange) {
-        List<Rate> conflictingRates = rateRepository.findByRange(email, minRange, maxRange);
+        List<Rate> conflictingRates = rateRepository.findConflictingRates(email, minRange, maxRange);
         return !conflictingRates.isEmpty();
     }
+
+
 
     public List<Rate> viewRates(String email) {
         return rateRepository.findByEmail(email); // Fetch rates filtered by email
@@ -352,5 +373,4 @@ public class TokenService {
 
         rateRepository.delete(rate);
     }
-
 }
