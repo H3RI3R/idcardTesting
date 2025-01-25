@@ -1113,15 +1113,21 @@ document.addEventListener('DOMContentLoaded', function () {
             fetch(`${API_URL}/api/admin/token/modifyRate?email=${encodeURIComponent(email)}&newRate=${rate}&newMinRange=${minRange}&newMaxRange=${maxRange}&oldMinRange=${oldMinRange}&oldMaxRange=${oldMaxRange}`, {
                 method: 'PUT'
             })
-            .then(response => {
+             .then(response => {
                 if (response.ok) {
                     Swal.fire('Success', 'Rate updated successfully', 'success');
                     fetchRates(); // Refresh the table
                 } else {
-                    response.json().then(data => Swal.fire('Error', data.message, 'error'));
+                    return response.json();
                 }
-            })
-            .catch(error => Swal.fire('Error', 'Error updating rate: ' + error.message, 'error'));
+              })
+               .then(data =>{
+                  if(data && data.message){
+                       Swal.fire('Error', data.message, 'error');
+                       fetchRates();
+                  }
+               })
+                .catch(error => Swal.fire('Error', 'Error updating rate: ' + error.message, 'error'));
         }
     };
 
@@ -1144,8 +1150,13 @@ document.addEventListener('DOMContentLoaded', function () {
                             Swal.fire('Deleted!', 'Rate deleted successfully', 'success');
                             fetchRates(); // Refresh the table
                         } else {
-                            response.json().then(data => Swal.fire('Error', `Error deleting rate: ${data.message}`, 'error'));
+                         return response.text();
                         }
+                    })
+                    .then(data =>{
+                         if(data){
+                              Swal.fire('Error', `Error deleting rate: ${data}`, 'error')
+                         }
                     })
                     .catch(error => Swal.fire('Error', 'Error deleting rate: ' + error.message, 'error'));
             }
@@ -1153,47 +1164,72 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // Function to add a new row for input
-    window.addNewRow = function () {
-        const tableBody = document.getElementById('rateTableBody');
-        const newRow = document.createElement('tr');
+   window.addNewRow = function () {
+       const tableBody = document.getElementById('rateTableBody');
+       const lastRow = tableBody.querySelector('tr:last-child');
 
-        newRow.innerHTML = `
-            <td>#</td>
-            <td><input type="number" class="form-control" placeholder="Min Range"></td>
-            <td><input type="number" class="form-control" placeholder="Max Range"></td>
-            <td><input type="number" class="form-control" placeholder="Rate"></td>
-            <td>
-                <button class="btn btn-sm btn-success" onclick="saveNewRow(this)">Save</button>
-            </td>
-        `;
-        tableBody.appendChild(newRow);
-    };
+       // Check if there is a last row and validate its inputs
+       if (lastRow) {
+           const inputs = lastRow.querySelectorAll('input');
+           for (const input of inputs) {
+               if (!input.value.trim()) {
+                   Swal.fire('Error', 'Please fill in all fields in the current row before adding a new one.', 'error');
+                   return;
+               }
+           }
+       }
+
+       // Add a new row if all validations pass
+       const newRow = document.createElement('tr');
+       newRow.innerHTML = `
+           <td>#</td>
+           <td><input type="number" class="form-control" placeholder="Min Range"></td>
+           <td><input type="number" class="form-control" placeholder="Max Range"></td>
+           <td><input type="number" class="form-control" placeholder="Rate"></td>
+           <td>
+               <button class="btn btn-sm btn-success" onclick="saveNewRow(this)">Save</button>
+           </td>
+       `;
+       tableBody.appendChild(newRow);
+   };
 
     // Function to save the newly added row
-    window.saveNewRow = function (button) {
-        const row = button.closest('tr');
-        const inputs = row.querySelectorAll('input');
-        const minRange = inputs[0].value;
-        const maxRange = inputs[1].value;
-        const rate = inputs[2].value;
-        const email = sessionStorage.getItem('userEmail');
+   // Function to save the newly added row
+   window.saveNewRow = function (button) {
+       const row = button.closest('tr');
+       const inputs = row.querySelectorAll('input');
+       const minRange = inputs[0].value.trim();
+       const maxRange = inputs[1].value.trim();
+       const rate = inputs[2].value.trim();
+       const email = sessionStorage.getItem('userEmail');
 
-        // Call the create API
-        fetch(`${API_URL}/api/admin/token/createRate?email=${encodeURIComponent(email)}&rate=${rate}&minRange=${minRange}&maxRange=${maxRange}`, {
-            method: 'POST'
-        })
-        .then(response => {
-            if (response.ok) {
-                Swal.fire('Success', 'Rate created successfully', 'success');
-                fetchRates(); // Refresh the table
-            } else {
-                response.json().then(data => Swal.fire('Error', `Error creating rate: ${data.message}`, 'error'));
-            }
-        })
-        .catch(error => Swal.fire('Error', 'Error creating rate: ' + error.message, 'error'));
-    };
+       // Validate inputs
+       if (!minRange || !maxRange || !rate) {
+           Swal.fire('Error', 'Please fill in all the required fields (Min Range, Max Range, and Rate).', 'error');
+           return;
+       }
+
+       // Call the create API
+       fetch(`${API_URL}/api/admin/token/createRate?email=${encodeURIComponent(email)}&rate=${encodeURIComponent(rate)}&minRange=${encodeURIComponent(minRange)}&maxRange=${encodeURIComponent(maxRange)}`, {
+           method: 'POST'
+       })
+           .then(response => {
+               if (response.ok) {
+                   Swal.fire('Success', 'Rate created successfully', 'success');
+                   fetchRates(); // Refresh the table
+               } else {
+                   return response.json();
+               }
+           })
+           .then(data => {
+               if (data && data.message) {
+                   Swal.fire('Error', `Error creating rate: ${data.message}`, 'error');
+                   fetchRates();
+               }
+           })
+           .catch(error => Swal.fire('Error', 'Error creating rate: ' + error.message, 'error'));
+   };
 });
-
  //---------------------------------- Toggle nav bar  ----------------------------------
 
 (function() {
