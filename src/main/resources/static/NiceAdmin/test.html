@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Test</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css">
+</head>
+<body>
+<div class="table-container">
+    <table id="activityTable" class="table datatable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Phone Number</th>
+            <th>Opening Balance</th>
+            <th>Amount</th>
+            <th>Closing Balance</th>
+            <th>Status</th>
+            <th>Transaction ID</th>
+            <th>Role</th>
+        </tr>
+        </thead>
+        <tbody id="activity-table-body">
+        <!-- Activity rows will be dynamically inserted here -->
+        </tbody>
+    </table>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" defer></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log("DOMContentLoaded event fired in test.html");
+        const activityTableBody = document.getElementById('activity-table-body');
+         if (!activityTableBody) {
+               console.error("Error: Could not find the element with ID 'activity-table-body'. Check your HTML.");
+              console.log("activityTableBody", activityTableBody)
+             console.log("document.getElementById('activityTable')", document.getElementById('activityTable'))
+               return; // Exit early if the element doesn't exist
+           }
+          const adminEmail = "admin@gmail.com";
+
+      // Function to format date
+          function formatDate(dateString) {
+               const date = new Date(dateString);
+               return date.toLocaleString();
+            }
+
+          // Function to fetch data from an API
+           async function fetchData(url) {
+             try {
+               const response = await fetch(url);
+               if (!response.ok) {
+                 throw new Error(`HTTP error! Status: ${response.status}`);
+               }
+               return await response.json();
+            } catch (error) {
+               console.error("Failed to fetch data:", error);
+               return null;
+              }
+          }
+            async function fillActivityTable() {
+              // Fetch activity data
+            const activityUrl = `https://selfidcard.in:8443/api/admin/distributor/AdminActivity?adminEmail=${encodeURIComponent(adminEmail)}`;
+             const activityData = await fetchData(activityUrl);
+
+          // Fetch user data (name and role)
+         const userNameUrl = `https://selfidcard.in:8443/api/admin/distributor/name?email=${encodeURIComponent(adminEmail)}`;
+             const userInfoUrl = `https://selfidcard.in:8443/api/admin/distributor/userInfo?email=${encodeURIComponent(adminEmail)}`;
+
+           const nameData = await fetchData(userNameUrl);
+           const userData = await fetchData(userInfoUrl);
+
+             if (!activityData || !nameData || !userData) {
+              console.error("Failed to fetch one or more data sources.");
+             return;
+          }
+
+      // Populate the table
+          activityData.forEach(activity => {
+              const row = document.createElement('tr');
+                 const amount = activity.type === 'TOKEN_CREATION' ? activity.closingBalance - activity.openingBalance : 0;
+                   row.innerHTML = `
+                  <td>${activity.id}</td>
+                  <td>${formatDate(activity.timestamp)}</td>
+                 <td>${nameData.name}</td>
+                 <td>${userData.phoneNumber || 'N/A'}</td>
+                <td>${activity.openingBalance || 'N/A'}</td>
+                 <td>${amount || 'N/A'}</td>
+                 <td>${activity.closingBalance || 'N/A'}</td>
+                  <td>${activity.type}</td>
+                 <td>${activity.transactionId || 'N/A'}</td>
+                  <td>${userData.role}</td>
+                 `;
+                  activityTableBody.appendChild(row);
+                  });
+
+            const datatable = document.querySelector('#activityTable');
+             if (datatable) {
+                   new simpleDatatables.DataTable(datatable, {
+                       perPageSelect: [5, 10, 15, ["All", -1]],
+                        columns: [{
+                          select: 2,
+                            sortSequence: ["desc", "asc"]
+                         },
+                            {
+                               select: 3,
+                               sortSequence: ["desc"]
+                         },
+                         {
+                               select: 4,
+                               cellClass: "green",
+                             headerClass: "red"
+                          }
+                          ]
+                   });
+                 }
+             }
+          fillActivityTable();
+
+    });
+</script>
+</body>
+</html>
