@@ -1,5 +1,3 @@
-//-------------------------------Create Tokens---------------------------------------------------------------------------
-
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('CreateTokenForm');
     const messageDiv = document.getElementById('tokenCreationMessage');
@@ -42,15 +40,57 @@ document.addEventListener('DOMContentLoaded', function() {
         })
             .then(response => response.json())
             .then(data => {
-            if (data.error) {
-                messageDiv.textContent = `Error: ${data.error}`;
-            } else {
-                messageDiv.textContent = data.message;
-            }
-        })
+                if (data.error) {
+                    messageDiv.textContent = `Error: ${data.error}`;
+                } else {
+                    messageDiv.textContent = data.message;
+                    // After successful token creation, fetch the updated token count
+                    fetchTokenCount();
+                }
+            })
             .catch(error => {
-            console.error('Error:', error);
-            messageDiv.textContent = 'An error occurred while creating tokens.';
-        });
+                console.error('Error:', error);
+                messageDiv.textContent = 'An error occurred while creating tokens.';
+            });
     });
+
+
+    function fetchTokenCount() {
+        const userEmail = sessionStorage.getItem('userEmail');
+
+        if (userEmail) {
+            const getWalletAddressUrl = `${API_URL}/api/admin/token/getWalletAddress?email=${encodeURIComponent(userEmail)}`;
+
+            fetch(getWalletAddressUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error('Error fetching wallet address:', data.error);
+                    } else {
+                        const phoneNumber = data.phoneNumber;
+                        const walletAddress = data.walletAddress;
+
+                        if (phoneNumber && walletAddress) {
+                            const getTokenCountUrl = `${API_URL}/api/admin/token/count?identifier=${encodeURIComponent(phoneNumber)}`;
+
+                            return fetch(getTokenCountUrl);
+                        } else {
+                            console.error('Phone number or wallet address not found in the response.');
+                            throw new Error('Phone number or wallet address not found');
+                        }
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.tokenCount !== undefined) {
+                        document.getElementById("tokenCount").textContent = data.tokenCount;
+                    } else {
+                        console.error('Error fetching token count:', data.error);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        } else {
+            console.error('User email is not found in session storage.');
+        }
+    }
 });
