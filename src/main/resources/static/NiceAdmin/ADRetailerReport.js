@@ -74,33 +74,41 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch(`${API_URL}/api/admin/distributor/AdminActivity?adminEmail=${userEmail}`)
             .then(response => response.json())
             .then(data => {
-            // Clear any existing activities
-            activityList.innerHTML = "";
+                // Clear any existing activities
+                activityList.innerHTML = "";
 
-            // Filter retailer-related activities
-            const retailerActivities = data.filter(activity =>
-            activity.type.includes("RETAILER_CREATION") ||
-            activity.type.includes("RETAILER_DELETION")
-            );
+                // Filter retailer-related activities (case insensitive)
+                const retailerActivities = data.filter(activity =>
+                    activity.type.toUpperCase().includes("RETAILER_CREATION") ||
+                    activity.type.toUpperCase().includes("RETAILER_DELETION") ||
+                    activity.type.toUpperCase().includes("RETAILER_ACTIVATION") ||
+                    activity.type.toUpperCase().includes("RETAILER_DEACTIVATES") ||
+                    activity.type.toUpperCase().includes("Retailer Created".toUpperCase()) // Ensures matching case differences
+                );
 
-            // Check if there are retailer-related activities
-            if (retailerActivities.length > 0) {
-                retailerActivities.forEach(activity => {
-                    // Determine the appropriate icon based on the activity type
-                    let iconSrc = "assets/img/DefaultIcon.png"; // Default icon
+                // Check if there are retailer-related activities
+                if (retailerActivities.length > 0) {
+                    retailerActivities.forEach(activity => {
+                        // Determine the appropriate icon based on the activity type
+                        let iconSrc = "assets/img/DefaultIcon.png"; // Default icon
 
-                    if (activity.type.includes("RETAILER_CREATION")) {
-                        iconSrc = "assets/img/CreateRetailer.png"; // Update with the correct path
-                    } else if (activity.type.includes("RETAILER_DELETION")) {
-                        iconSrc = "assets/img/Deleter.png"; // Update with the correct path
-                    }
+                        if (activity.type.toUpperCase().includes("RETAILER_CREATION") || activity.type.toUpperCase().includes("Retailer Created".toUpperCase())) {
+                            iconSrc = "assets/img/CreateRetailer.png"; // Update with the correct path
+                        } else if (activity.type.toUpperCase().includes("RETAILER_DELETION")) {
+                            iconSrc = "assets/img/Deleter.png"; // Update with the correct path
+                        } else if (activity.type.toUpperCase().includes("RETAILER_ACTIVATION")) {
+                            iconSrc = "assets/img/ActivateRetailer.png"; // Update with the correct path
+                        }else if (activity.type.toUpperCase().includes("RETAILER_DEACTIVATES")) {
+                            iconSrc = "assets/img/deactivate.png"; // Update with the correct path
+                        }
 
-                    // Create a new div element for each activity
-                    const activityItem = document.createElement("div");
-                    activityItem.className = "activity-item d-flex align-items-center";
 
-                    // Set the inner HTML of the activity item
-                    activityItem.innerHTML = `
+                        // Create a new div element for each activity
+                        const activityItem = document.createElement("div");
+                        activityItem.className = "activity-item d-flex align-items-center";
+
+                        // Set the inner HTML of the activity item
+                        activityItem.innerHTML = `
                             <div class="activity-icon">
                                 <img src="${iconSrc}" alt="${activity.type} icon" style="width: 24px; height: 24px; margin-right: 10px;">
                             </div>
@@ -111,18 +119,18 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                         `;
 
-                    // Append the activity item to the activity list
-                    activityList.appendChild(activityItem);
-                });
-            } else {
-                // No retailer-related activities found
-                activityList.innerHTML = "<p>No recent retailer activities found.</p>";
-            }
-        })
+                        // Append the activity item to the activity list
+                        activityList.appendChild(activityItem);
+                    });
+                } else {
+                    // No retailer-related activities found
+                    activityList.innerHTML = "<p>No recent retailer activities found.</p>";
+                }
+            })
             .catch(error => {
-            console.error("Error fetching activities:", error);
-            activityList.innerHTML = "<p>Failed to load activities.</p>";
-        });
+                console.error("Error fetching activities:", error);
+                activityList.innerHTML = "<p>Failed to load activities.</p>";
+            });
     }
 
     // Fetch activities on page load
