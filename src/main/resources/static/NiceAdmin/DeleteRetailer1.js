@@ -473,10 +473,25 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     };
 
-    // Function to handle deactivation of a retailer user
-    window.deactivateRetailer = function (email, creatorEmail) {
-        fetch(`${API_URL}/api/admin/retailer/delete?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}&requestingUserRole=DISTRIBUTOR`, {
-            method: 'POST'
+// Function to handle deactivation of a retailer user
+window.deactivateRetailer = function (email, creatorEmail) {
+    const userEmail = sessionStorage.getItem('userEmail');  // Assuming userEmail is available from sessionStorage
+    let userRole = '';
+
+    // Fetch the user's role before proceeding
+    fetch(`${API_URL}/api/admin/retailer/user-role?email=${userEmail}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.role) {
+                userRole = data.role;  // Store the role
+                // Proceed with the deactivation after fetching the role
+                return fetch(`${API_URL}/api/admin/retailer/delete?email=${encodeURIComponent(email)}&creatorEmail=${encodeURIComponent(creatorEmail)}&requestingUserRole=${encodeURIComponent(userRole)}`, {
+                    method: 'POST'
+                });
+            } else {
+                console.error('Error fetching user role');
+                return Promise.reject('Error fetching user role');
+            }
         })
         .then(response => response.json())
         .then(data => {
@@ -488,6 +503,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     icon: 'success',
                     confirmButtonText: 'OK'
                 }).then(() => {
+                    // After showing the success alert, refresh the table to reflect the new status
                     fetch(`${API_URL}/api/admin/retailer/listAllRetailer?adminEmail=${userEmail}`)
                         .then(response => response.json())
                         .then(retailers => populateRetailerTable(retailers)); // Update the table
@@ -517,7 +533,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 confirmButtonText: 'OK'
             });
         });
-    };
+};
 
     // Search functionality
     document.getElementById('searchInput').addEventListener('input', function () {

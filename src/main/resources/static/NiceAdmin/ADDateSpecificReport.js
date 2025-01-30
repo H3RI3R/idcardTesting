@@ -82,48 +82,53 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch(url)
             .then(response => response.json())
             .then(data => {
-            // Clear any existing activities
-            activityList.innerHTML = "";
+                // Clear any existing activities
+                activityList.innerHTML = "";
 
-            // Filter activities
-            const filteredActivities = data.filter(activity => {
-                const activityDate = new Date(activity.timestamp);
-                return (!startDate || activityDate >= new Date(startDate)) &&
-                (!endDate || activityDate <= new Date(endDate));
-            });
+                // Filter activities based on date range
+                const filteredActivities = data.filter(activity => {
+                    const activityDate = new Date(activity.timestamp).toISOString().split('T')[0];  // Extract the date part only
+                    const start = startDate ? new Date(startDate).toISOString().split('T')[0] : null;
+                    const end = endDate ? new Date(endDate).toISOString().split('T')[0] : null;
 
-            // Check if there are filtered activities
-            if (filteredActivities.length > 0) {
-                filteredActivities.forEach(activity => {
-                    // Determine the appropriate icon based on the activity type
-                    let iconSrc = "assets/img/DefaultIcon.png"; // Default icon
+                    return (
+                        (!start || activityDate >= start) &&  // Check if activity date is after or equal to start date
+                        (!end || activityDate <= end)        // Check if activity date is before or equal to end date
+                    );
+                });
 
-                    switch (activity.type) {
-                        case "TOKEN_SENT":
-                            iconSrc = "assets/img/SendToken.png";
-                            break;
-                        case "TOKEN_RECEIPT":
-                            iconSrc = "assets/img/RecievedToken.png";
-                            break;
-                        case "TOKEN_CREATION":
-                        case "DISTRIBUTOR_CREATION":
-                        case "RETAILER_CREATION":
-                            iconSrc = "assets/img/CreateRetailer.png";
-                            break;
-                        case "DISTRIBUTOR_DELETION":
-                        case "RETAILER_DELETION":
-                            iconSrc = "assets/img/Deleter.png";
-                            break;
-                        default:
-                            iconSrc = "assets/img/DefaultIcon.png"; // Fallback icon
-                    }
+                // Check if there are filtered activities
+                if (filteredActivities.length > 0) {
+                    filteredActivities.forEach(activity => {
+                        // Determine the appropriate icon based on the activity type
+                        let iconSrc = "assets/img/DefaultIcon.png"; // Default icon
 
-                    // Create a new div element for each activity
-                    const activityItem = document.createElement("div");
-                    activityItem.className = "activity-item d-flex align-items-center";
+                        switch (activity.type) {
+                            case "TOKEN_SENT":
+                                iconSrc = "assets/img/SendToken.png";
+                                break;
+                            case "TOKEN_RECEIPT":
+                                iconSrc = "assets/img/RecievedToken.png";
+                                break;
+                            case "TOKEN_CREATION":
+                            case "DISTRIBUTOR_CREATION":
+                            case "RETAILER_CREATION":
+                                iconSrc = "assets/img/CreateRetailer.png";
+                                break;
+                            case "DISTRIBUTOR_DELETION":
+                            case "RETAILER_DELETION":
+                                iconSrc = "assets/img/Deleter.png";
+                                break;
+                            default:
+                                iconSrc = "assets/img/DefaultIcon.png"; // Fallback icon
+                        }
 
-                    // Set the inner HTML of the activity item
-                    activityItem.innerHTML = `
+                        // Create a new div element for each activity
+                        const activityItem = document.createElement("div");
+                        activityItem.className = "activity-item d-flex align-items-center";
+
+                        // Set the inner HTML of the activity item
+                        activityItem.innerHTML = `
                             <div class="activity-icon">
                                 <img src="${iconSrc}" alt="${activity.type} icon" style="width: 24px; height: 24px; margin-right: 10px;">
                             </div>
@@ -134,18 +139,18 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                         `;
 
-                    // Append the activity item to the activity list
-                    activityList.appendChild(activityItem);
-                });
-            } else {
-                // No filtered activities found
-                activityList.innerHTML = "<p>No activities found for the selected date range.</p>";
-            }
-        })
+                        // Append the activity item to the activity list
+                        activityList.appendChild(activityItem);
+                    });
+                } else {
+                    // No filtered activities found
+                    activityList.innerHTML = "<p>No activities found for the selected date range.</p>";
+                }
+            })
             .catch(error => {
-            console.error("Error fetching activities:", error);
-            activityList.innerHTML = "<p>Failed to load activities.</p>";
-        });
+                console.error("Error fetching activities:", error);
+                activityList.innerHTML = "<p>Failed to load activities.</p>";
+            });
     }
 
     // Fetch activities on page load

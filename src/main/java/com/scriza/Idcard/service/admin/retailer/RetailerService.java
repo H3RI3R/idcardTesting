@@ -146,6 +146,14 @@ private ActivityRepository activityRepository;
             throw new RuntimeException("User not found");
         }
     }
+    public void logActivityDis(String type, String description, String userEmail) {
+        ActivityDis activity = new ActivityDis();
+        activity.setType(type);
+        activity.setDescription(description);
+        activity.setTimestamp(new Date());
+        activity.setUserEmail(userEmail);
+        activityRepositoryDis.save(activity);
+    }
     public void deleteRetailer(String email, String creatorEmail, String requestingUserRole) {
         User user = userRepository.findByEmail(email);
 
@@ -153,13 +161,13 @@ private ActivityRepository activityRepository;
             if (!user.isStatus()) {
                 throw new RuntimeException("Retailer is already deactivated.");
             }
-
             if ("ADMIN".equals(requestingUserRole)) {
-                deActivateRetailer(user);
+                deActivateRetailer(user);//jrv
                 logActivityAdmin("RETAILER_DEACTIVATES", "Deactivated retailer: " + email, creatorEmail);
             } else if ("DISTRIBUTOR".equals(requestingUserRole)) {
                 if (creatorEmail.equals(user.getCreatorEmail())) {
                     deActivateRetailer(user);
+                    logActivityDis("RETAILER_DEACTIVATES", "Deactivated retailer: " + email, creatorEmail);
                 } else {
                     throw new RuntimeException("Unauthorized to deactivate this retailer.");
                 }
