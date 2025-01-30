@@ -12,9 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Populate the HTML with the user data
             document.getElementById('nameFull').textContent = userData.name;
             document.getElementById('company').textContent = userData.company || 'Not Available';
-            document.getElementById('designation').textContent = userData.job || 'Not Available';
+            document.getElementById('designation').textContent = userData.role || 'Not Available';
             document.getElementById('role').textContent = userData.role || 'Not Available';
-            document.getElementById('address').textContent = userData.address || 'Not Available';
+            document.getElementById('address').textContent = userData.companyAddress || 'Not Available';
             document.getElementById('phone').textContent = userData.phoneNumber || 'Not Available';
             document.getElementById('email').textContent = userData.email;
 

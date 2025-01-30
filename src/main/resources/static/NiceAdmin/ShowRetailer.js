@@ -416,78 +416,67 @@ function getSessionEmail() {
     return sessionStorage.getItem('userEmail');
 }
 //----------------------------------Show Token retiler  Api ----------------------------------
-document.addEventListener('DOMContentLoaded', function () {
-    const creatorEmail = sessionStorage.getItem('userEmail'); // Get the creatorEmail from session storage
+// Fetch and display retailers table
+function fetchAndDisplayRetailers() {
+    const creatorEmail = sessionStorage.getItem('userEmail'); // Get the creator's email from session storage
     const retailerTableBody = document.getElementById('retailerTableBody');
-    const tokenTableBody = document.getElementById('tokenTableBody');
 
-    // Clear existing rows before populating new data
-    retailerTableBody.innerHTML = '';
-    tokenTableBody.innerHTML = '';
-
-    if (creatorEmail) {
-        // Fetch retailer data
-        fetch(`${API_URL}/api/admin/retailer/list-by-creator?creatorEmail=${creatorEmail}`)
-            .then(response => response.json())
-            .then(data => {
-                const retailers = data.retailers;
-
-                if (retailers && Array.isArray(retailers)) {
-                    // Create a map of retailers for quick lookup
-                    const retailerMap = new Map();
-                    retailers.forEach(retailer => {
-                        retailerMap.set(retailer.email, retailer);
-                    });
-
-                    // Populate retailer table
-                    retailers.forEach(retailer => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${retailer.id || 'null'}</td>
-                            <td>${retailer.name || 'null'}</td>
-                            <td>${retailer.designation || 'null'}</td>
-                            <td>${retailer.email || 'null'}</td>
-                            <td>${retailer.phoneNumber || 'null'}</td>
-                            <td>${retailer.companyAddress || 'null'}</td>
-                        `;
-                        retailerTableBody.appendChild(row);
-                    });
-
-                    // Fetch token data
-                    fetch(`${API_URL}/api/admin/token/tokens?email=${creatorEmail}`)
-                        .then(response => response.json())
-                        .then(tokens => {
-                            // Create a map of tokens for quick lookup
-                            const tokenMap = new Map();
-                            tokens.forEach(token => {
-                                tokenMap.set(token.userEmail, token.tokenAmount);
-                            });
-
-                            // Populate token table
-                            retailers.forEach(retailer => {
-                                const tokenAmount = tokenMap.get(retailer.email) || 'null';
-                                const tokenRow = document.createElement('tr');
-                                tokenRow.innerHTML = `
-                                    <td>${retailer.name || 'null'}</td>
-                                    <td>${retailer.email || 'null'}</td>
-                                    <td>${retailer.phoneNumber || 'null'}</td>
-                                    <td>${tokenAmount}</td>
-                                `;
-                                tokenTableBody.appendChild(tokenRow);
-                            });
-                        })
-                        .catch(error => console.error('Error fetching token data:', error));
-                } else {
-                    console.error('No retailers found or data format is incorrect.');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching retailer data:', error);
-            });
-    } else {
-        console.error('Creator email not found in session storage.');
+    if (!creatorEmail) {
+        console.error('Creator email is not set in session storage.');
+        return;
     }
-});
+
+    fetch(`${API_URL}/api/admin/retailer/list-by-creator?creatorEmail=${encodeURIComponent(creatorEmail)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            retailerTableBody.innerHTML = ''; // Clear existing rows
+            const retailers = data.retailers;
+            if(retailers && retailers.length > 0){
+                   retailers.forEach(retailer => {
+                    // Fetch token amount for each retailer
+                    fetch(`${API_URL}/api/admin/token/tokens?email=${encodeURIComponent(creatorEmail)}`)
+                        .then(tokenResponse => {
+                             if (!tokenResponse.ok) {
+                                  throw new Error(`Network response was not ok: ${tokenResponse.statusText}`);
+                             }
+                                return tokenResponse.json();
+                        })
+                        .then(tokenData => {
+
+                            // Find the specific retailer's token amount
+                            const retailerTokenInfo = tokenData.find(token => token.userEmail === retailer.email);
+                            const tokenAmount = retailerTokenInfo ? retailerTokenInfo.tokenAmount : 0;
+                             const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${retailer.id}</td>
+                                <td>${retailer.name || 'N/A'}</td>
+                                <td>${retailer.creatorEmail || 'N/A'}</td>
+                                <td>${retailer.email}</td>
+                                <td>${retailer.phoneNumber || 'N/A'}</td>
+                                <td>${retailer.companyAddress || 'N/A'}</td>
+                                <td>${tokenAmount}</td>
+                            `;
+                            retailerTableBody.appendChild(row);
+                         })
+                        .catch(error => {
+                        console.error('Error fetching token data:', error);
+                     });
+                });
+            }else{
+                console.error('No retailers found or data format is incorrect.');
+            }
+
+        })
+        .catch(error => {
+            console.error('Error fetching retailers:', error);
+        });
+}
+ fetchAndDisplayRetailers();
 //----------------------------------Logout Api ----------------------------------
 
 document.addEventListener("DOMContentLoaded", function() {
