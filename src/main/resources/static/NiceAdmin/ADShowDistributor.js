@@ -468,7 +468,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <td>${distributor.creatorEmail || 'N/A'}</td>
                             <td>${distributor.email}</td>
                             <td>${distributor.phoneNumber}</td>
-                            <td>${distributor.address || 'N/A'}</td>
+                            <td>${distributor.companyAddress || 'N/A'}</td>
                             <td>${distributor.password}</td>
 
                             <td>${tokenData.tokenCount}</td>
@@ -480,56 +480,75 @@ document.addEventListener('DOMContentLoaded', function () {
         .catch(error => console.error('Error fetching distributor data:', error));
 });
 //----------------------------------Search dis Api ----------------------------------
-document.getElementById('searchDistributorForm').addEventListener('submit', function (event) {
-    event.preventDefault();
+  document.getElementById('searchDistributorForm').addEventListener('submit', function (event) {
+     event.preventDefault();
 
-    const email = document.getElementById('inputEmail').value;
-    const confirmationSection = document.getElementById('confirmationSection');
-    const distributorTable = document.getElementById('distributorTable');
+     const email = document.getElementById('inputEmail').value;
+     const emailError = document.getElementById('emailError');
+        const errorModal = document.getElementById('errorModal')
+        const modalMessage = document.getElementById('modalMessage');
+     const confirmationSection = document.getElementById('confirmationSection');
+     const distributorTable = document.getElementById('distributorTable');
 
-    // Clear the table before adding new results
-    distributorTable.innerHTML = '';
+     // Clear the table before adding new results
+     distributorTable.innerHTML = '';
 
-    // Fetch distributor info by email
-    fetch(`${API_URL}/api/admin/distributor/userInfo?email=${email}`)
-        .then(response => {
-            if (!response.ok) {
-                // If the response is not ok (status code outside 200-299)
-                if (response.status === 400) {
-                    // Handle "No user found" case
-                    alert('No user found with the provided email.');
-                }
-                throw new Error('User not found or bad request');
-            }
-            return response.json();
-        })
-        .then(distributor => {
-            // Fetch token count for the distributor
-            fetch(`${API_URL}/api/admin/token/count?identifier=${distributor.phoneNumber}`)
-                .then(response => response.json())
-                .then(tokenData => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${distributor.id}</td>
-                        <td>${distributor.name}</td>
-                        <td>${distributor.email}</td>
-                        <td>${distributor.company || '-'}</td>
-                        <td>${tokenData.tokenCount}</td>
-                        <td>${distributor.phoneNumber}</td>
-                    `;
-                    distributorTable.appendChild(row);
-                    confirmationSection.style.display = 'block';
-                })
-                .catch(error => console.error('Error fetching token data:', error));
-        })
-        .catch(error => {
-            console.error('Error fetching distributor data:', error);
-            // Optionally handle other errors here
-        });
+     // Simple email validation using regex
+     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+     if (!emailRegex.test(email)) {
+         emailError.style.display = 'block';
+         return; // Stop the form submission if email is invalid
+     } else {
+         emailError.style.display = 'none';
+     }
 
-    // Clear the form input
-    document.getElementById('inputEmail').value = '';
-});
+     // Fetch distributor info by email
+         fetch(`${API_URL}/api/admin/distributor/userInfo?email=${email}`)
+             .then(response => {
+                 if (!response.ok) {
+                     // If the response is not ok (status code outside 200-299)
+                    if (response.status === 400) {
+                     // Show modal with error message
+                     modalMessage.textContent = 'Distributor not found with this email.';
+                     errorModal.style.display = 'block';
+                     return; // Stop processing further
+                 }
+                  throw new Error(`HTTP error! status: ${response.status}`);
+               }
+                 return response.json();
+             })
+             .then(distributor => {
+                 // Fetch token count for the distributor
+                 fetch(`${API_URL}/api/admin/token/count?identifier=${distributor.phoneNumber}`)
+                     .then(response => response.json())
+                     .then(tokenData => {
+                         const row = document.createElement('tr');
+                         row.innerHTML = `
+                             <td>${distributor.id}</td>
+                             <td>${distributor.name}</td>
+                             <td>${distributor.email}</td>
+                             <td>${distributor.company || '-'}</td>
+                             <td>${tokenData.tokenCount}</td>
+                             <td>${distributor.phoneNumber}</td>
+                         `;
+                         distributorTable.appendChild(row);
+                         confirmationSection.style.display = 'block';
+                     })
+                     .catch(error => console.error('Error fetching token data:', error));
+             })
+             .catch(error => {
+                 console.error('Error fetching distributor data:', error);
+                  modalMessage.textContent = 'Distributor is not found by this email.';
+                 errorModal.style.display = 'block';
+                 // Optionally handle other errors here
+             });
+
+         // Clear the form input
+       document.getElementById('inputEmail').value = '';
+ });
+   function closeModal() {
+         document.getElementById('errorModal').style.display = 'none';
+     }
 //----------------------------------Logout Api ----------------------------------
 
 document.addEventListener("DOMContentLoaded", function() {

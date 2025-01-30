@@ -4,17 +4,255 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link href="assets/css/loginStyle.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* Prevent scrollbars */
+        }
 
+        .container {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            background-color: #ffffff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+        }
+        .container.loaded{
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .image-container {
+            flex: 1;
+            overflow: hidden;
+            border-radius: 15px 0 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(80%);
+            transition: filter 0.3s ease-in-out;
+
+        }
+        .image-container:hover img {
+            filter: brightness(100%);
+        }
+
+        .form-container {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-container h2 {
+            color: #4a4a4a;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 500;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .form-container h2::before{
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background-color: #9CB4CC;
+            border-radius: 2px;
+        }
+        .input-group {
+            width: 100%;
+            margin-bottom: 25px;
+             display: flex;
+              flex-direction: column;
+              gap: 5px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #777;
+            font-size: 0.9rem;
+            transform: translateY(0);
+            transition: transform 0.3s ease-in-out;
+            pointer-events: none;
+            text-align: left;
+        }
+
+        .input-group input{
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            width: calc(100% - 34px); /* Adjusted for label transition space */
+            outline: none;
+            transition: border-color 0.3s ease-in-out;
+            font-size: 1rem;
+        }
+
+
+        .input-group input:focus {
+            border-color: #9CB4CC;
+        }
+        .input-group input:focus + label{
+              color: #9CB4CC;
+           }
+
+
+        .login-button {
+            background-color: #9CB4CC;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+            font-size: 1rem;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .login-button:hover {
+            background-color: #7995A8;
+        }
+
+        #forgotPasswordLink {
+            display: block;
+            margin-top: 15px;
+            color: #9CB4CC;
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.9rem;
+            transition: color 0.3s ease-in-out;
+        }
+        #forgotPasswordLink:hover {
+            color: #7995A8;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5); /* Black background with transparency */
+             backdrop-filter: blur(5px);
+        }
+         .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+              box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+             position: relative;
+        }
+         .modal-content p {
+            margin: 15px 0;
+            font-size: 1rem;
+            color: #4a4a4a;
+        }
+
+
+         .modal-content .close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .modal-content .close:hover,
+        .modal-content .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+          .modal-content p {
+            margin: 10px 0;
+            font-size: 1rem;
+            color: #4a4a4a;
+             padding: 10px 20px;
+          border-radius: 5px;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease;
+        }
+         .modal-content p:hover{
+                background-color: #f0f0f0;
+         }
+
+
+
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+<!--            background: linear-gradient(45deg, #e0b0ff, #a0f0ff, #f0ffa0, #ffa0a0);-->
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            z-index: -1;
+        }
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .image-container {
+                border-radius: 15px 15px 0 0;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="container">
+<div class="background-overlay"></div>
+<div class="container" id="loginContainer" style="
+    height: 600px;
+">
     <div class="image-container">
-        <img src="https://images.pexels.com/photos/2033997/pexels-photo-2033997.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" alt="Background Image">
+        <img src="https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Login Background">
     </div>
     <div class="form-container">
         <h2>Login</h2>
-        <form id="loginForm">
+        <form id="loginForm" style="width:70%">
             <div class="input-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" class="form-control" required>
@@ -26,99 +264,78 @@
             <button type="submit" class="login-button">Login</button>
             <a href="#" id="forgotPasswordLink">Forgot your password?</a>
         </form>
-        <form id="forgotPasswordForm" class="hidden">
-            <div class="input-group">
-                <label for="resetEmail">Enter your email</label>
-                <input type="email" id="resetEmail" name="resetEmail" required>
-            </div>
-            <button type="submit" class="login-button">Submit</button>
-        </form>
-
-        <form id="otpForm" class="hidden">
-            <div class="input-group">
-                <label for="otp">Enter OTP</label>
-                <input type="text" id="otp" name="otp" required>
-            </div>
-            <button type="submit" class="login-button">Verify OTP</button>
-        </form>
-
-        <form id="resetPasswordForm" class="hidden">
-            <div class="input-group">
-                <label for="newPassword">Enter New Password</label>
-                <input type="password" id="newPassword" name="newPassword" required>
-            </div>
-            <div class="input-group">
-                <label for="confirmPassword">Re-enter New Password</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" required>
-            </div>
-            <button type="submit" class="login-button">Reset Password</button>
-        </form>
     </div>
 </div>
-<div class="modal" id="inactiveModal" style="display: none;">
+
+<!-- Modal for displaying inactive account message -->
+<div class="modal" id="inactiveModal">
     <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
+        <span class="close" onclick="closeModal()">×</span>
         <p id="modalMessage"></p>
     </div>
 </div>
 
 <script src="config.js"></script>
 <script>
+    // Timeout function to make the form visible after 1 sec
+    setTimeout(() => {
+        document.getElementById('loginContainer').classList.add('loaded');
+    }, 1000);
 
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-               event.preventDefault(); // Prevent form from submitting the traditional way
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent form from submitting the traditional way
 
-               const email = document.getElementById('email').value;
-               const password = document.getElementById('password').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
-               fetch(`${API_URL}/api/login`, {
-                   method: 'POST',
-                   headers: {
-                       'Content-Type': 'application/x-www-form-urlencoded'
-                   },
-                   body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-               })
-               .then(response => {
-                   if (!response.ok) {
-                       throw new Error('Network response was not ok');
-                   }
-                   return response.json();
-               })
-               .then(data => {
-                   if (data.status === "true") { // User is active
-                       // Store email in session storage and redirect based on role
-                       sessionStorage.setItem('userEmail', email);
-                       switch (data.role) {
-                           case 'ADMIN':
-                               window.location.href = './Adindex.html';
-                               break;
-                           case 'DISTRIBUTOR':
-                               window.location.href = './index.html';
-                               break;
-                           case 'RETAILER':
-                               window.location.href = './rindex.html';
-                               break;
-                           default:
-                               alert('Unknown user role');
-                       }
-                   } else if (data.status === "false") { // User is inactive
-                       // Show modal with inactive account message
-                       document.getElementById('modalMessage').textContent = data.message || "Your account is inactive.";
-                       document.getElementById('inactiveModal').style.display = 'block';
-                   } else {
-                       alert(data.error || 'Login failed. Please try again.');
-                   }
-               })
-               .catch(error => {
-                   console.error('There was a problem with the fetch operation:', error);
-                   alert('Login failed. Please try again.');
-               });
-           });
+        fetch(`${API_URL}/api/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === "true") { // User is active
+                    // Store email in session storage and redirect based on role
+                    sessionStorage.setItem('userEmail', email);
+                    switch (data.role) {
+                        case 'ADMIN':
+                            window.location.href = './Adindex.html';
+                            break;
+                        case 'DISTRIBUTOR':
+                            window.location.href = './index.html';
+                            break;
+                        case 'RETAILER':
+                            window.location.href = './rindex.html';
+                            break;
+                        default:
+                            alert('Unknown user role');
+                    }
+                } else if (data.status === "false") { // User is inactive
+                    // Show modal with inactive account message
+                    document.getElementById('modalMessage').textContent = data.message || "Your account is inactive.";
+                    document.getElementById('inactiveModal').style.display = 'block';
+                } else {
+                    alert(data.error || 'Login failed. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+                alert('Login failed. Please try again.');
+            });
+    });
 
-           // Function to close the modal
-           function closeModal() {
-               document.getElementById('inactiveModal').style.display = 'none';
-           }
+    // Function to close the modal
+    function closeModal() {
+        document.getElementById('inactiveModal').style.display = 'none';
+    }
 </script>
 </body>
 </html>

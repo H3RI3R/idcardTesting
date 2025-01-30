@@ -381,19 +381,44 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 //----------------------------------Search  retiler  Api ----------------------------------
-
-document.getElementById('deleteRetailerForm').addEventListener('submit', async function(event) {
+ document.getElementById('deleteRetailerForm').addEventListener('submit', async function(event) {
     event.preventDefault(); // Prevent form submission
 
     const email = document.getElementById('inputEmail').value;
+    const emailError = document.getElementById('emailError');
+      const confirmationSection = document.getElementById('confirmationSection');
+      const errorModal = document.getElementById('errorModal')
+       const modalMessage = document.getElementById('modalMessage');
     const sessionEmail = getSessionEmail(); // You need to implement this function to get the session email
+
+         // Simple email validation using regex
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            emailError.style.display = 'block';
+            return; // Stop the form submission if email is invalid
+        } else {
+            emailError.style.display = 'none';
+        }
 
     try {
         // Fetch retailer information
         const retailerResponse = await fetch(`${API_URL}/api/admin/distributor/userInfo?email=${encodeURIComponent(email)}`);
-        const retailerData = await retailerResponse.json();
 
-        if (retailerResponse.ok && retailerData) {
+
+        if (!retailerResponse.ok) {
+                if (retailerResponse.status === 400) {
+                    // Show modal with error message
+                    modalMessage.textContent = 'Retailer not found with this email.';
+                    errorModal.style.display = 'block';
+                    return; // Stop processing further
+                }
+              throw new Error(`HTTP error! status: ${retailerResponse.status}`);
+          }
+         const retailerData = await retailerResponse.json();
+
+
+
+        if (retailerData) {
             // Fetch token amount
             const tokenResponse = await fetch(`${API_URL}/api/admin/token/tokens?email=${encodeURIComponent(sessionEmail)}`);
             const tokenData = await tokenResponse.json();
@@ -419,13 +444,15 @@ document.getElementById('deleteRetailerForm').addEventListener('submit', async f
             retailerTable.appendChild(row);
 
             // Show the confirmation section
-            document.getElementById('confirmationSection').style.display = 'block';
+           confirmationSection.style.display = 'block';
         } else {
-            alert('Retailer not found or error fetching data');
+             modalMessage.textContent = 'Retailer not found by this email';
+                errorModal.style.display = 'block';
         }
     } catch (error) {
         console.error('Error fetching retailer or token data:', error);
-        alert('An error occurred while fetching the data.');
+          modalMessage.textContent = 'An error occurred while fetching the data.';
+                errorModal.style.display = 'block';
     }
 });
 
@@ -434,6 +461,9 @@ function getSessionEmail() {
     // For example, if you store the session email in localStorage or sessionStorage
     return sessionStorage.getItem('userEmail');
 }
+  function closeModal() {
+        document.getElementById('errorModal').style.display = 'none';
+    }
 //----------------------------------Show Token retiler  Api ----------------------------------
 
 //----------------------------------Show Table Api ----------------------------------
