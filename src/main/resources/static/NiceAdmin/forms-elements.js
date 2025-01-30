@@ -6,12 +6,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 //------------------------------------ Active page fucntion ---------------------------------------
 /**
- * Template Name: NiceAdmin
- * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
- * Updated: Apr 20 2024 with Bootstrap v5.3.3
- * Author: BootstrapMade.com
- * License: https://bootstrapmade.com/license/
- */
+* Template Name: NiceAdmin
+* Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+* Updated: Apr 20 2024 with Bootstrap v5.3.3
+* Author: BootstrapMade.com
+* License: https://bootstrapmade.com/license/
+*/
 
 (function() {
     "use strict";
@@ -324,8 +324,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 })();
-//-------------------------------------------------------
-
+    //-------------------------------------------------------
+ function fetchUserInfo(email) {
+   if (!email) {
+     alert('You are on a guest profile');
+     return;
+   }
+   const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
+   fetch(apiUrl)
+     .then(response => response.json())
+     .then(data => {
+               document.getElementById("userRole").innerText = data.role || "N/A";
+     })
+     .catch(error => {
+       console.error("Error fetching user info:", error);
+       alert("An error occurred while fetching user information.");
+     });
+ }
+ const userEmail = sessionStorage.getItem('userEmail');
+ fetchUserInfo(userEmail);
 //------------------------------------Create retailer api ---------------------------------------
 document.getElementById('createRetailerForm').addEventListener('submit', function(event) {
     event.preventDefault();
@@ -348,17 +365,39 @@ document.getElementById('createRetailerForm').addEventListener('submit', functio
         return;
     }
 
-    const phoneNumberPattern = /^\d{10}$/;
-    if (!phoneNumberPattern.test(phoneNumber)) {
-        alert("Error: Phone number must be exactly 10 digits.");
-        return;
-    }
-
+    // Email validation
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
-        alert("Error: Please enter a valid email address.");
-        return;
+      alert("Error: Please enter a valid email address (e.g., example@example.com).");
+      return;
     }
+
+    // Mobile number validation
+    const phoneNumberPattern = /^\d{10}$/;
+    if (!phoneNumberPattern.test(phoneNumber)) {
+      alert("Error: Phone number must be exactly 10 digits.");
+      return;
+    }
+
+       // PAN card validation
+        const panCardPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+        if (!panCardPattern.test(panCardNo)) {
+            alert("Error: Please enter a valid PAN card number (e.g., ABCDE1234F).");
+            return;
+        }
+    // Aadhaar card validation
+    const aadharCardPattern = /^\d{4}\s\d{4}\s\d{4}$/;
+        if (!aadharCardPattern.test(aadharCardNo)) {
+          alert("Error: Please enter a valid Aadhaar card number (e.g., 1234 5678 9012).");
+          return;
+        }
+
+        // State pincode validation
+        const statePincodePattern = /^\d{6}$/;
+        if (!statePincodePattern.test(statePincode)) {
+            alert("Error: State pincode must be exactly 6 digits.");
+            return;
+        }
 
     // Send data to the API
     fetch(`${API_URL}/api/admin/retailer/create`, {
@@ -381,23 +420,22 @@ document.getElementById('createRetailerForm').addEventListener('submit', functio
 
         })
     })
-        .then(response => response.json())
-           .then(data => {
-               if (data.message) {
-                   document.getElementById('modalMessage').innerText = data.message;
-                   new bootstrap.Modal(document.getElementById('successModal')).show();
-                   document.querySelector('form').reset(); // Clear the form
-               } else if (data.error) {
-                   document.getElementById('modalMessage').innerText = data.error;
-                   new bootstrap.Modal(document.getElementById('successModal')).show();
-               }
-           })
-           .catch(error => {
-               document.getElementById('modalMessage').innerText = `Something went wrong: ${error}`;
-               new bootstrap.Modal(document.getElementById('successModal')).show();
-           });
-        });
-
+   .then(response => response.json())
+   .then(data => {
+       if (data.message) {
+           document.getElementById('modalMessage').innerText = data.message;
+           new bootstrap.Modal(document.getElementById('successModal')).show();
+           document.querySelector('form').reset(); // Clear the form
+       } else if (data.error) {
+           document.getElementById('modalMessage').innerText = data.error;
+           new bootstrap.Modal(document.getElementById('successModal')).show();
+       }
+   })
+   .catch(error => {
+       document.getElementById('modalMessage').innerText = `Something went wrong: ${error}`;
+       new bootstrap.Modal(document.getElementById('successModal')).show();
+   });
+});
 //----------------------------------fetch UserName Api ----------------------------------
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -442,23 +480,3 @@ document.addEventListener("DOMContentLoaded", function() {
         window.location.href = './login.html'; // Redirect to login page or any other page
     });
 });
-
-//----------------------------------User Info Api ----------------------------------
-function fetchUserInfo(email) {
-   if (!email) {
-     alert('You are on a guest profile');
-     return;
-   }
-   const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
-   fetch(apiUrl)
-     .then(response => response.json())
-     .then(data => {
-               document.getElementById("userRole").innerText = data.role || "N/A";
-     })
-     .catch(error => {
-       console.error("Error fetching user info:", error);
-       alert("An error occurred while fetching user information.");
-     });
- }
- const userEmail = sessionStorage.getItem('userEmail');
- fetchUserInfo(userEmail);

@@ -109,76 +109,88 @@ function fetchUserInfo(email) {
 }
 
 //-------------------------------------- Transaction Status Table API -------------------------------------------
+// Function to fetch and display transactions
 function fetchAndDisplayTransactions() {
-  const transactionTableBody = document.getElementById('transactionTableBody');
-  const searchInput = document.getElementById('searchTransactionId');
+    const transactionTableBody = document.getElementById('transactionTableBody');
+    const searchInput = document.getElementById('searchTransactionId');
+    const userEmail = sessionStorage.getItem('userEmail');
 
-  fetch(`${API_URL}/api/admin/distributor/getTransactionRequests?creatorEmail=${userEmail}&userEmail=${userEmail}`)
-    .then(handleResponseError)
-    .then(response => response.json())
-    .then(data => {
-      transactionTableBody.innerHTML = ''; // Clear the table body
+    fetch(`${API_URL}/api/admin/distributor/getTransactionRequests?creatorEmail=${userEmail}&userEmail=${userEmail}`)
+        .then(handleResponseError)
+        .then(response => response.json())
+        .then(data => {
+            transactionTableBody.innerHTML = ''; // Clear the table body
 
-        // Filter the data based on search input
-        const filteredData = data.filter(transaction =>
-          !searchInput.value || transaction.transactionId.includes(searchInput.value)
-        );
+            // Filter the data based on search input
+            const filteredData = data.filter(transaction =>
+                !searchInput.value || transaction.transactionId.includes(searchInput.value)
+            );
 
-      filteredData.forEach((transaction, index) => {
-         let type = transaction.userEmail === userEmail ? 'Request Sent' :
-             transaction.creatorEmail === userEmail ? 'Request Received' : '';
-        const date = new Date(transaction.timestamp).toLocaleDateString();
-         let statusImage = '';
-         switch (transaction.status) {
-             case 'Pending': statusImage = 'assets/img/pending.png'; break;
-             case 'Rejected': statusImage = 'assets/img/rejected.png'; break;
-             case 'Accepted': statusImage = 'assets/img/success.png'; break;
-             default: statusImage = 'assets/img/default.png';
-         }
+            filteredData.forEach((transaction, index) => {
+                let type = transaction.userEmail === userEmail ? 'Request Sent' :
+                    transaction.creatorEmail === userEmail ? 'Request Received' : '';
+                const date = new Date(transaction.timestamp).toLocaleDateString();
+                let statusImage = '';
+                switch (transaction.status) {
+                    case 'Pending':
+                        statusImage = 'assets/img/pending.png';
+                        break;
+                    case 'Rejected':
+                        statusImage = 'assets/img/rejected.png';
+                        break;
+                    case 'Accepted':
+                        statusImage = 'assets/img/success.png';
+                        break;
+                    default:
+                        statusImage = 'assets/img/default.png';
+                }
 
 
-         const row = `
-           <tr>
-             <td>${index + 1}</td>
-             <td>${date}</td>
-             <td>${Math.round(transaction.amount)}</td>
-             <td><img src="${statusImage}" alt="${transaction.status}" style="height: 20px;"></td>
-             <td>${transaction.transactionId}</td>
-             <td>${type}</td>
-              <td>
-                   ${transaction.status === 'Pending' && type === 'Request Received' ? `
-                      <button class="btn btn-sm btn-success me-2" onclick="updateStatusAndSendToken('${transaction.transactionId}', '${transaction.userEmail}')">Accept</button>
-                      <button class="btn btn-sm btn-danger" onclick="updateStatus('${transaction.transactionId}', 'Rejected')">Reject</button>
-                     ` : ''}
-               </td>
-             </tr>
-           `;
-        transactionTableBody.innerHTML += row;
-      });
-    })
-    .catch(error => console.error('Error fetching transaction requests:', error));
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${date}</td>
+                        <td>${Math.round(transaction.amount)}</td>
+                        <td><img src="${statusImage}" alt="${transaction.status}" style="height: 20px;"></td>
+                        <td>${transaction.transactionId}</td>
+                        <td>${type}</td>
+                         <td>
+                            ${transaction.status === 'Pending' && type === 'Request Received' ? `
+                               <button class="btn btn-sm btn-success me-2" onclick="updateStatusAndSendToken('${transaction.transactionId}', '${transaction.userEmail}')">Accept</button>
+                               <button class="btn btn-sm btn-danger" onclick="updateStatus('${transaction.transactionId}', 'Rejected')">Reject</button>
+                             ` : ''}
+                        </td>
+                    </tr>
+                `;
+                transactionTableBody.innerHTML += row;
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching transaction requests:', error);
+            showAlert('error', 'An error occurred while fetching transactions');
+        });
 }
 
 
 // Function to update transaction status
 window.updateStatus = function (transactionId, status) {
-  fetch(`${API_URL}/api/admin/distributor/updateTransactionStatus?transactionId=${transactionId}&status=${status}`, {
-    method: 'POST'
-  })
-      .then(handleResponseError)
-      .then(response => response.json())
-      .then(data => {
-        if (data.message) {
-            showAlert('success', `Transaction ${status.toLowerCase()} successfully!`);
-             fetchAndDisplayTransactions();
-        } else {
-            showAlert('error', data.error || 'An error occurred');
-        }
-      })
-      .catch(error => {
-         showAlert('error', 'An error occurred while updating the status');
-          console.error('Error:', error);
-      });
+    fetch(`${API_URL}/api/admin/distributor/updateTransactionStatus?transactionId=${transactionId}&status=${status}`, {
+        method: 'POST'
+    })
+        .then(handleResponseError)
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                showAlert('success', `Transaction ${status.toLowerCase()} successfully!`);
+                fetchAndDisplayTransactions();
+            } else {
+                showAlert('error', data.error || 'An error occurred');
+            }
+        })
+        .catch(error => {
+            showAlert('error', 'An error occurred while updating the status');
+            console.error('Error:', error);
+        });
 };
 
 // Function to fetch token amount
@@ -199,42 +211,60 @@ function fetchTokenAmount(transactionId) {
         });
 }
 
+
 // Function to update transaction status and send tokens
 window.updateStatusAndSendToken = function (transactionId, recipientEmail) {
+    let tokenAmount;
     fetchTokenAmount(transactionId)
-        .then(tokenAmount => {
+        .then(amount => {
+            tokenAmount = amount;
             if (tokenAmount <= 0 || isNaN(tokenAmount)) {
                 throw new Error('Invalid token amount.');
-            }
-            return fetch(`${API_URL}/api/admin/distributor/updateTransactionStatus?transactionId=${transactionId}&status=Accepted`, {
-              method: 'POST'
-            });
-        })
-        .then(handleResponseError)
-        .then(response => response.json())
-        .then(statusData => {
-            if (!statusData.message) {
-                throw new Error(statusData.error || 'An error occurred while updating the status');
             }
             return fetch(`${API_URL}/api/admin/token/send?senderIdentifier=${userEmail}&amount=${tokenAmount}&recipient=${recipientEmail}`, {
                 method: 'POST'
             });
         })
-      .then(handleResponseError)
+        .then(handleResponseError)
         .then(response => response.json())
-        .then(tokenData => {
+         .then(tokenData => {
             if (tokenData.message) {
-                showAlert('success', 'Token sent successfully!');
-                fetchAndDisplayTransactions();
+                return fetch(`${API_URL}/api/admin/distributor/updateTransactionStatus?transactionId=${transactionId}&status=Accepted`, {
+                    method: 'POST'
+                })
+                    .then(handleResponseError)
+                    .then(response => response.json())
+                    .then(statusData => {
+                        if (statusData.message) {
+                            showAlert('success', 'Token sent successfully!');
+                            fetchAndDisplayTransactions();
+                        } else {
+                            throw new Error(statusData.error || 'An error occurred while updating the status');
+                        }
+
+                    })
+
             } else {
-               showAlert('error', tokenData.error || 'An error occurred while sending the token');
+                throw new Error(tokenData.error || 'An error occurred while sending the token');
             }
+
         })
-        .catch(error => {
+         .catch(error => {
             showAlert('error', error.message || 'An error occurred');
              console.error('Error:', error);
-        });
+         });
 };
+
+
+
+// Helper function to handle errors
+function handleResponseError(response) {
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response;
+}
+
 
 // Refresh button event listener
 document.getElementById('refreshButton').addEventListener('click', fetchAndDisplayTransactions);
@@ -242,133 +272,201 @@ document.getElementById('refreshButton').addEventListener('click', fetchAndDispl
 // Search input event listener
 document.getElementById('searchTransactionId').addEventListener('input', fetchAndDisplayTransactions);
 
-
+// Initial fetch
+document.addEventListener('DOMContentLoaded', fetchAndDisplayTransactions);
 //-------------------------------------- Create Transaction Request API -------------------------------------------
  //  ------------------------------Create transection request api------------------------------------------
 document.addEventListener("DOMContentLoaded", function() {
-  const doneButton = document.getElementById("bankDoneButton1");
-  const doneButton1 = document.getElementById("upiDoneButton1");
+    const doneButton = document.getElementById("bankDoneButton1");
+    const doneButton1 = document.getElementById("upiDoneButton1");
 
-  let isBankAccountAvailable = false;
-  let isUPIAccountAvailable = false;
+    let isBankAccountAvailable = false;
+    let isUPIAccountAvailable = false;
 
-  // Function to update the flags based on account availability
-  function checkAccountAvailability() {
-    isBankAccountAvailable = document.getElementById("bankAccountsContainer").innerHTML.trim() !== "<p>No Active Bank Account Available. Please Select Another Option.</p>";
-    isUPIAccountAvailable = document.getElementById("upiAccountsContainer").innerHTML.trim() !== "<p>No Active UPI Account Available. Please Select Another Option.</p>";
-  }
-
-  // Bank Transfer Done Button
-  doneButton.addEventListener("click", function() {
-    checkAccountAvailability(); // Ensure flags are updated before validation
-
-    const transactionID = document.getElementById("bankTransactionID1").value;
-    const amount = document.getElementById("payableAmount").textContent.match(/\d+/)[0];
-    const email = sessionStorage.getItem('userEmail');
-    const tokenAmount = document.getElementById('inputTokenAmount').value;
-
-    if (!isBankAccountAvailable) {
-      alert("Cannot create request as no bank account is selected.");
-      return;
-    }
-    if (!transactionID) {
-      alert("Please enter the transaction ID.");
-      return;
+    // Function to update the flags based on account availability
+    function checkAccountAvailability() {
+        isBankAccountAvailable = document.getElementById("bankAccountsContainer").innerHTML.trim() !== "<p>No Active Bank Account Available. Please Select Another Option.</p>";
+        isUPIAccountAvailable = document.getElementById("upiAccountsContainer").innerHTML.trim() !== "<p>No Active UPI Account Available. Please Select Another Option.</p>";
     }
 
-    fetch(`${API_URL}/api/admin/distributor/createTransactionRequest?email=${email}&amount=${amount}&transactionId=${transactionID}`, {
-      method: 'POST'
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.message) {
-        showAlert("Payment request submitted successfully.");
-        closeModal('bankTransferModal1');
+    // Function to check if the transaction ID is unique
+    function isTransactionIdUnique(transactionID, callback) {
+        const creatorEmail = sessionStorage.getItem('userEmail');
+        fetch(`${API_URL}/api/admin/distributor/getTransactionRequests?creatorEmail=${creatorEmail}`)
+            .then(response => {
+                if (response.status === 204) {
+                    // Handle 204 No Content response (no existing transactions)
+                    callback(true); //  no existing requests (unique)
+                    return Promise.resolve(); // Resolve to stop
+                }
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    const transactionExists = data.some(request => request.transactionId === transactionID);
+                    callback(!transactionExists); // Pass true if unique, false otherwise
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching transaction requests:", error);
+                showAlert("Error fetching existing requests. Please try again.");
+                callback(false);
+            });
+    }
 
-        fetch(`${API_URL}/api/admin/tokenAmount/create?transactionId=${transactionID}&email=${email}&tokenAmount=${tokenAmount}&price=${amount}`, {
-          method: 'POST'
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data) {
-            console.log("Token amount record created successfully", data);
-          } else {
-            console.log("Error: ", data);
-          }
-        })
-        .catch(error => {
-          console.error("Error creating token amount:", error);
+    // Bank Transfer Done Button
+    doneButton.addEventListener("click", function() {
+        checkAccountAvailability(); // Ensure flags are updated before validation
+
+        const transactionID = document.getElementById("bankTransactionID1").value;
+        const amount = document.getElementById("payableAmount").textContent.match(/\d+/)[0];
+        const email = sessionStorage.getItem('userEmail');
+        const tokenAmount = document.getElementById('inputTokenAmount').value;
+
+        if (!isBankAccountAvailable) {
+            showAlert("Cannot create request as no bank account is selected.");
+            return;
+        }
+        if (!transactionID) {
+            showAlert("Please enter the transaction ID.");
+            return;
+        }
+
+        // Check if transaction ID is unique
+        isTransactionIdUnique(transactionID, function(isUnique) {
+            if (!isUnique) {
+                Swal.fire({
+                    title: "Error",
+                    text: "This transaction ID request already exists.",
+                    icon: "error"
+                });
+                return;
+            }
+            // Proceed with request if transaction ID is unique
+            fetch(`${API_URL}/api/admin/distributor/createTransactionRequest?email=${email}&amount=${amount}&transactionId=${transactionID}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+
+                    closeModal('bankTransferModal1');
+                      showAlert("Payment request submitted successfully.");
+
+
+                    fetch(`${API_URL}/api/admin/tokenAmount/create?transactionId=${transactionID}&email=${email}&tokenAmount=${tokenAmount}&price=${amount}`, {
+                        method: 'POST'
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data) {
+                                console.log("Token amount record created successfully", data);
+                            } else {
+                                console.log("Error: ", data);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error creating token amount:", error);
+                        });
+                } else {
+                     showAlert("Error: " + (data.error || "Unknown error"));
+                }
+            })
+            .catch(error => {
+                  showAlert("Error: " + error.message);
+            });
         });
-      } else {
-        showAlert("Error: " + (data.error || "Unknown error"));
-      }
-    })
-    .catch(error => {
-      showAlert("Error: " + error.message);
     });
-  });
 
-  // UPI Payment Done Button
-  doneButton1.addEventListener("click", function() {
-    checkAccountAvailability(); // Ensure flags are updated before validation
+    // UPI Payment Done Button
+    doneButton1.addEventListener("click", function() {
+        checkAccountAvailability(); // Ensure flags are updated before validation
 
-    const transactionID = document.getElementById("upiTransactionID1").value;
-    const amount = document.getElementById("payableAmount").textContent.match(/\d+/)[0];
-    const email = sessionStorage.getItem('userEmail');
-    const tokenAmount = document.getElementById('inputTokenAmount').value;
+        const transactionID = document.getElementById("upiTransactionID1").value;
+        const amount = document.getElementById("payableAmount").textContent.match(/\d+/)[0];
+        const email = sessionStorage.getItem('userEmail');
+        const tokenAmount = document.getElementById('inputTokenAmount').value;
 
-    if (!isUPIAccountAvailable) {
-      alert("Cannot create request as no UPI account is selected.");
-      return;
-    }
-    if (!transactionID) {
-      alert("Please enter the transaction ID.");
-      return;
-    }
+        if (!isUPIAccountAvailable) {
+             showAlert("Cannot create request as no UPI account is selected.");
+            return;
+        }
+        if (!transactionID) {
+            showAlert("Please enter the transaction ID.");
+            return;
+        }
 
-    fetch(`${API_URL}/api/admin/distributor/createTransactionRequest?email=${email}&amount=${amount}&transactionId=${transactionID}`, {
-      method: 'POST'
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.message) {
-        showAlert("Payment request submitted successfully.");
-        closeModal('upiModal1');
+        // Check if transaction ID is unique
+        isTransactionIdUnique(transactionID, function(isUnique) {
+            if (!isUnique) {
+                  Swal.fire({
+                    title: "Error",
+                    text: "This transaction ID request already exists.",
+                    icon: "error"
+                });
+                return;
+            }
+            // Proceed with request if transaction ID is unique
+           fetch(`${API_URL}/api/admin/distributor/createTransactionRequest?email=${email}&amount=${amount}&transactionId=${transactionID}`, {
+                method: 'POST'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
 
-        fetch(`${API_URL}/api/admin/tokenAmount/create?transactionId=${transactionID}&email=${email}&tokenAmount=${tokenAmount}&price=${amount}`, {
-          method: 'POST'
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data) {
-            console.log("Token amount record created successfully", data);
-          } else {
-            console.log("Error: ", data);
-          }
-        })
-        .catch(error => {
-          console.error("Error creating token amount:", error);
+                      closeModal('upiModal1');
+                        showAlert("Payment request submitted successfully.");
+
+
+                        fetch(`${API_URL}/api/admin/tokenAmount/create?transactionId=${transactionID}&email=${email}&tokenAmount=${tokenAmount}&price=${amount}`, {
+                            method: 'POST'
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data) {
+                                    console.log("Token amount record created successfully", data);
+                                } else {
+                                    console.log("Error: ", data);
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error creating token amount:", error);
+                            });
+                    } else {
+                         showAlert("Error: " + (data.error || "Unknown error"));
+                    }
+                })
+                .catch(error => {
+                     showAlert("Error: " + error.message);
+                });
         });
-      } else {
-        showAlert("Error: " + (data.error || "Unknown error"));
-      }
-    })
-    .catch(error => {
-      showAlert("Error: " + error.message);
     });
-  });
 
 
-  function showAlert(message) {
-    const alert = document.getElementById("paymentAlert");
-    const alertMessage = document.getElementById("alertMessage");
-    if (alert && alertMessage) {
-      alertMessage.textContent = message;
-      alert.classList.remove("d-none");
-    } else {
-      console.error("Alert elements not found in the DOM");
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
     }
-  }
+
+     function showAlert(message) {
+        const alert = document.getElementById("paymentAlert");
+        const alertMessage = document.getElementById("alertMessage");
+        if (alert && alertMessage) {
+            alertMessage.textContent = message;
+            alert.classList.remove("d-none");
+            setTimeout(() => {
+            alert.classList.add("d-none");
+            }, 3000); // Hide after 3 seconds
+        } else {
+            console.error("Alert elements not found in the DOM");
+        }
+    }
 });
 //-------------------------------------- User Name API -------------------------------------------
 function fetchUserName() {
@@ -762,89 +860,229 @@ function filterActiveAccounts() {
 
 
 //---------------------------------------------Add Bank Account ---------------------------
-   document.getElementById('addBankBtn').addEventListener('click', function() {
-           const bankName = document.getElementById('bankName').value;
-           const accountNumber = document.getElementById('accountNumber').value;
-           const reAccountNumber = document.getElementById('reAccountNumber').value;
-           const accountOwnerFullName = document.getElementById('accountOwner').value;
-           const address = document.getElementById('address').value;
-           const ifscCode = document.getElementById('ifscCode').value;
+document.addEventListener('DOMContentLoaded', function () {
+  const addBankForm = document.getElementById('addBankForm');
+  const addBankBtn = document.getElementById('addBankBtn');
+ const addBankModal = document.getElementById('addBankModal'); // Get the modal element
+  if (addBankForm && addBankBtn) {
+    // Listen for the button click
+    addBankBtn.addEventListener('click', async function () {
+      console.log('Button clicked!'); // Check if the button click is registered
 
-           if (accountNumber !== reAccountNumber) {
-               showErrorModal('Account numbers do not match.');
-               return;
-           }
-           fetch(`${API_URL}/api/admin/bank/save`, {
-               method: 'POST',
-               headers: {
-                   'Content-Type': 'application/x-www-form-urlencoded',
-               },
-               body: new URLSearchParams({
-                   email: userEmail,
-                   accountNumber: accountNumber,
-                   reEnterAccountNumber: reAccountNumber,
-                   accountOwnerFullName: accountOwnerFullName,
-                   address: address,
-                   ifscCode: ifscCode,
-               }),
-           })
-               .then(handleResponseError)
-               .then(response => response.json())
-               .then(() => {
-                  showSuccessModal();
-                    const addBankModal = bootstrap.Modal.getInstance(document.getElementById('addBankModal'));
-                   if(addBankModal){
-                        addBankModal.hide();
-                     }
-                  fetchAndDisplayAccounts();
-               })
-               .catch(error => {
-                                      const addUpiModal = bootstrap.Modal.getInstance(document.getElementById('addBankModal'));
-                                     if(addUpiModal){
-                                          addUpiModal.hide();
-                                       }
-                                     showErrorModal(error.message);
-                                 });
-       });
+      // Retrieve email from session storage
+      const email = sessionStorage.getItem('userEmail');
+      if (!email) {
+        console.error('Email not found in session storage.');
+        showErrorModal("User email not found.");
+        return;
+      }
+
+      // Gather form data
+      const accountNumber = document.getElementById('accountNumber').value.trim();
+      const reAccountNumber = document.getElementById('reAccountNumber').value.trim();
+      const accountOwnerFullName = document.getElementById('accountOwner').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const ifscCode = document.getElementById('ifscCode').value.trim();
+
+      // Validate account number match
+      if (accountNumber !== reAccountNumber) {
+        console.error('Account numbers do not match.');
+        showErrorModal("Account numbers do not match.");
+        return;
+      }
+
+      // Validate required fields
+      if (!accountNumber || !accountOwnerFullName || !address || !ifscCode) {
+        console.error('All fields are required.');
+        showErrorModal("All fields are required.");
+        return;
+      }
+
+      // Create the request body
+      const requestBody = new URLSearchParams({
+        email: email,
+        accountNumber: accountNumber,
+        reEnterAccountNumber: reAccountNumber,
+        accountOwnerFullName: accountOwnerFullName,
+        address: address,
+        ifscCode: ifscCode
+      });
+
+      console.log('Request body:', requestBody.toString()); // Debugging log
+
+      try {
+        // Send the POST request to the API
+        const response = await fetch(`${API_URL}/api/admin/bank/save`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: requestBody
+        });
+
+        const data = await response.json();
+        console.log('Response data:', data);
+
+        // Check the response status
+        if (response.ok && data.status === 'success') {
+          showSuccessModal();
+          addBankForm.reset(); // Reset the form after successful submission
+             if(addBankModal){
+                          bootstrap.Modal.getInstance(addBankModal).hide(); // Close the addUpiModal
+                         }
+        } else {
+          // Handle API error response
+          showErrorModal(data.message || "Failed to save bank details.");
+        }
+      } catch (error) {
+        console.error('Error:', error); // Debugging log
+        showErrorModal("An error occurred while saving the bank.");
+      }
+    });
+  } else {
+    console.error('addBankForm or addBankBtn element not found.');
+  }
+
+  // Show success modal
+  function showSuccessModal() {
+    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+    successModal.show();
+
+    // Optionally, refresh the page or reload the table after closing the modal
+    successModal._element.addEventListener('hidden.bs.modal', function () {
+//      location.reload(); // Refresh the page after closing
+  fetchAndDisplayAccounts();
+    });
+  }
+
+  // Show error modal
+  function showErrorModal(errorMessage) {
+    const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+    document.getElementById('errorModalBody').innerText = errorMessage;
+    errorModal.show();
+  }
+});
+    //---------------------------------Add Upi account apis--------------------------------------
+    document.addEventListener('DOMContentLoaded', function () {
+      const addUpiForm = document.getElementById('addUpiForm');
+      const addUpiModal = document.getElementById('addUpiModal'); // Get the modal element
 
 
-   //--------------------------------------Add UPI Account Logic-------------------------------------------
-       document.getElementById('addUpiForm').addEventListener('submit', function(event) {
-               event.preventDefault();
-               const upiId = document.getElementById('upiId').value;
-               const upiAccountName = document.getElementById('upiAccountName').value;
-               const upiAddress = document.getElementById('upiAddress').value;
-               const qrCodeFile = document.getElementById('upiQrCode').files[0];
-               const formData = new FormData();
-               formData.append('email', userEmail);
-               formData.append('upiId', upiId);
-               formData.append('upiName', upiAccountName);
-               formData.append('upiProvider', upiAddress);
-               if(qrCodeFile){
-                   formData.append('qrCodeFile', qrCodeFile);
+      if (addUpiForm) {
+        // Listen for form submission
+        addUpiForm.addEventListener('submit', async function (event) {
+          event.preventDefault(); // Prevent the default form submission
+
+          // Retrieve form inputs safely
+          const upiIdInput = document.getElementById('upiId');
+          const upiAccountNameInput = document.getElementById('upiAccountName');
+          const upiAddressInput = document.getElementById('upiAddress');
+          const upiQrCodeInput = document.getElementById('upiQrCode');
+
+          // Ensure inputs exist before accessing their values
+          if (!upiIdInput || !upiAccountNameInput || !upiAddressInput) {
+            console.error('One or more input elements are missing.');
+            showErrorModal("Some required fields are missing in the form.");
+            return;
+          }
+
+          // Gather form data
+          const upiId = upiIdInput.value.trim();
+          const upiAccountName = upiAccountNameInput.value.trim();
+          const upiAddress = upiAddressInput.value.trim();
+
+          // Retrieve email from session storage
+          const email = sessionStorage.getItem('userEmail');
+          if (!email) {
+            console.error('Email not found in session storage.');
+            showErrorModal("User email not found.");
+            return;
+          }
+
+          // Validate required fields
+          if (!upiId || !upiAccountName || !upiAddress) {
+            console.error('All required fields must be filled.');
+            showErrorModal("All required fields must be filled.");
+            return;
+          }
+
+          // Create FormData object
+          const formData = new FormData();
+          formData.append('email', email);
+          formData.append('upiId', upiId);
+          formData.append('upiName', upiAccountName);
+          formData.append('upiProvider', 'Some UPI Provider'); // Example provider, customize as needed
+          formData.append('address', upiAddress);
+
+          // Append the QR Code file if provided
+          if (upiQrCodeInput.files.length > 0) {
+            formData.append('qrCodeFile', upiQrCodeInput.files[0]);
+          }
+
+          console.log('Submitting UPI form data...'); // Debugging log
+
+          try {
+            // Send the POST request to the API
+            const response = await fetch(`${API_URL}/api/admin/bank/save`, {
+              method: 'POST',
+              body: formData
+            });
+
+            const data = await response.json();
+            console.log('Response data:', data);
+
+            // Handle API response
+            if (response.ok && data.status === 'success') {
+               showSuccessModal();
+               addUpiForm.reset(); // Reset the form after successful submission
+               if(addUpiModal){
+                bootstrap.Modal.getInstance(addUpiModal).hide(); // Close the addUpiModal
                }
-               fetch(`${API_URL}/api/admin/bank/save`, {
-                   method: 'POST',
-                   body: formData,
-               })
-                   .then(handleResponseError)
-                   .then(response => response.json())
-                   .then(() => {
-                       showSuccessModal();
-                         const addUpiModal = bootstrap.Modal.getInstance(document.getElementById('addUpiModal'));
-                       if(addUpiModal){
-                            addUpiModal.hide();
-                         }
-                       fetchAndDisplayAccounts();
-                   })
-                   .catch(error => {
-                        const addUpiModal = bootstrap.Modal.getInstance(document.getElementById('addUpiModal'));
-                       if(addUpiModal){
-                            addUpiModal.hide();
-                         }
-                       showErrorModal(error.message);
-                   });
-           });
+
+            } else {
+              showErrorModal(data.message || "Failed to save UPI account details.");
+            }
+          } catch (error) {
+            console.error('Error:', error); // Debugging log
+            showErrorModal("An error occurred while saving the UPI account.");
+          }
+        });
+      } else {
+        console.error('addUpiForm element not found.');
+      }
+
+ function showSuccessModal() {
+    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+    successModal.show();
+
+    // Optionally, refresh the page or reload the table after closing the modal
+    successModal._element.addEventListener('hidden.bs.modal', function () {
+//      location.reload(); // Refresh the page after closing
+      fetchAndDisplayAccounts();
+
+    });
+  }
+
+     // Remove leftover backdrops when the modal is closed
+
+
+
+    function showErrorModal(errorMessage) {
+      const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+
+      // Show the error modal
+      document.getElementById('errorModalBody').innerText = errorMessage;
+      errorModal.show();
+
+      // When the modal is hidden, remove any remaining backdrops
+      errorModal._element.addEventListener('hidden.bs.modal', function () {
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+          backdrop.remove(); // Remove leftover backdrop
+        }
+      });
+    }
+    });
   //---------------------------------- Token Rate Table Functionalities ----------------------------------
   //---------------------------Token Rate Table --------------------------------------------------
    document.addEventListener('DOMContentLoaded', function () {
@@ -900,15 +1138,21 @@ function filterActiveAccounts() {
                fetch(`${API_URL}/api/admin/token/modifyRate?email=${encodeURIComponent(email)}&newRate=${rate}&newMinRange=${minRange}&newMaxRange=${maxRange}&oldMinRange=${oldMinRange}&oldMaxRange=${oldMaxRange}`, {
                    method: 'PUT'
                })
-               .then(response => {
+                .then(response => {
                    if (response.ok) {
                        Swal.fire('Success', 'Rate updated successfully', 'success');
                        fetchRates(); // Refresh the table
                    } else {
-                       response.json().then(data => Swal.fire('Error', data.message, 'error'));
+                       return response.json();
                    }
-               })
-               .catch(error => Swal.fire('Error', 'Error updating rate: ' + error.message, 'error'));
+                 })
+                  .then(data =>{
+                     if(data && data.message){
+                          Swal.fire('Error', data.message, 'error');
+                          fetchRates();
+                     }
+                  })
+                   .catch(error => Swal.fire('Error', 'Error updating rate: ' + error.message, 'error'));
            }
        };
 
@@ -931,8 +1175,13 @@ function filterActiveAccounts() {
                                Swal.fire('Deleted!', 'Rate deleted successfully', 'success');
                                fetchRates(); // Refresh the table
                            } else {
-                               response.json().then(data => Swal.fire('Error', `Error deleting rate: ${data.message}`, 'error'));
+                            return response.text();
                            }
+                       })
+                       .then(data =>{
+                            if(data){
+                                 Swal.fire('Error', `Error deleting rate: ${data}`, 'error')
+                            }
                        })
                        .catch(error => Swal.fire('Error', 'Error deleting rate: ' + error.message, 'error'));
                }
@@ -940,47 +1189,72 @@ function filterActiveAccounts() {
        };
 
        // Function to add a new row for input
-       window.addNewRow = function () {
-           const tableBody = document.getElementById('rateTableBody');
-           const newRow = document.createElement('tr');
+      window.addNewRow = function () {
+          const tableBody = document.getElementById('rateTableBody');
+          const lastRow = tableBody.querySelector('tr:last-child');
 
-           newRow.innerHTML = `
-               <td>#</td>
-               <td><input type="number" class="form-control" placeholder="Min Range"></td>
-               <td><input type="number" class="form-control" placeholder="Max Range"></td>
-               <td><input type="number" class="form-control" placeholder="Rate"></td>
-               <td>
-                   <button class="btn btn-sm btn-success" onclick="saveNewRow(this)">Save</button>
-               </td>
-           `;
-           tableBody.appendChild(newRow);
-       };
+          // Check if there is a last row and validate its inputs
+          if (lastRow) {
+              const inputs = lastRow.querySelectorAll('input');
+              for (const input of inputs) {
+                  if (!input.value.trim()) {
+                      Swal.fire('Error', 'Please fill in all fields in the current row before adding a new one.', 'error');
+                      return;
+                  }
+              }
+          }
+
+          // Add a new row if all validations pass
+          const newRow = document.createElement('tr');
+          newRow.innerHTML = `
+              <td>#</td>
+              <td><input type="number" class="form-control" placeholder="Min Range"></td>
+              <td><input type="number" class="form-control" placeholder="Max Range"></td>
+              <td><input type="number" class="form-control" placeholder="Rate"></td>
+              <td>
+                  <button class="btn btn-sm btn-success" onclick="saveNewRow(this)">Save</button>
+              </td>
+          `;
+          tableBody.appendChild(newRow);
+      };
 
        // Function to save the newly added row
-       window.saveNewRow = function (button) {
-           const row = button.closest('tr');
-           const inputs = row.querySelectorAll('input');
-           const minRange = inputs[0].value;
-           const maxRange = inputs[1].value;
-           const rate = inputs[2].value;
-           const email = sessionStorage.getItem('userEmail');
+      // Function to save the newly added row
+      window.saveNewRow = function (button) {
+          const row = button.closest('tr');
+          const inputs = row.querySelectorAll('input');
+          const minRange = inputs[0].value.trim();
+          const maxRange = inputs[1].value.trim();
+          const rate = inputs[2].value.trim();
+          const email = sessionStorage.getItem('userEmail');
 
-           // Call the create API
-           fetch(`${API_URL}/api/admin/token/createRate?email=${encodeURIComponent(email)}&rate=${rate}&minRange=${minRange}&maxRange=${maxRange}`, {
-               method: 'POST'
-           })
-           .then(response => {
-               if (response.ok) {
-                   Swal.fire('Success', 'Rate created successfully', 'success');
-                   fetchRates(); // Refresh the table
-               } else {
-                   response.json().then(data => Swal.fire('Error', `Error creating rate: ${data.message}`, 'error'));
-               }
-           })
-           .catch(error => Swal.fire('Error', 'Error creating rate: ' + error.message, 'error'));
-       };
+          // Validate inputs
+          if (!minRange || !maxRange || !rate) {
+              Swal.fire('Error', 'Please fill in all the required fields (Min Range, Max Range, and Rate).', 'error');
+              return;
+          }
+
+          // Call the create API
+          fetch(`${API_URL}/api/admin/token/createRate?email=${encodeURIComponent(email)}&rate=${encodeURIComponent(rate)}&minRange=${encodeURIComponent(minRange)}&maxRange=${encodeURIComponent(maxRange)}`, {
+              method: 'POST'
+          })
+              .then(response => {
+                  if (response.ok) {
+                      Swal.fire('Success', 'Rate created successfully', 'success');
+                      fetchRates(); // Refresh the table
+                  } else {
+                      return response.json();
+                  }
+              })
+              .then(data => {
+                  if (data && data.message) {
+                      Swal.fire('Error', `Error creating rate: ${data.message}`, 'error');
+                      fetchRates();
+                  }
+              })
+              .catch(error => Swal.fire('Error', 'Error creating rate: ' + error.message, 'error'));
+      };
    });
-
    //---------------------------------- Toggle nav bar  ----------------------------------
 
   (function() {

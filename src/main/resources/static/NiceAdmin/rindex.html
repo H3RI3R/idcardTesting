@@ -28,7 +28,251 @@
 
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
+<style>
+  .card {
+margin-bottom: 30px;
+border: none;
+border-radius: 5px;
+box-shadow: 0px 0 30px rgba(1, 41, 112, 0.1);
+}
 
+/* Filter dropdown */
+.dashboard .filter {
+position: absolute;
+right: 0px;
+top: 15px;
+}
+
+.dashboard .filter .icon {
+color: #aab7cf;
+padding-right: 20px;
+padding-bottom: 5px;
+transition: 0.3s;
+font-size: 16px;
+}
+
+.dashboard .filter .icon:hover,
+.dashboard .filter .icon:focus {
+color: #4154f1;
+}
+
+.dashboard .filter .dropdown-header {
+padding: 8px 15px;
+}
+
+.dashboard .filter .dropdown-header h6 {
+text-transform: uppercase;
+font-size: 14px;
+font-weight: 600;
+letter-spacing: 1px;
+color: #aab7cf;
+margin-bottom: 0;
+padding: 0;
+}
+
+.dashboard .filter .dropdown-item {
+padding: 8px 15px;
+}
+
+.dashboard .filter .icon {
+color: #aab7cf;
+padding-right: 20px;
+padding-bottom: 5px;
+transition: 0.3s;
+font-size: 16px;
+}
+
+.dashboard .filter .icon:hover,
+.dashboard .filter .icon:focus {
+color: #4154f1;
+}
+
+.dropdown-menu .dropdown-item {
+font-size: 14px;
+padding: 10px 15px;
+transition: 0.3s;
+}
+
+.dropdown-menu .dropdown-item i {
+margin-right: 10px;
+font-size: 18px;
+line-height: 0;
+}
+
+.dropdown-menu .dropdown-item:hover {
+background-color: #f6f9ff;
+}
+
+.header-nav .profile .dropdown-item {
+font-size: 14px;
+padding: 10px 15px;
+transition: 0.3s;
+}
+
+.header-nav .profile .dropdown-item i {
+margin-right: 10px;
+font-size: 18px;
+line-height: 0;
+}
+
+.header-nav .profile .dropdown-item:hover {
+background-color: #f6f9ff;
+}
+
+.dashboard .filter .dropdown-item {
+padding: 8px 15px;
+}
+
+/* Activity */
+.dashboard .activity {
+font-size: 14px;
+overflow-x: auto;  /* Allow horizontal scrolling */
+white-space: nowrap;  /* Prevent text from wrapping */
+}
+
+.dashboard .activity .activity-item .activite-label {
+color: #888;
+position: relative;
+flex-shrink: 0;
+flex-grow: 0;
+min-width: 64px;
+}
+
+.dashboard .activity .activity-item .activite-label::before {
+content: "";
+position: absolute;
+right: -11px;
+width: 4px;
+top: 0;
+bottom: 0;
+background-color: #eceefe;
+}
+
+.dashboard .activity .activity-item .activity-badge {
+margin-top: 3px;
+z-index: 1;
+font-size: 11px;
+line-height: 0;
+border-radius: 50%;
+flex-shrink: 0;
+border: 3px solid #fff;
+flex-grow: 0;
+}
+
+.dashboard .activity .activity-item .activity-content {
+padding-left: 10px;
+padding-bottom: 20px;
+}
+
+.dashboard .activity .activity-item:first-child .activite-label::before {
+top: 5px;
+}
+
+.dashboard .activity .activity-item:last-child .activity-content {
+padding-bottom: 0;
+}
+
+/* Truncate email or long text */
+.activity-item .email {
+display: inline-block;
+max-width: 200px;  /* Set the maximum width of the email */
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap; /* Prevent wrapping */
+position: relative; /* Required for the tooltip */
+cursor: pointer;
+}
+
+/* Tooltip styling */
+.activity-item .email:hover::after {
+content: attr(data-email);  /* Show full email on hover */
+position: absolute;
+bottom: -20px;
+left: 0;
+white-space: nowrap;
+background-color: #333;
+color: #fff;
+padding: 5px;
+border-radius: 3px;
+font-size: 14px;
+z-index: 100;
+width: auto;
+max-width: 250px;
+word-wrap: break-word;
+}
+
+/* Optional: style the horizontal scrollbar */
+.activity::-webkit-scrollbar {
+height: 8px;  /* Horizontal scrollbar height */
+}
+
+.activity::-webkit-scrollbar-thumb {
+background-color: #888; /* Color of the scrollbar thumb */
+border-radius: 10px;
+}
+
+.activity::-webkit-scrollbar-thumb:hover {
+background-color: #555; /* Hover color */
+}
+
+   /* Ensure the table scroll bar does not overlap with data */
+.table-wrapper {
+position: relative;
+max-height: 400px;
+overflow-y: auto;
+}
+
+/* Adding padding to the right for proper space for the scrollbar */
+.table-responsive {
+padding-right: 17px; /* Adjust this value based on your scrollbar width */
+}
+
+/* Fix table header while scrolling */
+.tableFixHead {
+position: relative;
+overflow: hidden;
+}
+
+.tableFixHead thead {
+position: sticky;
+top: 0;
+background-color: #f8f9fa;
+z-index: 2; /* Keeps the header above the body rows */
+}
+
+/* Optional: add border to table rows */
+.tableFixHead th,
+.tableFixHead td {
+border-bottom: 1px solid #ddd;
+}
+ /* Ensure #activity-list has a maximum height and enables vertical scrolling */
+#activity-list {
+max-height: 686px;
+overflow-y: auto;
+padding-right: 15px;  /* Add padding to prevent overlap */
+box-sizing: content-box;  /* Ensure padding is not included in width calculation */
+}
+
+/* Style the vertical scrollbar */
+#activity-list::-webkit-scrollbar {
+width: 10px; /* Width of the scrollbar */
+}
+
+#activity-list::-webkit-scrollbar-thumb {
+background-color: #888; /* Color of the scrollbar thumb */
+border-radius: 10px;
+}
+
+#activity-list::-webkit-scrollbar-thumb:hover {
+background-color: #555; /* Hover color */
+}
+
+/* Optional: add right padding to scrollbar track to keep consistent spacing */
+#activity-list::-webkit-scrollbar-track {
+background: transparent;
+margin-right: 5px; /* Creates space between scrollbar and content */
+}
+</style>
   <!-- =======================================================
   * Template Name: NiceAdmin
   * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/

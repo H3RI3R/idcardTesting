@@ -1,28 +1,32 @@
 //------------------------------------ userRole api  ---------------------------------------
-const userEmail = sessionStorage.getItem('userEmail');
-function fetchUserInfo(email) {
-  if (!email) {
-    return;
-  }
-  const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
-  fetch(apiUrl)
-    .then(response => response.json())
-    .then(data => {
-      document.getElementById("userRole").innerText = data.role || "N/A";
-    })
-    .catch(error => {
-      console.error("Error fetching user info:", error);
-      alert("An error occurred while fetching user information.");
-    });
-}
-fetchUserInfo(userEmail);
+
 //  ------------------------------table api of status ------------------------------------------
 document.addEventListener("DOMContentLoaded", function() {
+    const userEmail = sessionStorage.getItem('userEmail');
     const transactionTableBody = document.getElementById("transactionTableBody");
     const searchTransactionId = document.getElementById("searchTransactionId");
     const refreshButton = document.getElementById("refreshButton");
-    const userEmail = sessionStorage.getItem('userEmail');
-
+  // Function to fetch user role
+  function fetchUserInfo(email) {
+    if (!email) {
+      return;
+    }
+      const userRoleElement = document.getElementById("userRole");
+        if(userRoleElement){
+             const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
+                fetch(apiUrl)
+                .then(response => response.json())
+                    .then(data => {
+                    userRoleElement.innerText = data.role || "N/A";
+                })
+                    .catch(error => {
+                    console.error("Error fetching user info:", error);
+                    alert("An error occurred while fetching user information.");
+                });
+        }else{
+            console.error("Error: userRole element is not found.");
+        }
+  }
     function fetchTransactionRequests() {
         fetch(`${API_URL}/api/admin/distributor/getTransactionRequests?creatorEmail=${userEmail}`)
             .then(response => {
@@ -108,8 +112,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Initial fetch
     fetchTransactionRequests();
+      fetchUserInfo(userEmail);
+
 });
-//  ------------------------------Create transection request api------------------------------------------
 //  ------------------------------Create transection request api------------------------------------------
 document.addEventListener("DOMContentLoaded", function () {
     const doneButton = document.getElementById("bankDoneButton1");
@@ -163,19 +168,23 @@ document.addEventListener("DOMContentLoaded", function () {
         const tokenAmount = document.getElementById('inputTokenAmount').value;
 
         if (!isBankAccountAvailable) {
-            alert("Cannot create request as no bank account is selected.");
+            showAlert("Cannot create request as no bank account is selected.");
             return;
         }
         if (!transactionID) {
-            alert("Please enter the transaction ID.");
+            showAlert("Please enter the transaction ID.");
             return;
         }
 
         // Check if transaction ID is unique
         isTransactionIdUnique(transactionID, function (isUnique) {
             if (!isUnique) {
-                swal("Error", "This transaction ID request already exists.", "error");
-                return;
+                  Swal.fire({
+                    title: "Error",
+                    text: "This transaction ID request already exists.",
+                    icon: "error"
+                });
+                 return;
             }
 
             // Proceed with request if transaction ID is unique
@@ -184,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.message) {
+                     if (data.message) {
                         showAlert("Payment request submitted successfully.");
                         closeModal('bankTransferModal1');
 
@@ -203,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 console.error("Error creating token amount:", error);
                             });
                     } else {
-                        showAlert("Error: " + (data.error || "Unknown error"));
+                       showAlert("Error: " + (data.error || "Unknown error"));
                     }
                 })
                 .catch(error => {
@@ -222,19 +231,23 @@ document.addEventListener("DOMContentLoaded", function () {
         const tokenAmount = document.getElementById('inputTokenAmount').value;
 
         if (!isUPIAccountAvailable) {
-            alert("Cannot create request as no UPI account is selected.");
+            showAlert("Cannot create request as no UPI account is selected.");
             return;
         }
         if (!transactionID) {
-            alert("Please enter the transaction ID.");
+             showAlert("Please enter the transaction ID.");
             return;
         }
 
         // Check if transaction ID is unique
         isTransactionIdUnique(transactionID, function (isUnique) {
             if (!isUnique) {
-                swal("Error", "This transaction ID request already exists.", "error");
-                return;
+                  Swal.fire({
+                    title: "Error",
+                    text: "This transaction ID request already exists.",
+                    icon: "error"
+                });
+                 return;
             }
 
             // Proceed with request if transaction ID is unique
@@ -247,7 +260,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         showAlert("Payment request submitted successfully.");
                         closeModal('upiModal1');
 
-                        fetch(`${API_URL}/api/admin/tokenAmount/create?transactionId=${transactionID}&email=${email}&tokenAmount=${tokenAmount}&price=${amount}`, {
+                         fetch(`${API_URL}/api/admin/tokenAmount/create?transactionId=${transactionID}&email=${email}&tokenAmount=${tokenAmount}&price=${amount}`, {
                             method: 'POST'
                         })
                             .then(response => response.json())
@@ -262,11 +275,11 @@ document.addEventListener("DOMContentLoaded", function () {
                                 console.error("Error creating token amount:", error);
                             });
                     } else {
-                        showAlert("Error: " + (data.error || "Unknown error"));
+                         showAlert("Error: " + (data.error || "Unknown error"));
                     }
                 })
                 .catch(error => {
-                    showAlert("Error: " + error.message);
+                      showAlert("Error: " + error.message);
                 });
         });
     });
@@ -289,7 +302,7 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Alert elements not found in the DOM");
         }
     }
-});
+    });
   //----------------------------------User name Api -----------------------------------
 
   document.addEventListener("DOMContentLoaded", function() {

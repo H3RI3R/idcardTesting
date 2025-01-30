@@ -21,7 +21,7 @@
         document.getElementById("nameFull").innerText = data.name || "N/A";
         document.getElementById("company").innerText = data.company || "N/A";
         document.getElementById("companyAddress").innerText = data.companyAddress || "N/A";
-        document.getElementById("address").innerText = data.address || "N/A";
+        document.getElementById("role").innerText = data.role || "N/A";
         document.getElementById("phone").innerText = data.phoneNumber || "N/A";
         document.getElementById("email").innerText = data.email || "N/A";
          document.getElementById("userEmail1").innerText = data.name || "Guest";

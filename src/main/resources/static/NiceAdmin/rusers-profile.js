@@ -1,32 +1,38 @@
 //----------------------------------User Details  Api ----------------------------------
 document.addEventListener('DOMContentLoaded', function() {
-    // Assuming the user email is stored in session storage
     const userEmail = sessionStorage.getItem('userEmail');
 
-    if (!userEmail) {
-        console.error('Error: User email is not set in session storage.');
-        return;
-    }
-
-    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${encodeURIComponent(userEmail)}`;
-
-    // Fetch the user information
-    fetch(apiUrl)
+    // Fetch data from the API
+    fetch(`${API_URL}/api/admin/distributor/list`)
         .then(response => response.json())
         .then(data => {
-            // Populate the profile details with the data from the API
-            document.getElementById('nameFull').textContent = data.name || 'N/A';
-            document.getElementById('company').textContent = data.company || 'N/A';
-            document.getElementById('designation').textContent = data.designation || 'N/A';
-            document.getElementById('role').textContent = data.designation || 'N/A';
-            document.getElementById('address').textContent = data.address || 'N/A';
-            document.getElementById('phone').textContent = data.phoneNumber || 'N/A';
-            document.getElementById('email').textContent = data.email || 'N/A';
-        })
+        // Find the user data that matches the session email
+        const userData = data.find(user => user.email === userEmail);
+
+        if (userData) {
+            // Populate the HTML with the user data
+            document.getElementById('nameFull').textContent = userData.name;
+            document.getElementById('company').textContent = userData.company || 'Not Available';
+            document.getElementById('designation').textContent = userData.role || 'Not Available';
+            document.getElementById('role').textContent = userData.role || 'Not Available';
+            document.getElementById('address').textContent = userData.companyAddress || 'Not Available';
+            document.getElementById('phone').textContent = userData.phoneNumber || 'Not Available';
+            document.getElementById('email').textContent = userData.email;
+
+            // Update other sections of the page if needed
+            document.querySelector('.nav-profile .dropdown-toggle').textContent = userData.name;
+            document.querySelector('.dropdown-header h6').textContent = userData.name;
+        } else {
+            // Handle case where no matching user is found
+            document.getElementById('nameFull').textContent = 'Guest';
+            document.querySelector('.nav-profile .dropdown-toggle').textContent = 'Guest';
+            document.querySelector('.dropdown-header h6').textContent = 'Guest';
+        }
+    })
         .catch(error => {
-            console.error('Error fetching user information:', error);
-            // Handle error (optional)
-        });
+        console.error('Error fetching user data:', error);
+        // Handle error case
+    });
 });
 
 const userEmail = sessionStorage.getItem('userEmail');
