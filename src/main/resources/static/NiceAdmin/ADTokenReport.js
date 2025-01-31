@@ -67,6 +67,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
    //------------------------Token report Activity API --------------------------
       // JavaScript to fetch and populate table data
+  //------------------------Token report Activity API --------------------------
+  // JavaScript to fetch and populate table data
   async function fetchAdminActivities() {
       const adminEmail = sessionStorage.getItem('userEmail');
       const activityResponse = await fetch(`${API_URL}/api/admin/distributor/AdminActivity?adminEmail=${encodeURIComponent(adminEmail)}`);
@@ -88,13 +90,13 @@ document.addEventListener("DOMContentLoaded", function() {
               identifier = adminEmail;
               userInfoUrl = `${API_URL}/api/admin/distributor/userInfo?email=${encodeURIComponent(identifier)}`;
           } else if (type === 'TOKEN_SENT') {
-              // Ensure description is not null and has at least 10 digits
-              if (description && /\d{10}$/.test(description)) {
-                  const phoneNumber = description.match(/\d{10}$/)[0];
-                  identifier = phoneNumber;
+              // Extract email from description
+              const emailMatch = description.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+              if (emailMatch) {
+                  identifier = emailMatch[0]; // Extracted email
                   userInfoUrl = `${API_URL}/api/admin/distributor/userInfo?email=${encodeURIComponent(identifier)}`;
               } else {
-                  console.error('Description is not valid for TOKEN_SENT type.');
+                  console.error('Description does not contain a valid email for TOKEN_SENT type.');
                   return null;
               }
           }
@@ -102,6 +104,7 @@ document.addEventListener("DOMContentLoaded", function() {
           const userInfoResponse = await fetch(userInfoUrl);
           const userInfo = await userInfoResponse.json();
 
+          // Extract amount from description
           const amountMatch = description ? description.match(/\d+/) : null;
           const amount = amountMatch ? parseInt(amountMatch[0], 10) : null;
 
@@ -180,8 +183,8 @@ document.addEventListener("DOMContentLoaded", function() {
       // Update pagination controls
       dataTable.on('datatable.init', () => {
           const paginationControls = document.querySelector('.pagination-controls');
-          paginationControls.innerHTML = '';
-          paginationControls.appendChild(dataTable.tableWrapper.querySelector('.dataTable-pagination'));
+//          paginationControls.innerHTML = '';
+//          paginationControls.appendChild(dataTable.tableWrapper.querySelector('.dataTable-pagination'));
       });
   }
 
