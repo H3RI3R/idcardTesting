@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const userEmail = sessionStorage.getItem('userEmail');
 
         if (!userEmail) {
-            console.error('User email not found in session storage');
+            console.error('❌ User email not found in session storage');
             return;
         }
 
@@ -75,14 +75,18 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch(apiUrl)
             .then(response => response.json())
             .then(activities => {
-            const activityList = document.getElementById('activity-list');
-            activityList.innerHTML = '';
+                console.log("🔍 API Response:", activities);
 
-            if (activities.length > 0) {
-                const filteredActivities = activities.filter(activity => activity.type === 'ID_CARD_CREATION');
+                const activityList = document.getElementById('activity-list');
+                if (!activityList) {
+                    console.error("❌ activity-list element not found!");
+                    return;
+                }
 
-                if (filteredActivities.length > 0) {
-                    filteredActivities.forEach(activity => {
+                activityList.innerHTML = ''; // Clear previous data
+
+                if (activities.length > 0) {
+                    activities.forEach(activity => {
                         const activityItem = document.createElement('div');
                         activityItem.classList.add('activity-item', 'd-flex', 'align-items-center', 'mb-3');
 
@@ -97,29 +101,26 @@ document.addEventListener("DOMContentLoaded", function() {
                         const maskedDetails = maskPhoneNumber(activity.details);
 
                         activityItem.innerHTML = `
-                                <div class="d-flex align-items-center">
-                                    <div class="activity-icon bg-success text-light me-3">
-                                        <i class="bi bi-check-circle"></i>
-                                    </div>
-                                    <div>
-                                        <p class="mb-1"><strong>${activity.type}</strong> - ${maskedDetails}</p>
-                                        <small class="text-muted">${formattedDate}</small>
-                                    </div>
+                            <div class="d-flex align-items-center">
+                                <div class="activity-icon bg-primary text-light me-3">
+                                    <i class="bi bi-clock-history"></i>
                                 </div>
-                            `;
+                                <div>
+                                    <p class="mb-1"><strong>${activity.type}</strong> - ${maskedDetails}</p>
+                                    <small class="text-muted">${formattedDate}</small>
+                                </div>
+                            </div>
+                        `;
 
                         activityList.appendChild(activityItem);
                     });
                 } else {
-                    activityList.innerHTML = '<p>No recent ID Card Creation activities.</p>';
+                    activityList.innerHTML = '<p>No recent activities.</p>';
                 }
-            } else {
-                activityList.innerHTML = '<p>No recent activities.</p>';
-            }
-        })
+            })
             .catch(error => {
-            console.error('Error fetching activities:', error);
-        });
+                console.error('❌ Error fetching activities:', error);
+            });
     }
 
     loadRecentActivities();
