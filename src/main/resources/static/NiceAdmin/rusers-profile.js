@@ -2,38 +2,60 @@
 document.addEventListener('DOMContentLoaded', function() {
     const userEmail = sessionStorage.getItem('userEmail');
 
-    // Fetch data from the API
-    fetch(`${API_URL}/api/admin/distributor/list`)
-        .then(response => response.json())
+    if (!userEmail) {
+        alert('You are on a guest profile');
+        return;
+    }
+
+    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${encodeURIComponent(userEmail)}`;
+
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-        // Find the user data that matches the session email
-        const userData = data.find(user => user.email === userEmail);
+//            console.log("🔍 API Response:", data);
 
-        if (userData) {
-            // Populate the HTML with the user data
-            document.getElementById('nameFull').textContent = userData.name;
-            document.getElementById('company').textContent = userData.company || 'Not Available';
-            document.getElementById('designation').textContent = userData.role || 'Not Available';
-            document.getElementById('role').textContent = userData.role || 'Not Available';
-            document.getElementById('address').textContent = userData.companyAddress || 'Not Available';
-            document.getElementById('phone').textContent = userData.phoneNumber || 'Not Available';
-            document.getElementById('email').textContent = userData.email;
+            if (!data || Object.keys(data).length === 0) {
+                alert("No user data found. Please check your email.");
+                return;
+            }
 
-            // Update other sections of the page if needed
-            document.querySelector('.nav-profile .dropdown-toggle').textContent = userData.name;
-            document.querySelector('.dropdown-header h6').textContent = userData.name;
-        } else {
-            // Handle case where no matching user is found
-            document.getElementById('nameFull').textContent = 'Guest';
-            document.querySelector('.nav-profile .dropdown-toggle').textContent = 'Guest';
-            document.querySelector('.dropdown-header h6').textContent = 'Guest';
-        }
-    })
+            updateElementText("nameFull", data.name);
+            updateElementText("company", data.company);
+            updateElementText("address", data.companyAddress);
+            updateElementText("designation", data.role);
+            updateElementText("phone", data.phoneNumber);
+            updateElementText("email", data.email);
+//            updateElementText("userEmail1", data.name);
+            updateElementText("userRole", data.role);
+//            updateElementText("userRole1", data.role);
+            updateElementText("profileName", data.name);
+            updateElementText("userEmail", data.name);
+            updateElementText("userEmail1", data.name);
+
+            // Update profile dropdown
+            const profileDropdown = document.querySelector('.nav-profile .dropdown-toggle');
+            if (profileDropdown) profileDropdown.textContent = data.name;
+        })
         .catch(error => {
-        console.error('Error fetching user data:', error);
-        // Handle error case
-    });
+            console.error("❌ Error fetching user info:", error);
+            alert("An error occurred while fetching user information.");
+        });
 });
+
+// 🔹 Helper function to safely update text content
+function updateElementText(elementId, text) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.textContent = text || "N/A";
+    } else {
+        console.warn(`⚠️ Element with ID '${elementId}' not found.`);
+    }
+}
 
 const userEmail = sessionStorage.getItem('userEmail');
 function fetchUserInfo(email) {
@@ -56,38 +78,6 @@ fetchUserInfo(userEmail);
 
 //----------------------------------User name Api ----------------------------------
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Retrieve the user email from session storage
-    const userEmail = sessionStorage.getItem('userEmail');
-    if (!userEmail) {
-        console.error('User email is not set in session storage');
-        return;
-    }
-
-    // API URL with user email
-     const apiUrl = `${API_URL}/api/admin/distributor/name?email=${encodeURIComponent(userEmail)}`;
-
-    // Fetch the user data from the API
-    fetch(apiUrl)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.statusText}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Update the HTML elements with the fetched data
-            const name = data.name || 'Guest'; // Default to 'Guest' if name is not available
-
-            document.getElementById('userEmail1').textContent = name;
-            document.getElementById('userEmail').textContent = name;
-            document.getElementById('nameFull').textContent = name;
-            document.getElementById('profileName').textContent = name;
-        })
-        .catch(error => {
-            console.error('Error fetching user data:', error);
-        });
-});
 
 
 //---------------------------------- toggleSidebar  method -----------------------------------
