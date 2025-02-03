@@ -22,74 +22,74 @@ function fetchUserInfo(email) {
         });
 }
 fetchUserInfo(userEmail);
-//---------------------------------- Table  Api -----------------------------------
-document.addEventListener("DOMContentLoaded", function() {
-    const retailerTableBody = document.getElementById("retailerTableBody");
-
-    // Ensure retailerTableBody is not null
-    if (!retailerTableBody) {
-        console.error("Table body element not found.");
-        return;
-    }
-
-    // Fetch ID Card history using the session data (userEmail)
-    async function fetchIdCardHistory() {
-        const userEmail = sessionStorage.getItem('userEmail');
-
-        if (!userEmail) {
-            alert("User email not found in session.");
-            return;
-        }
-
-        try {
-            const response = await fetch(`${API_URL}/api/admin/retailer/idcard-history?retailerEmail=${encodeURIComponent(userEmail)}`);
-            const data = await response.json();
-            console.log(data);  // Log the response data for debugging
-
-            if (data.error) {
-                alert(`Error: ${data.error}`);
-                return;
-            }
-
-            // Clear existing table data
-            retailerTableBody.innerHTML = "";
-
-            if (data.idCardHistory && Array.isArray(data.idCardHistory) && data.idCardHistory.length > 0) {
-                // Populate table with the fetched ID card history details
-                data.idCardHistory.forEach(idCard => {
-                    const row = document.createElement("tr");
-
-                    // Mask phone number, showing only the last 4 digits
-                    const maskedPhoneNumber = idCard.phoneNumber.slice(-4).padStart(idCard.phoneNumber.length, '*');
-
-                    row.innerHTML = `
-                        <td>${idCard.name}</td>
-                        <td>${maskedPhoneNumber}</td>
-                        <td>${idCard.businessName}</td>
-                        <td>Success</td>
-                        <td>${idCard.id}</td>
-                    `; // Changed to 5 columns as per the <thead>
-                    retailerTableBody.appendChild(row);
-                });
-            } else {
-                retailerTableBody.innerHTML = `<tr><td colspan="5">No ID cards found.</td></tr>`;
-            }
-
-            // Initialize DataTable only after the table is populated
-            new simpleDatatables.DataTable("#idCardTable", {
-                searchable: true,
-                fixedHeight: true,
-                perPageSelect: [5, 10, 15, 20],
-            });
-        } catch (error) {
-            console.error("Error fetching ID Card history:", error);
-            alert("An error occurred while fetching the ID Card history.");
-        }
-    }
-
-    // Call the fetch function on page load
-    fetchIdCardHistory();
-});
+////---------------------------------- Table  Api -----------------------------------
+//document.addEventListener("DOMContentLoaded", function() {
+//    const retailerTableBody = document.getElementById("retailerTableBody");
+//
+//    // Ensure retailerTableBody is not null
+//    if (!retailerTableBody) {
+//        console.error("Table body element not found.");
+//        return;
+//    }
+//
+//    // Fetch ID Card history using the session data (userEmail)
+//    async function fetchIdCardHistory() {
+//        const userEmail = sessionStorage.getItem('userEmail');
+//
+//        if (!userEmail) {
+//            alert("User email not found in session.");
+//            return;
+//        }
+//
+//        try {
+//            const response = await fetch(`${API_URL}/api/admin/retailer/idcard-history?retailerEmail=${encodeURIComponent(userEmail)}`);
+//            const data = await response.json();
+//            console.log(data);  // Log the response data for debugging
+//
+//            if (data.error) {
+//                alert(`Error: ${data.error}`);
+//                return;
+//            }
+//
+//            // Clear existing table data
+//            retailerTableBody.innerHTML = "";
+//
+//            if (data.idCardHistory && Array.isArray(data.idCardHistory) && data.idCardHistory.length > 0) {
+//                // Populate table with the fetched ID card history details
+//                data.idCardHistory.forEach(idCard => {
+//                    const row = document.createElement("tr");
+//
+//                    // Mask phone number, showing only the last 4 digits
+//                    const maskedPhoneNumber = idCard.phoneNumber.slice(-4).padStart(idCard.phoneNumber.length, '*');
+//
+//                    row.innerHTML = `
+//                        <td>${idCard.name}</td>
+//                        <td>${maskedPhoneNumber}</td>
+//                        <td>${idCard.businessName}</td>
+//                        <td>Success</td>
+//                        <td>${idCard.id}</td>
+//                    `; // Changed to 5 columns as per the <thead>
+//                    retailerTableBody.appendChild(row);
+//                });
+//            } else {
+//                retailerTableBody.innerHTML = `<tr><td colspan="5">No ID cards found.</td></tr>`;
+//            }
+//
+//            // Initialize DataTable only after the table is populated
+//            new simpleDatatables.DataTable("#idCardTable", {
+//                searchable: true,
+//                fixedHeight: true,
+//                perPageSelect: [5, 10, 15, 20],
+//            });
+//        } catch (error) {
+//            console.error("Error fetching ID Card history:", error);
+//            alert("An error occurred while fetching the ID Card history.");
+//        }
+//    }
+//
+//    // Call the fetch function on page load
+//    fetchIdCardHistory();
+//});
 //----------------------------------USerName Api ----------------------------------
 document.addEventListener("DOMContentLoaded", function() {
     // Function to fetch the user's name from the API
