@@ -57,33 +57,36 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch(`${API_URL}/api/admin/distributor/AdminActivity?adminEmail=${userEmail}`)
             .then(response => response.json())
             .then(data => {
-            // Clear any existing activities
-            activityList.innerHTML = "";
+                // Clear any existing activities
+                activityList.innerHTML = "";
 
-            // Filter distributor-related activities
-            const distributorActivities = data.filter(activity =>
-            activity.type.includes("DISTRIBUTOR_CREATION") ||
-            activity.type.includes("DISTRIBUTOR_DELETION")
-            );
+                // Filter distributor-related activities: Activation, Deactivation, and Creation
+                const distributorActivities = data.filter(activity =>
+                    activity.type.includes("DISTRIBUTOR_ACTIVATION") ||
+                    activity.type.includes("DISTRIBUTOR_DEACTIVATION") ||
+                    activity.type.includes("DISTRIBUTOR_CREATION")
+                );
 
-            // Check if there are distributor-related activities
-            if (distributorActivities.length > 0) {
-                distributorActivities.forEach(activity => {
-                    // Determine the appropriate icon based on the activity type
-                    let iconSrc = "assets/img/DefaultIcon.png"; // Default icon
+                // Check if there are distributor-related activities
+                if (distributorActivities.length > 0) {
+                    distributorActivities.forEach(activity => {
+                        // Determine the appropriate icon based on the activity type
+                        let iconSrc = "assets/img/DefaultIcon.png"; // Default icon
 
-                    if (activity.type.includes("DISTRIBUTOR_CREATION")) {
-                        iconSrc = "assets/img/CreateRetailer.png"; // Update with the correct path
-                    } else if (activity.type.includes("DISTRIBUTOR_DELETION")) {
-                        iconSrc = "assets/img/Deleter.png"; // Update with the correct path
-                    }
+                        if (activity.type.includes("DISTRIBUTOR_CREATION")) {
+                            iconSrc = "assets/img/CreateRetailer.png"; // Update with the correct path
+                        } else if (activity.type.includes("DISTRIBUTOR_ACTIVATION")) {
+                            iconSrc = "assets/img/right.png"; // Replace with the activation icon path
+                        } else if (activity.type.includes("DISTRIBUTOR_DEACTIVATION")) {
+                            iconSrc = "assets/img/wrong1.png"; // Replace with the deactivation icon path
+                        }
 
-                    // Create a new div element for each activity
-                    const activityItem = document.createElement("div");
-                    activityItem.className = "activity-item d-flex align-items-center";
+                        // Create a new div element for each activity
+                        const activityItem = document.createElement("div");
+                        activityItem.className = "activity-item d-flex align-items-center";
 
-                    // Set the inner HTML of the activity item
-                    activityItem.innerHTML = `
+                        // Set the inner HTML of the activity item
+                        activityItem.innerHTML = `
                             <div class="activity-icon">
                                 <img src="${iconSrc}" alt="${activity.type} icon" style="width: 24px; height: 24px; margin-right: 10px;">
                             </div>
@@ -94,18 +97,18 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                         `;
 
-                    // Append the activity item to the activity list
-                    activityList.appendChild(activityItem);
-                });
-            } else {
-                // No distributor-related activities found
-                activityList.innerHTML = "<p>No recent distributor activities found.</p>";
-            }
-        })
+                        // Append the activity item to the activity list
+                        activityList.appendChild(activityItem);
+                    });
+                } else {
+                    // No distributor-related activities found
+                    activityList.innerHTML = "<p>No recent distributor activities found.</p>";
+                }
+            })
             .catch(error => {
-            console.error("Error fetching activities:", error);
-            activityList.innerHTML = "<p>Failed to load activities.</p>";
-        });
+                console.error("Error fetching activities:", error);
+                activityList.innerHTML = "<p>Failed to load activities.</p>";
+            });
     }
 
     // Fetch activities on page load
