@@ -54,7 +54,6 @@ fetchUserInfo(userEmail);
 document.getElementById('idCardForm').addEventListener('submit', generateIdCard);
 
 async function generateIdCard(event) {
-
     event.preventDefault(); // Prevent the default form submission
     const selectedType = document.querySelector('input[name="employmentType"]:checked');
 
@@ -95,7 +94,7 @@ async function generateIdCard(event) {
         });
 
         if (response.ok) {
-        await saveUserIdCard(formData);
+            await saveUserIdCard(formData);
             const htmlContent = await response.text();
             const iframe = document.getElementById('previewIframe');
 
@@ -111,114 +110,114 @@ async function generateIdCard(event) {
                 style.innerHTML = `
                     /* Your custom styles here */
                      .main {
-                                            display: flex;
-                                            justify-content: center;
-                                            align-items: center;
-                                            grid-template-columns: 2.3fr 0.7fr;
-                                            width: 100%;
-                                            padding: 10px;
-                                        }
-                                        .form {
-                                        margin:0;
-                                        }
-                                        .form:nth-child(1){
-                                            width:80%;
-                                        }
-                                        .form:nth-child(2){
-                                            width:100%;
-                                        }
-                                       .card {
-                                           width: 100%;
-                                           height: auto;
-                                           border-radius: 20px;
-                                           background-color: #ffffff;
-                                           border-top: 20px solid #17146e;
-                                           margin-top: 20px;
-                                       }
-                                       .footer {
-                                           position: relative;
-                                           bottom: 0;
-                                           background-color: #2c2c64;
-                                           width: 100%;
-                                           font-family: Inter;
-                                           font-size: 10px;
-                                           font-weight: 500;
-                                           text-align: center;
-                                           color: #ffffff;
-                                           border-radius: 0 0 20px 20px;
-                                           display: flex;
-                                           align-items: center;
-                                           justify-content: center;
-                                           padding: 8px;
-                                           height: 60px;
-                                       }
-                                        .header {
-                                            border-bottom: 5px solid #25257d;
-                                            text-align: center;
-                                            color: #17146e;
-                                            font-family: Inter;
-                                            font-size: 24px;
-                                            font-weight: 500;
-                                            line-height: 26px;
-                                        }
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        grid-template-columns: 2.3fr 0.7fr;
+                        width: 100%;
+                        padding: 10px;
+                    }
+                    .form {
+                        margin: 0;
+                    }
+                    .form:nth-child(1){
+                        width: 80%;
+                    }
+                    .form:nth-child(2){
+                        width: 100%;
+                    }
+                   .card {
+                       width: 100%;
+                       height: auto;
+                       border-radius: 20px;
+                       background-color: #ffffff;
+                       border-top: 20px solid #17146e;
+                       margin-top: 20px;
+                   }
+                   .footer {
+                       position: relative;
+                       bottom: 0;
+                       background-color: #2c2c64;
+                       width: 100%;
+                       font-family: Inter;
+                       font-size: 10px;
+                       font-weight: 500;
+                       text-align: center;
+                       color: #ffffff;
+                       border-radius: 0 0 20px 20px;
+                       display: flex;
+                       align-items: center;
+                       justify-content: center;
+                       padding: 8px;
+                       height: 60px;
+                   }
+                    .header {
+                        border-bottom: 5px solid #25257d;
+                        text-align: center;
+                        color: #17146e;
+                        font-family: Inter;
+                        font-size: 24px;
+                        font-weight: 500;
+                        line-height: 26px;
+                    }
 
-                                        table {
-                                            border-collapse: collapse;
-                                            width: 100%;
-                                        }
-                                      table tr td {
-                                          font-family: Inter;
-                                          font-size: 15px;
-                                          font-weight: 550;
-                                          line-height: 33.89px;
-                                          color: #17146e;
-                                          padding: 0px 0 0px;
-                                      }
-                                        input {
-                                            font-family: Inter;
-                                            font-size: 18px;
-                                            font-weight: 400;
-                                            line-height: 33.89px;
-                                            text-align: left;
-                                            color: #383747;
-                                            outline: none;
-                                            border: 0px;
-                                            background-color: #ffffff;
-                                            padding-left: 5px;
-                                        }
-                                       table tr td textarea {
-                                           font-family: Inter;
-                                           font-size: 15px;
-                                           font-weight: 400;
-                                           line-height: 33.89px;
-                                           text-align: left;
-                                           color: #383747;
-                                           outline: none;
-                                           border: 0px;
-                                           background-color: #ffffff;
-                                            width: 100%;
-                                           padding-left: 5px;
-                                           resize: none;
-                                           overflow-wrap: break-word;
-                                           word-wrap: break-word;
-                                       }
-                                        table tr td input {
-                                            font-family: Inter;
-                                            font-size: 18px;
-                                            font-weight: 400;
-                                            line-height: 33.89px;
-                                            text-align: left;
-                                            color: #383747;
-                                            outline: none;
-                                            border: 0px;
-                                            background-color: #ffffff;
-                                            padding-left: 5px;
-                                        }
-                                       img {
-                                           max-width: 80px;
-                                           height: auto;
-                                           margin: 0;
-                                       }
+                    table {
+                        border-collapse: collapse;
+                        width: 100%;
+                    }
+                  table tr td {
+                      font-family: Inter;
+                      font-size: 15px;
+                      font-weight: 550;
+                      line-height: 33.89px;
+                      color: #17146e;
+                      padding: 0px 0 0px;
+                  }
+                    input {
+                        font-family: Inter;
+                        font-size: 18px;
+                        font-weight: 400;
+                        line-height: 33.89px;
+                        text-align: left;
+                        color: #383747;
+                        outline: none;
+                        border: 0px;
+                        background-color: #ffffff;
+                        padding-left: 5px;
+                    }
+                   table tr td textarea {
+                       font-family: Inter;
+                       font-size: 15px;
+                       font-weight: 400;
+                       line-height: 33.89px;
+                       text-align: left;
+                       color: #383747;
+                       outline: none;
+                       border: 0px;
+                       background-color: #ffffff;
+                        width: 100%;
+                       padding-left: 5px;
+                       resize: none;
+                       overflow-wrap: break-word;
+                       word-wrap: break-word;
+                   }
+                    table tr td input {
+                        font-family: Inter;
+                        font-size: 18px;
+                        font-weight: 400;
+                        line-height: 33.89px;
+                        text-align: left;
+                        color: #383747;
+                        outline: none;
+                        border: 0px;
+                        background-color: #ffffff;
+                        padding-left: 5px;
+                    }
+                   img {
+                       max-width: 80px;
+                       height: auto;
+                       margin: 0;
+                   }
                 `;
                 iframeDoc.head.appendChild(style);
             };
@@ -255,14 +254,18 @@ async function generateIdCard(event) {
                 localStorage.setItem('form-data', JSON.stringify(formDataObject));
                 console.log("Form data saved to localStorage (without image):", formDataObject);
             }
+        } else if (response.status === 413) {
+            // If the response is a 413 Payload Too Large
+            showErrorModal("Image is too large. Please make it under 1MB or lower the resolution and try again.");
         } else {
             console.error("Failed to generate ID card:", response.statusText);
+            showErrorModal("You don't have enough tokens to generate the ID card.");
         }
     } catch (error) {
         console.error("Error generating ID card:", error);
+        showErrorModal("Image is too large. Please make it under 1MB or lower the resolution and try again");
     }
 }
-
 
 async function saveUserIdCard(formData) {
     try {
@@ -280,6 +283,16 @@ async function saveUserIdCard(formData) {
     } catch (error) {
         console.error("Error saving ID card details:", error);
     }
+}
+
+// Function to show the error modal
+function showErrorModal(message) {
+    const errorModalBody = document.getElementById("errorModalBody");
+    errorModalBody.textContent = message; // Set the error message in the modal body
+
+    // Show the modal
+    const errorModal = new bootstrap.Modal(document.getElementById("errorModal"));
+    errorModal.show();
 }
 //---------------------------------Print API Button -----------------------------
 // Print the ID card when the Print button is clicked

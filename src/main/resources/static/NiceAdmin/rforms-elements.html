@@ -305,7 +305,7 @@
                   <input type="text" id="phoneNumber" name="phoneNumber" placeholder="Personal Contact Number" class="form-control mb-3" required>
                   <!-- Submit button -->
                   <button type="submit" class="btn btn-dark">Submit</button>
-                  <button type="button" id="printButton" class="btn btn-secondary mt-2" style="display:none;">Print</button>
+                  <button type="button" id="printButton" class="btn btn-secondary " style="display:none;">Print</button>
                 </form>
               </div>
             </div>
@@ -328,6 +328,16 @@
           <iframe id="previewIframe1" style ="display:none" srcdoc="<p style='text-align:center;'>Your ID Card Preview Will Appear Here</p>"></iframe>
         </div>
         </div>
+      <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-body text-center">
+              <h4 class="text-danger">Error</h4>
+              <p id="errorModalBody"></p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
   </section>
