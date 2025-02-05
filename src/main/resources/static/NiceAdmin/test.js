@@ -55,15 +55,33 @@ document.getElementById('idCardForm').addEventListener('submit', generateIdCard)
 
 async function generateIdCard(event) {
     event.preventDefault(); // Prevent the default form submission
+
+    // Collect form data
+    const form = document.getElementById('idCardForm');
+    const formData = new FormData(form);
+
+    // Validate Email BEFORE doing anything else!
+    const email = formData.get('email');
+    if (!email) {
+        showErrorModal("Email is required.");
+        return;
+    }
+
+    if (email.length > 25) {
+        showErrorModal("Email address should not exceed 25 characters.");
+        return;
+    }
+
+    if (!isValidEmail(email)) {
+        showErrorModal("Please enter a valid email address.");
+        return;
+    }
     const selectedType = document.querySelector('input[name="employmentType"]:checked');
 
     if (!selectedType) {
         alert("Please select Employment Type before proceeding.");
         return;
     }
-    // Collect form data
-    const form = document.getElementById('idCardForm');
-    const formData = new FormData(form);
 
     // Fetch retailerEmail from session storage
     const retailerEmail = sessionStorage.getItem('userEmail'); // Assuming 'userEmail' is stored in session storage
@@ -76,13 +94,12 @@ async function generateIdCard(event) {
     // Add retailerEmail to form data
     formData.append('retailerEmail', retailerEmail);
 
-    // Check if 'email' field exists and update it as 'emailAddress'
-    const email = formData.get('email');
+    // Check if 'email' field exists and update it as 'emailAddress'  (Already validated, but good to double-check)
     if (email) {
         formData.delete('email'); // Remove the old 'email' field
         formData.append('emailAddress', email); // Add it with the correct name
     } else {
-        console.error("'email' field is not found in formData.");
+        console.error("'email' field is not found in formData (after validation!).");
         return; // Stop the process if 'email' is not found
     }
 
@@ -293,6 +310,13 @@ function showErrorModal(message) {
     // Show the modal
     const errorModal = new bootstrap.Modal(document.getElementById("errorModal"));
     errorModal.show();
+}
+
+// Helper function to validate email format
+function isValidEmail(email) {
+    // Basic email validation regex (you can use a more robust one if needed)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
 }
 //---------------------------------Print API Button -----------------------------
 // Print the ID card when the Print button is clicked

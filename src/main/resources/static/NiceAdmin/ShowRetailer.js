@@ -362,21 +362,33 @@ document.addEventListener("DOMContentLoaded", function() {
     fetchUserName();
 });
 //----------------------------------Search  retiler  Api ----------------------------------
-
 document.getElementById('deleteRetailerForm').addEventListener('submit', async function(event) {
     event.preventDefault(); // Prevent form submission
 
-    const email = document.getElementById('inputEmail').value;
-    const sessionEmail = getSessionEmail(); // You need to implement this function to get the session email
+    let email = document.getElementById('inputEmail').value;
+    email = email.trim(); // Remove any leading/trailing whitespace
+
+    if (!isValidEmail(email)) {
+        showErrorModal("Please enter a valid email address.");
+        return;
+    }
+
+    const sessionEmail = getSessionEmail();
 
     try {
         // Fetch retailer information
-        const retailerResponse = await fetch(`${API_URL}/api/admin/distributor/userInfo?email=${encodeURIComponent(email)}`);
+        const retailerResponse = await fetch(`${API_URL}/api/admin/distributor/userInfo?email=${email}`); // Use raw email value
+
+        if (!retailerResponse.ok) {
+            showErrorModal('No retailer found with this email.');
+            return;
+        }
         const retailerData = await retailerResponse.json();
 
-        if (retailerResponse.ok && retailerData) {
+
+        if (retailerData) {
             // Fetch token amount
-            const tokenResponse = await fetch(`${API_URL}/api/admin/token/tokens?email=${encodeURIComponent(sessionEmail)}`);
+            const tokenResponse = await fetch(`${API_URL}/api/admin/token/tokens?email=${encodeURIComponent(sessionEmail)}`); // Okay to encode sessionEmail
             const tokenData = await tokenResponse.json();
 
             // Find the retailer's token amount
@@ -402,11 +414,11 @@ document.getElementById('deleteRetailerForm').addEventListener('submit', async f
             // Show the confirmation section
             document.getElementById('confirmationSection').style.display = 'block';
         } else {
-            alert('Retailer not found or error fetching data');
+            showErrorModal('Retailer not found with this email.');
         }
     } catch (error) {
         console.error('Error fetching retailer or token data:', error);
-        alert('An error occurred while fetching the data.');
+        showErrorModal('An error occurred while fetching the data.');
     }
 });
 
@@ -414,6 +426,12 @@ document.getElementById('deleteRetailerForm').addEventListener('submit', async f
 function getSessionEmail() {
     // For example, if you store the session email in localStorage or sessionStorage
     return sessionStorage.getItem('userEmail');
+}
+
+// Helper function to validate email format
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
 }
 //----------------------------------Show Token retiler  Api ----------------------------------
 // Fetch and display retailers table
@@ -429,6 +447,7 @@ function fetchAndDisplayRetailers() {
     fetch(`${API_URL}/api/admin/retailer/list-by-creator?creatorEmail=${encodeURIComponent(creatorEmail)}`)
         .then(response => {
             if (!response.ok) {
+               showErrorModal(`Network response was not ok: ${response.statusText}`);
                 throw new Error(`Network response was not ok: ${response.statusText}`);
             }
             return response.json();
@@ -442,6 +461,7 @@ function fetchAndDisplayRetailers() {
                     fetch(`${API_URL}/api/admin/token/tokens?email=${encodeURIComponent(creatorEmail)}`)
                         .then(tokenResponse => {
                              if (!tokenResponse.ok) {
+                                  showErrorModal(`Network response was not ok: ${tokenResponse.statusText}`);
                                   throw new Error(`Network response was not ok: ${tokenResponse.statusText}`);
                              }
                                 return tokenResponse.json();
@@ -465,15 +485,18 @@ function fetchAndDisplayRetailers() {
                          })
                         .catch(error => {
                         console.error('Error fetching token data:', error);
+                         showErrorModal('Error fetching token data: '+ error);
                      });
                 });
             }else{
                 console.error('No retailers found or data format is incorrect.');
+                 showErrorModal('No retailers found or data format is incorrect.');
             }
 
         })
         .catch(error => {
             console.error('Error fetching retailers:', error);
+             showErrorModal('Error fetching retailers: '+ error);
         });
 }
  fetchAndDisplayRetailers();
@@ -490,7 +513,7 @@ document.addEventListener("DOMContentLoaded", function() {
 //----------------------------------User Info Api ----------------------------------
 function fetchUserInfo(email) {
    if (!email) {
-     alert('You are on a guest profile');
+       showErrorModal('You are on a guest profile');
      return;
    }
    const apiUrl = `${API_URL}/api/admin/distributor/userInfo?email=${email}`;
@@ -501,8 +524,26 @@ function fetchUserInfo(email) {
      })
      .catch(error => {
        console.error("Error fetching user info:", error);
-       alert("An error occurred while fetching user information.");
+       showErrorModal("An error occurred while fetching user information.");
      });
  }
  const userEmail = sessionStorage.getItem('userEmail');
  fetchUserInfo(userEmail);
+
+//----------------------------------Modal Logic----------------------------------
+function showErrorModal(message) {
+    document.getElementById('modalMessage').innerText = message;
+    document.getElementById('errorModal').style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById('errorModal').style.display = "none";
+}
+
+// Close the modal if the user clicks outside of it.  Note:  This may not be desirable.
+window.onclick = function(event) {
+    const modal = document.getElementById('errorModal');
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}

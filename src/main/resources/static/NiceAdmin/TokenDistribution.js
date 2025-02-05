@@ -449,7 +449,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 .then(response => response.json())
                 .then(activities => {
                 // Filter and count ID card creation activities
-                const idCardCount = activities.filter(activity => activity.type === 'ID_CARD_CREATION').length;
+                const idCardCount = activities.filter(activity => activity.type === 'ID Card Creation').length;
 
                 // Create a new table row
                 const row = document.createElement('tr');
@@ -482,7 +482,7 @@ function populateTokenUsageTable() {
                 .then(response => response.json())
                 .then(activityData => {
                 // Count ID_CARD_CREATION activities to determine token usage
-                const tokenUsageCount = activityData.filter(activity => activity.type === "ID_CARD_CREATION").length;
+                const tokenUsageCount = activityData.filter(activity => activity.type === "ID Card Creation").length;
 
                 const row = document.createElement("tr");
 

@@ -371,6 +371,8 @@ public class RetailerController {
         activity.setUserEmail(userEmail);
         activityRepository.save(activity);
     }
+
+
     @PostMapping("/createIdCardFinal")
     public ResponseEntity<String> createIdCardFinal(
             @RequestParam String retailerEmail,
@@ -426,179 +428,211 @@ public class RetailerController {
             businessField = "Company Name";
             addressField = "Company Address";
         }
-        // Create the dynamic HTML content
-        String htmlContent = """
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <title>ID Card</title>
-    <style>
-        body {
-            background-color: white;
-            display: flex;
-            flex-direction: column;
-            gap: 200px;
-            justify-content: center;
-            align-items: center;
-        }
-        .card {
-            width: 973px;
-            height: 638px;
-            border-radius: 20px;
-            background-color: #ffffff;
-            border-top: 20px solid #17146e;
-            margin-top: 20px;
-        }
-        .header {
-            border-bottom: 5px solid #25257d;
-            text-align: center;
-            color: #17146e;
-            font-family: Inter;
-            font-size: 50px;
-            font-weight: 500;
-            line-height: 60.51px;
-        }
-        .main {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 30px;
-            display: grid;
-            grid-template-columns: 2.3fr 0.7fr;
-        }
-        .form {
-            margin-left: 54px;
-            margin-top: 51px;
-        }
-        table {
-            border-collapse: collapse;
-        }
-        table tr {
-            padding-bottom: 15px;
-        }
-        table tr td {
-            font-family: Inter;
-            font-size: 28px;
-            font-weight: 550;
-            line-height: 33.89px;
-            color: #17146e;
-            padding: 15px 0;
-        }
-        table tr td input {
-            font-family: Inter;
-            font-size: 28px;
-            font-weight: 400;
-            line-height: 33.89px;
-            text-align: left;
-            color: #383747;
-            outline: none;
-            border: 0px;
-            background-color: #ffffff;
-            padding-left: 5px;
-        }
-        table tr td textarea {
-            font-family: Inter;
-            font-size: 28px;
-            font-weight: 400;
-            line-height: 33.89px;
-            color: #383747;
-            outline: none;
-            border: 0px;
-            background-color: #ffffff;
-            
-            padding-left: 5px;
-            resize: none;
-        }
-        img {
-            width: 194px;
-            height: 231px;
-            border-radius: 10px;
-            border: 1px solid #000000;
-            margin-top: 54px;
-        }
-        .footer {
-            position: absolute;
-            bottom: 0px;
-            background-color: #2c2c64;
-            width: 100%%;
-            height: 123px;
-            font-family: Inter;
-            font-size: 28px;
-            font-weight: 500;
-            line-height: 40px;
-            text-align: center;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-</style>
-</head>
-<body>
-    <!-- Front Side of the Card -->
-    <div class="card">
-        <header class="header">
-            <p>PERSONAL ID CARD</p>
-        </header>
-        <main class="main">
-            <form class="form">
-                <table>
-                    <!-- Name Field -->
-                    <tr><td>%s</td><td>&nbsp;&nbsp; :&nbsp;&nbsp; <input type="text" value="%s" readonly /></td></tr>
-                    <!-- Phone Number Field -->
-                    <tr><td>Phone Number</td><td>&nbsp;&nbsp; :&nbsp;&nbsp; <input type="text" value="%s" readonly /></td></tr>
-                    <!-- Email Address Field -->
-                    <tr><td>Email Address</td><td>&nbsp;&nbsp; :&nbsp;&nbsp; <input type="text" value="%s" readonly /></td></tr>
-                    <!-- Business/Company Name Field -->
-                    <tr><td>%s</td><td>&nbsp;&nbsp; :&nbsp;&nbsp; <input type="text" value="%s" readonly /></td></tr>
-                </table>
-            </form>
-            <!-- Photo Section -->
-            <div><img src="data:image/jpeg;base64,%s" alt="Photo" /></div>
-        </main>
-         <footer class="footer">
-          
-        </footer>
-    </div>
 
-    <!-- Back Side of the Card -->
-    <div class="card">
-        <header class="header">
-            <p>PERSONAL ID CARD - BACK</p>
-        </header>
-        <main class="main">
-            <form class="form">
-                <table>
-                    <!-- Business/Company Address -->
-                    <tr><td>%s   &nbsp; &nbsp; :&nbsp;</td><td> <textarea readonly>%s</textarea></td></tr>
-                    <!-- Current Address -->
-                    <tr><td>Current Address &nbsp;&nbsp;&nbsp;&nbsp; :&nbsp;</td><td> <textarea readonly>%s</textarea></td></tr>
-                    <!-- Permanent Address -->
-                    <tr><td>Permanent Address :&nbsp;</td><td> <textarea readonly>%s</textarea></td></tr>
-                </table>
-            </form>
-        </main>
-        <footer class="footer">
-            <p>Note: This card is not a Government Id or any type of Address proof.</p>
-        </footer>
-    </div>
-</body>
-</html>
-""".formatted(
-                nameField, name,               // Name
-                phoneNumber,                   // Phone Number
-                emailAddress,                         // Email Address (New addition on the front)
-                businessField, businessName,   // Business/Company Name
-                photoBase64,                   // Photo
-                addressField, businessAddress, // Business/Company Address (Now on the back)
-                currentAddress,                // Current Address
-                permanentAddress               // Permanent Address
-        );
-        // Return the dynamically generated HTML
-        // Save ID card
+        String nbsp = " ";
+
+        // Build the HTML content using StringBuilder
+        StringBuilder htmlBuilder = new StringBuilder();
+        htmlBuilder.append("<!DOCTYPE html>\n");
+        htmlBuilder.append("<html lang=\"en\">\n");
+        htmlBuilder.append("<head>\n");
+        htmlBuilder.append("    <meta charset=\"UTF-8\" />\n");
+        htmlBuilder.append("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n");
+        htmlBuilder.append("    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\" />\n");
+        htmlBuilder.append("    <title>ID Card</title>\n");
+        htmlBuilder.append("    <style>\n");
+        htmlBuilder.append("        body {\n");
+        htmlBuilder.append("            background-color: white;\n");
+        htmlBuilder.append("            display: flex;\n");
+        htmlBuilder.append("            flex-direction: column;\n");
+        htmlBuilder.append("            justify-content: flex-end;\n");
+        htmlBuilder.append("            align-items: center;\n");
+        htmlBuilder.append("            min-height: 100vh;\n");
+        htmlBuilder.append("            margin: 0;\n");
+        htmlBuilder.append("            font-size: 10px; /* Base font size for the body */\n");
+        htmlBuilder.append("        }\n");
+        htmlBuilder.append("\n");
+        htmlBuilder.append("        .card-container {\n");
+        htmlBuilder.append("            display: flex;\n");
+        htmlBuilder.append("            flex-direction: row;\n");
+        htmlBuilder.append("            gap: 10px;\n");
+        htmlBuilder.append("            width: 100%;\n");
+        htmlBuilder.append("            max-width: 700px; /* Further reduced max-width */\n");
+        htmlBuilder.append("            margin-bottom: 10px; /* Further reduced margin */\n");
+        htmlBuilder.append("            justify-content: space-around;\n");
+        htmlBuilder.append("        }\n");
+        htmlBuilder.append("\n");
+        htmlBuilder.append("        .card {\n");
+        htmlBuilder.append("            width: 300px; /* Further reduced card width */\n");
+        htmlBuilder.append("            height: auto;\n");
+        htmlBuilder.append("            border-radius: 8px; /* Further reduced border radius */\n");
+        htmlBuilder.append("            background-color: #ffffff;\n");
+        htmlBuilder.append("            border-top: 8px solid #17146e; /* Further reduced border top */\n");
+        htmlBuilder.append("            position: relative;\n");
+        htmlBuilder.append("        }\n");
+        htmlBuilder.append("        .header {\n");
+        htmlBuilder.append("            border-bottom: 2px solid #25257d;\n");
+        htmlBuilder.append("            text-align: center;\n");
+        htmlBuilder.append("            color: #17146e;\n");
+        htmlBuilder.append("            font-family: Inter;\n");
+        htmlBuilder.append("            font-size: 18px; /* Further reduced font size */\n");
+        htmlBuilder.append("            font-weight: 500;\n");
+        htmlBuilder.append("            line-height: 24px; /* Further reduced line height */\n");
+        htmlBuilder.append("        }\n");
+        htmlBuilder.append("   .main {\n");
+        htmlBuilder.append("    display: flex\n");
+        htmlBuilder.append(";\n");
+        htmlBuilder.append("    justify-content: center;\n");
+        htmlBuilder.append("    align-items: center;\n");
+        htmlBuilder.append("    /* margin-top: 10px; */\n");
+        htmlBuilder.append("    grid-template-columns: 2fr 0.1fr;\n");
+        htmlBuilder.append("    display: grid\n");
+        htmlBuilder.append(";\n");
+        htmlBuilder.append("    padding-bottom: 10px;\n");
+        htmlBuilder.append("    /* margin-bottom: 10px; */\n");
+        htmlBuilder.append("    /* padding-bottom: 11px; */\n");
+        htmlBuilder.append("    height: 100%;\n");
+        htmlBuilder.append("}\n");
+        htmlBuilder.append(".form {\n");
+        htmlBuilder.append("    margin-left: 15px;\n");
+        htmlBuilder.append("    /* margin-top: 15px; */\n");
+        htmlBuilder.append("}\n");
+        htmlBuilder.append("        table {\n");
+        htmlBuilder.append("            border-collapse: collapse;\n");
+        htmlBuilder.append("        }\n");
+        htmlBuilder.append("        table tr {\n");
+        htmlBuilder.append("            padding-bottom: 5px; /* Further reduced padding */\n");
+        htmlBuilder.append("        }\n");
+        htmlBuilder.append("        table tr td {\n");
+        htmlBuilder.append("            font-family: Inter;\n");
+        htmlBuilder.append("            font-size: 10px; /* Further reduced font size */\n");
+        htmlBuilder.append("            font-weight: 500;\n");
+        htmlBuilder.append("            line-height: 16px; /* Further reduced line height */\n");
+        htmlBuilder.append("            color: #17146e;\n");
+        htmlBuilder.append("            padding: 5px 0; /* Further reduced padding */\n");
+        htmlBuilder.append("            vertical-align:top;  /* Added for better alignment */\n");
+        htmlBuilder.append("        }\n");
+        htmlBuilder.append("        table tr td input {\n");
+        htmlBuilder.append("    font-family: Inter;\n");
+        htmlBuilder.append("    font-size: 10px;\n");
+        htmlBuilder.append("    font-weight: 400;\n");
+        htmlBuilder.append("    line-height: 16px;\n");
+        htmlBuilder.append("    text-align: left;\n");
+        htmlBuilder.append("    color: #383747;\n");
+        htmlBuilder.append("    outline: none;\n");
+        htmlBuilder.append("    border: 0px;\n");
+        htmlBuilder.append("    background-color: #ffffff;\n");
+        htmlBuilder.append("    padding-left: 3px;\n");
+        htmlBuilder.append("    width: 88%;\n");
+        htmlBuilder.append("}\n");
+        htmlBuilder.append("       img {\n");
+        htmlBuilder.append("    width: 60px;\n");
+        htmlBuilder.append("    height: auto;\n");
+        htmlBuilder.append("    border-radius: 4px;\n");
+        htmlBuilder.append("    /* border: 1px solid #000000; */\n");
+        htmlBuilder.append("    /* margin-top: 15px; */\n");
+        htmlBuilder.append("    justify-items: center;\n");
+        htmlBuilder.append("    marign-right: 10px;\n");
+        htmlBuilder.append("     margin-right: 17px;\n");
+        htmlBuilder.append("}\n");
+        htmlBuilder.append("  .footer {\n");
+        htmlBuilder.append("    /* position: absolute; */\n");
+        htmlBuilder.append("    bottom: 0;\n");
+        htmlBuilder.append("    background-color: #2c2c64;\n");
+        htmlBuilder.append("    width: 100%;\n");
+        htmlBuilder.append("    height: auto;\n");
+        htmlBuilder.append("    min-height: 40px;\n");
+        htmlBuilder.append("    font-family: Inter;\n");
+        htmlBuilder.append("    /* font-size: 12px; */\n");
+        htmlBuilder.append("    font-weight: 400;\n");
+        htmlBuilder.append("    line-height: 16px;\n");
+        htmlBuilder.append("    text-align: center;\n");
+        htmlBuilder.append("    color: #ffffff;\n");
+        htmlBuilder.append("    display: flex\n");
+        htmlBuilder.append(";\n");
+        htmlBuilder.append("    align-items: center;\n");
+        htmlBuilder.append("    justify-content: center;\n");
+        htmlBuilder.append("    /* padding: 2px; */\n");
+        htmlBuilder.append("    padding-bottom: -5px;\n");
+        htmlBuilder.append("    padding-top: 12px;\n");
+        htmlBuilder.append("}\n");
+        htmlBuilder.append("\n");
+        htmlBuilder.append("        /* Style for addresses, using spans instead of textareas */\n");
+        htmlBuilder.append("        .address-span {\n");
+        htmlBuilder.append("            display: block;  /* Make it act like a block element */\n");
+        htmlBuilder.append("            font-family: Inter;\n");
+        htmlBuilder.append("            font-size: 10px;\n");
+        htmlBuilder.append("            font-weight: 400;\n");
+        htmlBuilder.append("            line-height: 16px;\n");
+        htmlBuilder.append("            color: #383747;\n");
+        htmlBuilder.append("            padding-left: 5px;\n");
+        htmlBuilder.append("            word-break: break-word;  /* Allow long words to wrap */\n");
+        htmlBuilder.append("        }\n");
+        htmlBuilder.append("    </style>\n");
+        htmlBuilder.append("</head>\n");
+        htmlBuilder.append("<body>\n");
+        htmlBuilder.append("\n");
+        htmlBuilder.append("<div class=\"card-container\">\n");
+        htmlBuilder.append("    <!-- Front Side of the Card -->\n");
+        htmlBuilder.append("    <div class=\"card\">\n");
+        htmlBuilder.append("        <header class=\"header\">\n");
+        htmlBuilder.append("            <p>PERSONAL ID CARD</p>\n");
+        htmlBuilder.append("        </header>\n");
+        htmlBuilder.append("        <main class=\"main\">\n");
+        htmlBuilder.append("            <form class=\"form\" style=\"\n");
+        htmlBuilder.append("    width: 100%;\n");
+        htmlBuilder.append("\">\n");
+        htmlBuilder.append("                <table style=\"\n");
+        htmlBuilder.append("    width: 100%;\n");
+        htmlBuilder.append("\">\n");
+        htmlBuilder.append("                    <!-- Name Field -->\n");
+        htmlBuilder.append("                    <tr><td>Name</td><td>:").append(nbsp).append("<input type=\"text\" value=\"").append(name).append("\" readonly /></td></tr>\n");
+        htmlBuilder.append("                    <!-- Phone Number Field -->\n");
+        htmlBuilder.append("                    <tr><td>Phone Number</td><td>:").append(nbsp).append("<input type=\"text\" value=\"").append(phoneNumber).append("\" readonly /></td></tr>\n");
+        htmlBuilder.append("                    <!-- Email Address Field -->\n");
+        htmlBuilder.append("                    <tr><td>Email Address</td><td>:").append(nbsp).append("<input type=\"text\" value=\"").append(emailAddress).append("\" readonly /></td></tr>\n");
+        htmlBuilder.append("                    <!-- Business/Company Name Field -->\n");
+        htmlBuilder.append("                    <tr><td>Business Name</td><td>:").append(nbsp).append("<input type=\"text\" value=\"").append(businessName).append("\" readonly /></td></tr>\n");
+        htmlBuilder.append("                </table>\n");
+        htmlBuilder.append("            </form>\n");
+        htmlBuilder.append("            <!-- Photo Section -->\n");
+        htmlBuilder.append("            <div style=\"\n");
+        htmlBuilder.append("    justify-self: center;\n");
+        htmlBuilder.append("\"><img src=\"data:image/jpeg;base64,").append(photoBase64).append("\" alt=\"Photo\" /></div>\n");
+        htmlBuilder.append("        </main>\n");
+        htmlBuilder.append("        <footer class=\"footer\">\n");
+        htmlBuilder.append("\n");
+        htmlBuilder.append("        </footer>\n");
+        htmlBuilder.append("    </div>\n");
+        htmlBuilder.append("\n");
+        htmlBuilder.append("    <!-- Back Side of the Card -->\n");
+        htmlBuilder.append("    <div class=\"card\">\n");
+        htmlBuilder.append("        <header class=\"header\">\n");
+        htmlBuilder.append("            <p>PERSONAL ID CARD - BACK</p>\n");
+        htmlBuilder.append("        </header>\n");
+        htmlBuilder.append("        <main class=\"main\">\n");
+        htmlBuilder.append("            <form class=\"form\">\n");
+        htmlBuilder.append("                <table>\n");
+        htmlBuilder.append("                    <!-- Business/Company Address -->\n");
+        htmlBuilder.append("                    <tr><td>Business Address    :</td><td> <span class=\"address-span\">").append(businessAddress).append("</span></td></tr>\n");
+        htmlBuilder.append("                    <!-- Current Address -->\n");
+        htmlBuilder.append("                    <tr><td>Current  Address:</td><td> <span class=\"address-span\">").append(currentAddress).append("</span></td></tr>\n");
+        htmlBuilder.append("                    <!-- Permanent Address : -->\n");
+        htmlBuilder.append("                    <tr><td>Permanent Address :</td><td> <span class=\"address-span\">").append(permanentAddress).append("</span></td></tr>\n");
+        htmlBuilder.append("                </table>\n");
+        htmlBuilder.append("            </form>\n");
+        htmlBuilder.append("        </main>\n");
+        htmlBuilder.append("        <footer class=\"footer\">\n");
+        htmlBuilder.append("            <p>Note: This card is not a Government Id or any type of Address proof.</p>\n");
+        htmlBuilder.append("        </footer>\n");
+        htmlBuilder.append("    </div>\n");
+        htmlBuilder.append("</div>\n");
+        htmlBuilder.append("</body>\n");
+        htmlBuilder.append("</html>\n");
+        String htmlContent = htmlBuilder.toString();
+
+
+        // Save ID card (add your createIdCard logic here, using the parameters)
         createIdCard(name, businessName, businessAddress, phoneNumber, emailAddress,
                 permanentAddress, currentAddress, retailer.getEmail(),
                 retailerEmail, photoBytes, null, null);
