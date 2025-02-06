@@ -576,7 +576,7 @@ public class RetailerController {
         htmlBuilder.append("    <!-- Front Side of the Card -->\n");
         htmlBuilder.append("    <div class=\"card\">\n");
         htmlBuilder.append("        <header class=\"header\">\n");
-        htmlBuilder.append("            <p>PERSONAL ID CARD</p>\n");
+        htmlBuilder.append("            <p style=\"margin-top: 5px; margin-bottom: 5px;\">PERSONAL ID CARD</p>\n");  // Added style here
         htmlBuilder.append("        </header>\n");
         htmlBuilder.append("        <main class=\"main\">\n");
         htmlBuilder.append("            <form class=\"form\" style=\"\n");
@@ -608,7 +608,7 @@ public class RetailerController {
         htmlBuilder.append("    <!-- Back Side of the Card -->\n");
         htmlBuilder.append("    <div class=\"card\">\n");
         htmlBuilder.append("        <header class=\"header\">\n");
-        htmlBuilder.append("            <p>PERSONAL ID CARD - BACK</p>\n");
+        htmlBuilder.append("            <p style=\"margin-top: 5px; margin-bottom: 5px;\">PERSONAL ID CARD - BACK</p>\n");  // Added style here
         htmlBuilder.append("        </header>\n");
         htmlBuilder.append("        <main class=\"main\">\n");
         htmlBuilder.append("            <form class=\"form\">\n");
