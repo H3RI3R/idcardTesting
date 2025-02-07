@@ -36,6 +36,9 @@ document.addEventListener('DOMContentLoaded', function() {
             updateElementText("profileName", data.name);
             updateElementText("userEmail", data.name);
             updateElementText("userEmail1", data.name);
+            updateElementText("role", data.role);
+
+            
 
             // Update profile dropdown
             const profileDropdown = document.querySelector('.nav-profile .dropdown-toggle');
@@ -67,7 +70,7 @@ function fetchUserInfo(email) {
         .then(response => response.json())
         .then(data => {
             document.getElementById("userRole").innerText = data.role || "N/A";
-            document.getElementById("role").innerText = data.role || "N/A";
+            // document.getElementById("role").innerText = data.role || "N/A";
         })
         .catch(error => {
             console.error("Error fetching user info:", error);

@@ -167,7 +167,7 @@ function fetchAndDisplayTransactions() {
         })
         .catch(error => {
             console.error('Error fetching transaction requests:', error);
-            showAlert('error', 'An error occurred while fetching transactions');
+            // showAlert('error', 'An error occurred while fetching transactions');
         });
 }
 
@@ -275,8 +275,7 @@ document.getElementById('searchTransactionId').addEventListener('input', fetchAn
 // Initial fetch
 document.addEventListener('DOMContentLoaded', fetchAndDisplayTransactions);
 //-------------------------------------- Create Transaction Request API -------------------------------------------
- //  ------------------------------Create transection request api------------------------------------------
-document.addEventListener("DOMContentLoaded", function() {
+ document.addEventListener("DOMContentLoaded", function() {
     const doneButton = document.getElementById("bankDoneButton1");
     const doneButton1 = document.getElementById("upiDoneButton1");
 
@@ -317,6 +316,14 @@ document.addEventListener("DOMContentLoaded", function() {
             });
     }
 
+    // Function to reset the input field
+    function resetInputField() {
+        document.getElementById('inputTokenAmount').value = '';
+    }
+ function resetRateCalculator() {
+   document.getElementById("rateDisplay").textContent = ""; // Clear rate display
+   document.getElementById("payableAmount").textContent = ""; // Clear payable amount
+ }
     // Bank Transfer Done Button
     doneButton.addEventListener("click", function() {
         checkAccountAvailability(); // Ensure flags are updated before validation
@@ -364,12 +371,17 @@ document.addEventListener("DOMContentLoaded", function() {
                         .then(data => {
                             if (data) {
                                 console.log("Token amount record created successfully", data);
+                                resetInputField(); // Reset the input field
+                                fetchAndDisplayTransactions(); // Refresh the transaction table
+                                resetRateCalculator();
                             } else {
                                 console.log("Error: ", data);
                             }
                         })
                         .catch(error => {
                             console.error("Error creating token amount:", error);
+                            // Reload the page even if token amount creation fails (handle as needed)
+
                         });
                 } else {
                      showAlert("Error: " + (data.error || "Unknown error"));
@@ -410,7 +422,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 return;
             }
             // Proceed with request if transaction ID is unique
-           fetch(`${API_URL}/api/admin/distributor/createTransactionRequest?email=${email}&amount=${amount}&transactionId=${transactionID}`, {
+            fetch(`${API_URL}/api/admin/distributor/createTransactionRequest?email=${email}&amount=${amount}&transactionId=${transactionID}`, {
                 method: 'POST'
             })
                 .then(response => response.json())
@@ -428,20 +440,25 @@ document.addEventListener("DOMContentLoaded", function() {
                             .then(data => {
                                 if (data) {
                                     console.log("Token amount record created successfully", data);
+                                     resetInputField(); // Reset the input field
+                                    fetchAndDisplayTransactions(); // Refresh the transaction table
+                                    resetRateCalculator();
                                 } else {
                                     console.log("Error: ", data);
                                 }
                             })
                             .catch(error => {
                                 console.error("Error creating token amount:", error);
+                                // Reload the page even if token amount creation fails (handle as needed)
+
                             });
-                    } else {
-                         showAlert("Error: " + (data.error || "Unknown error"));
-                    }
-                })
-                .catch(error => {
+                } else {
+                     showAlert("Error: " + (data.error || "Unknown error"));
+                }
+            })
+            .catch(error => {
                      showAlert("Error: " + error.message);
-                });
+            });
         });
     });
 

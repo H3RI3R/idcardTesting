@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
             updateElementText("company", data.company);
             updateElementText("address", data.companyAddress);
             updateElementText("designation", data.role);
+            updateElementText("role", data.role); // This updates the element with id "role"
             updateElementText("phone", data.phoneNumber);
             updateElementText("email", data.email);
 

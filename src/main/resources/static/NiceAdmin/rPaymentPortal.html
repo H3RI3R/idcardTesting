@@ -28,37 +28,36 @@
 
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
-  <style>
+<style>
     /* Custom red button styles */
-    button.btn-secondary {
-        --bs-btn-color: #fff; /* Text color */
-        --bs-btn-bg: red; /* Button background color */
-        --bs-btn-border-color: red; /* Border color */
-        --bs-btn-hover-color: #fff; /* Text color on hover */
-        --bs-btn-hover-bg: darkred; /* Hover background color */
-        --bs-btn-hover-border-color: darkred; /* Hover border color */
-        --bs-btn-focus-shadow-rgb: 130, 138, 145; /* Focus shadow color */
-        --bs-btn-active-color: #fff; /* Text color on active */
-        --bs-btn-active-bg: darkred; /* Active background color */
-        --bs-btn-active-border-color: darkred; /* Active border color */
-        --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125); /* Active shadow */
-        --bs-btn-disabled-color: #fff; /* Disabled text color */
-        --bs-btn-disabled-bg: #6c757d; /* Disabled background color */
-        --bs-btn-disabled-border-color: #6c757d; /* Disabled border color */
-    }
+button.btn-secondary {
+    --bs-btn-color: #fff; /* Text color */
+    --bs-btn-bg: red; /* Button background color */
+    --bs-btn-border-color: red; /* Border color */
+    --bs-btn-hover-color: #fff; /* Text color on hover */
+    --bs-btn-hover-bg: darkred; /* Hover background color */
+    --bs-btn-hover-border-color: darkred; /* Hover border color */
+    --bs-btn-focus-shadow-rgb: 130, 138, 145; /* Focus shadow color */
+    --bs-btn-active-color: #fff; /* Text color on active */
+    --bs-btn-active-bg: darkred; /* Active background color */
+    --bs-btn-active-border-color: darkred; /* Active border color */
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125); /* Active shadow */
+    --bs-btn-disabled-color: #fff; /* Disabled text color */
+    --bs-btn-disabled-bg: #6c757d; /* Disabled background color */
+    --bs-btn-disabled-border-color: #6c757d; /* Disabled border color */
+}
 
-    /* Optional: Add hover effects for better visibility */
-    button.btn-secondary:hover {
-        --bs-btn-bg: darkred; /* Ensure hover background stays dark red */
-        --bs-btn-border-color: darkred; /* Ensure hover border stays dark red */
-    }
+/* Optional: Add hover effects for better visibility */
+button.btn-secondary:hover {
+    --bs-btn-bg: darkred; /* Ensure hover background stays dark red */
+    --bs-btn-border-color: darkred; /* Ensure hover border stays dark red */
+}
 
-    button.btn-secondary:active {
-        --bs-btn-bg: darkred; /* Active background stays dark red */
-        --bs-btn-border-color: darkred; /* Active border stays dark red */
-    }
-  </style>
-
+button.btn-secondary:active {
+    --bs-btn-bg: darkred; /* Active background stays dark red */
+    --bs-btn-border-color: darkred; /* Active border stays dark red */
+}
+</style>
   <!-- =======================================================
   * Template Name: NiceAdmin
   * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
@@ -71,457 +70,457 @@
 
 <body>
 
-<!-- ======= Header ======= -->
-<header id="header" class="header fixed-top d-flex align-items-center">
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
 
-  <div class="d-flex align-items-center justify-content-between">
-    <a href="rindex.html" class="logo d-flex align-items-center">
-      <img src="assets/img/logo.png" alt="">
-      <span class="d-none d-lg-block">IdCard</span>
-    </a>
-    <i class="bi bi-list toggle-sidebar-btn"></i>
-  </div><!-- End Logo -->
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="rindex.html" class="logo d-flex align-items-center">
+        <img src="assets/img/logo.png" alt="">
+        <span class="d-none d-lg-block">IdCard</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
 
-  <nav class="header-nav ms-auto">
-    <ul class="d-flex align-items-center">
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
 
 
 
-      <li class="nav-item dropdown pe-3">
+        <li class="nav-item dropdown pe-3">
 
-        <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-          <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-          <span class="d-none d-md-block dropdown-toggle ps-2"><span id="userEmail"></span></span>
-        </a><!-- End Profile Iamge Icon -->
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2"><span id="userEmail"></span></span>
+          </a><!-- End Profile Iamge Icon -->
 
-        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-          <li class="dropdown-header">
-            <h6><span id="userEmail1"></span></h6>
-            <span id="userRole"></span>
-          </li>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6><span id="userEmail1"></span></h6>
+              <span id="userRole"></span>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="rusers-profile.html">
+                <i class="bi bi-person"></i>
+                <span>My Profile</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="#" id="logoutBtn">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign Out</span>
+              </a>
+            </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="rindex.html">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+      <li class="nav-item">
+        <a class="nav-link " href="rPaymentPortal.html">
+          <i class="bi bi-credit-card"></i>
+          <span>Payment Portal</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-menu-button-wide"></i><span>Manage IDCard</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <hr class="dropdown-divider">
-          </li>
-
-          <li>
-            <a class="dropdown-item d-flex align-items-center" href="rusers-profile.html">
-              <i class="bi bi-person"></i>
-              <span>My Profile</span>
+            <a href="rforms-elements.html" >
+              <i class="bi bi-circle"></i><span>Create IDCard</span>
             </a>
           </li>
           <li>
-            <hr class="dropdown-divider">
-          </li>
-
-
-          <li>
-            <hr class="dropdown-divider">
-          </li>
-
-
-          <li>
-            <hr class="dropdown-divider">
-          </li>
-
-          <li>
-            <a class="dropdown-item d-flex align-items-center" href="#" id="logoutBtn">
-              <i class="bi bi-box-arrow-right"></i>
-              <span>Sign Out</span>
+            <a href="rShowRetailer.html" >
+              <i class="bi bi-circle"></i><span>IDCard History</span>
             </a>
           </li>
 
-        </ul><!-- End Profile Dropdown Items -->
-      </li><!-- End Profile Nav -->
-
+        </ul>
+      <li class="nav-item">
+        <a class="nav-link collapsed " data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-journal-text"></i><span>Manage Report</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="rReport.html">
+              <i class="bi bi-circle"></i><span>IDCard Creation Report</span>
+            </a>
+          </li>
+          <li>
+            <a href="rTokenReceiptReport.html">
+              <i class="bi bi-circle"></i><span>Token Receipt Report</span>
+            </a>
+          </li>
+          <li>
+            <a href="rActivityLog.html">
+              <i class="bi bi-circle"></i><span>Activity Log</span>
+            </a>
+          </li>
+          <li>
+            <a href="rSuccessFailure.html">
+              <i class="bi bi-circle"></i><span>Success/Failure Report</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed " data-bs-target="#Token-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-journal-text"></i><span>Manage Tokens</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="Token-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="rToken.html">
+              <i class="bi bi-circle"></i><span>Show Tokens</span>
+            </a>
+          </li>
+          <li>
+            <a href="rTokenCreate.html">
+              <i class="bi bi-circle"></i><span>Request Tokens</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-heading">Pages</li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="rusers-profile.html">
+          <i class="bi bi-person"></i>
+          <span>Profile</span>
+        </a>
+      </li><!-- End Profile Page Nav -->
     </ul>
-  </nav><!-- End Icons Navigation -->
-
-</header><!-- End Header -->
-
-<!-- ======= Sidebar ======= -->
-<aside id="sidebar" class="sidebar">
-
-  <ul class="sidebar-nav" id="sidebar-nav">
-
-    <li class="nav-item">
-      <a class="nav-link collapsed" href="rindex.html">
-        <i class="bi bi-grid"></i>
-        <span>Dashboard</span>
-      </a>
-    </li><!-- End Dashboard Nav -->
-    <li class="nav-item">
-      <a class="nav-link " href="rPaymentPortal.html">
-        <i class="bi bi-credit-card"></i>
-        <span>Payment Portal</span>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-menu-button-wide"></i><span>Manage IDCard</span><i class="bi bi-chevron-down ms-auto"></i>
-      </a>
-      <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-        <li>
-          <a href="rforms-elements.html" >
-            <i class="bi bi-circle"></i><span>Create IDCard</span>
-          </a>
-        </li>
-        <li>
-          <a href="rShowRetailer.html" >
-            <i class="bi bi-circle"></i><span>IDCard History</span>
-          </a>
-        </li>
-
-      </ul>
-    <li class="nav-item">
-      <a class="nav-link collapsed " data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-journal-text"></i><span>Manage Report</span><i class="bi bi-chevron-down ms-auto"></i>
-      </a>
-      <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-        <li>
-          <a href="rReport.html">
-            <i class="bi bi-circle"></i><span>IDCard Creation Report</span>
-          </a>
-        </li>
-        <li>
-          <a href="rTokenReceiptReport.html">
-            <i class="bi bi-circle"></i><span>Token Receipt Report</span>
-          </a>
-        </li>
-        <li>
-          <a href="rActivityLog.html">
-            <i class="bi bi-circle"></i><span>Activity Log</span>
-          </a>
-        </li>
-        <li>
-          <a href="rSuccessFailure.html">
-            <i class="bi bi-circle"></i><span>Success/Failure Report</span>
-          </a>
-        </li>
-      </ul>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link collapsed " data-bs-target="#Token-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-journal-text"></i><span>Manage Tokens</span><i class="bi bi-chevron-down ms-auto"></i>
-      </a>
-      <ul id="Token-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-        <li>
-          <a href="rToken.html">
-            <i class="bi bi-circle"></i><span>Show Tokens</span>
-          </a>
-        </li>
-        <li>
-          <a href="rTokenCreate.html">
-            <i class="bi bi-circle"></i><span>Request Tokens</span>
-          </a>
-        </li>
-      </ul>
-    </li>
-    <li class="nav-heading">Pages</li>
-    <li class="nav-item">
-      <a class="nav-link collapsed" href="rusers-profile.html">
-        <i class="bi bi-person"></i>
-        <span>Profile</span>
-      </a>
-    </li><!-- End Profile Page Nav -->
-  </ul>
-</aside><!-- End Sidebar-->
+  </aside><!-- End Sidebar-->
 
 
-<main id="main" class="main">
-  <!-- Modal Structure (Placed towards the bottom of the file) -->
-  <div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="notificationModalTitle">All Notifications</h5>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <!-- Notification items go here -->
-          <div class="notification-item">
-            <i class="bi bi-exclamation-circle text-warning"></i>
-            <div>
-              <h4>Lorem Ipsum</h4>
-              <p>Quae dolorem earum veritatis oditseno</p>
-              <p>30 min. ago</p>
-            </div>
+  <main id="main" class="main">
+    <!-- Modal Structure (Placed towards the bottom of the file) -->
+    <div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="notificationModalTitle">All Notifications</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
-          <hr class="dropdown-divider">
-          <div class="notification-item">
-            <i class="bi bi-x-circle text-danger"></i>
-            <div>
-              <h4>Atque rerum nesciunt</h4>
-              <p>Quae dolorem earum veritatis oditseno</p>
-              <p>1 hr. ago</p>
+          <div class="modal-body">
+            <!-- Notification items go here -->
+            <div class="notification-item">
+              <i class="bi bi-exclamation-circle text-warning"></i>
+              <div>
+                <h4>Lorem Ipsum</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>30 min. ago</p>
+              </div>
             </div>
-          </div>
-          <hr class="dropdown-divider">
-          <div class="notification-item">
-            <i class="bi bi-check-circle text-success"></i>
-            <div>
-              <h4>Sit rerum fuga</h4>
-              <p>Quae dolorem earum veritatis oditseno</p>
-              <p>2 hrs. ago</p>
+            <hr class="dropdown-divider">
+            <div class="notification-item">
+              <i class="bi bi-x-circle text-danger"></i>
+              <div>
+                <h4>Atque rerum nesciunt</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>1 hr. ago</p>
+              </div>
             </div>
-          </div>
-          <hr class="dropdown-divider">
-          <div class="notification-item">
-            <i class="bi bi-info-circle text-primary"></i>
-            <div>
-              <h4>Dicta reprehenderit</h4>
-              <p>Quae dolorem earum veritatis oditseno</p>
-              <p>4 hrs. ago</p>
+            <hr class="dropdown-divider">
+            <div class="notification-item">
+              <i class="bi bi-check-circle text-success"></i>
+              <div>
+                <h4>Sit rerum fuga</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>2 hrs. ago</p>
+              </div>
             </div>
+            <hr class="dropdown-divider">
+            <div class="notification-item">
+              <i class="bi bi-info-circle text-primary"></i>
+              <div>
+                <h4>Dicta reprehenderit</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>4 hrs. ago</p>
+              </div>
+            </div>
+            <hr class="dropdown-divider">
           </div>
-          <hr class="dropdown-divider">
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- End Page Title -->
+    <!-- End Page Title -->
 
-  <section class="section dashboard">
-    <div class="page-content-wrapper p-xxl-4" style="height: auto !important; min-height: 0px !important;">
-      <div class="row">
-        <div class="pagetitle">
-          <h1>
-            <i class="bi bi-bank"> Add Money</i>
-          </h1>
-          <nav>
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="rindex.html">Home</a></li>
-              <li class="breadcrumb-item active">Payment portal</li>
-            </ol>
-          </nav>
+    <section class="section dashboard">
+      <div class="page-content-wrapper p-xxl-4" style="height: auto !important; min-height: 0px !important;">
+        <div class="row">
+          <div class="pagetitle">
+            <h1>
+              <i class="bi bi-bank"> Add Money</i>
+            </h1>
+            <nav>
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="rindex.html">Home</a></li>
+                <li class="breadcrumb-item active">Payment portal</li>
+              </ol>
+            </nav>
+          </div>
         </div>
-      </div>
-      <ul class="nav nav-tabs nav-bottom-line mb-3 d-flex justify-content-center">
-        <li class="nav-item">
-          <a class="nav-link active" data-bs-toggle="tab" href="#tab-payment-gateway">
-            Payment Gateway
-          </a>
-        </li>
+        <ul class="nav nav-tabs nav-bottom-line mb-3 d-flex justify-content-center">
+          <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#tab-payment-gateway">
+              Payment Gateway
+            </a>
+          </li>
 
-        <li class="nav-item">
-          <a class="nav-link" data-bs-toggle="tab" href="#tab-other">
-            Other
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" data-bs-toggle="tab" href="#tab-Status">
-            Status
-          </a>
-        </li>
-      </ul>
-      <div class="tab-content mt-3" style="height: auto !important;">
-        <div class="tab-pane show active" id="tab-payment-gateway" style="height: auto !important;">
-          <div class="row g-4">
-            <div class="col-md-6 col-sm-6 col-lg-6 mx-auto">
-              <div class="card">
-                <div class="border-bottom card-header">
-                  <div class="mb-0 card-title h5">
-                    Purchase Tokens
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab-other">
+              Other
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tab-Status">
+              Status
+            </a>
+          </li>
+        </ul>
+        <div class="tab-content mt-3" style="height: auto !important;">
+          <div class="tab-pane show active" id="tab-payment-gateway" style="height: auto !important;">
+            <div class="row g-4">
+              <div class="col-md-6 col-sm-6 col-lg-6 mx-auto">
+                <div class="card">
+                  <div class="border-bottom card-header">
+                    <div class="mb-0 card-title h5">
+                      Purchase Tokens
+                    </div>
+                    <p class="mb-0 small">
+                      Enter the token amount to get started
+                    </p>
                   </div>
-                  <p class="mb-0 small">
-                    Enter the token amount to get started
-                  </p>
-                </div>
-                <div class="card-body">
-                  <form>
-                    <div class="mb-3">
-                      <label class="form-label">Enter Token Amount <span class="text-danger">*</span></label>
-                      <input type="number" id="inputTokenAmount" class="form-control" placeholder="Enter token amount" required oninput="handleTokenInput()" maxlength="6">
-                    </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="mb-3">
+                        <label class="form-label">Enter Token Amount <span class="text-danger">*</span></label>
+                        <input type="number" id="inputTokenAmount" class="form-control" placeholder="Enter token amount" required oninput="handleTokenInput()" maxlength="6">
+                      </div>
 
-                    <div class="mb-3 d-flex align-items-center justify-content-between">
-                      <p id="rateDisplay" class="mb-0 text-success">Rate: <span id="rateValue"></span></p>
-                      <p id="payableAmount" class="mb-0 fw-bold text-success">Payable Amount: <span id="payableAmountValue"></span></p>
-                    </div>
+                      <div class="mb-3 d-flex align-items-center justify-content-between">
+                        <p id="rateDisplay" class="mb-0 text-success">Rate: <span id="rateValue"></span></p>
+                        <p id="payableAmount" class="mb-0 fw-bold text-success">Payable Amount: <span id="payableAmountValue"></span></p>
+                      </div>
 
-                    <div class="mb-3">
-                      <label class="form-label">Select Payment Method <span class="text-danger">*</span></label>
-                      <select id="paymentMethod" required class="form-select">
-                        <option value="" selected disabled>Select Payment Method</option>
-                        <option value="UPI">UPI</option>
-                        <option value="BankTransfer">Bank Transfer</option>
-                      </select>
-                    </div>
+                      <div class="mb-3">
+                        <label class="form-label">Select Payment Method <span class="text-danger">*</span></label>
+                        <select id="paymentMethod" required class="form-select">
+                          <option value="" selected disabled>Select Payment Method</option>
+                          <option value="UPI">UPI</option>
+                          <option value="BankTransfer">Bank Transfer</option>
+                        </select>
+                      </div>
 
-                    <div class="d-grid mt-4">
-                      <button type="button" class="btn btn-dark d-flex justify-content-center align-items-center" onclick="handlePayment()">
-                        <span class="fs-5 me-2">✨ Pay Now</span>
-                      </button>
-                    </div>
-                  </form>
+                      <div class="d-grid mt-4">
+                        <button type="button" class="btn btn-dark d-flex justify-content-center align-items-center" onclick="handlePayment()">
+                          <span class="fs-5 me-2">✨ Pay Now</span>
+                        </button>
+                      </div>
+                    </form>
 
-                  <div class="modal" id="bankTransferModal1" style="display: none;">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-body text-center">
-                          <p class="text-muted small mb-4">Use the following bank details to complete the transfer:</p>
-                          <div id="bankAccountsContainer"></div>
-                          <p class="text-muted small mb-2">If payment is done, enter the transaction code below:</p>
-                          <input type="text" id="bankTransactionID1" class="form-control mb-3" placeholder="Transaction ID">
-                          <button type="button" class="btn btn-dark" id="bankDoneButton1">Submit</button>
-                          <button type="button" class="btn btn-secondary " onclick="closeModal('bankTransferModal1')">Close</button>
+                    <div class="modal" id="bankTransferModal1" style="display: none;">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-body text-center">
+                            <p class="text-muted small mb-4">Use the following bank details to complete the transfer:</p>
+                            <div id="bankAccountsContainer"></div>
+                            <p class="text-muted small mb-2">If payment is done, enter the transaction code below:</p>
+                            <input type="text" id="bankTransactionID1" class="form-control mb-3" placeholder="Transaction ID">
+                            <button type="button" class="btn btn-dark" id="bankDoneButton1">Submit</button>
+                            <button type="button" class="btn btn-secondary " onclick="closeModal('bankTransferModal1')">Close</button>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div class="modal" id="upiModal1" style="display: none;">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-body text-center">
-                          <p class="text-muted small mb-4">Open your UPI app and scan the QR code below to pay the amount:</p>
-                          <div id="upiAccountsContainer"></div>
-                          <p class="text-muted small mb-2">If payment is done, enter the transaction code below:</p>
-                          <input type="text" id="upiTransactionID1" class="form-control mb-3" placeholder="Transaction ID">
-                          <button type="button" class="btn btn-dark" id="upiDoneButton1">Submit</button>
-                          <button type="button" class="btn btn-secondary " onclick="closeModal('upiModal1')">Close</button>
+                    <div class="modal" id="upiModal1" style="display: none;">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-body text-center">
+                            <p class="text-muted small mb-4">Open your UPI app and scan the QR code below to pay the amount:</p>
+                            <div id="upiAccountsContainer"></div>
+                            <p class="text-muted small mb-2">If payment is done, enter the transaction code below:</p>
+                            <input type="text" id="upiTransactionID1" class="form-control mb-3" placeholder="Transaction ID">
+                            <button type="button" class="btn btn-dark" id="upiDoneButton1">Submit</button>
+                            <button type="button" class="btn btn-secondary " onclick="closeModal('upiModal1')">Close</button>
+                          </div>
                         </div>
                       </div>
                     </div>
+
+                    <div id="paymentAlert" class="alert alert-success alert-dismissible fade show d-none" role="alert">
+                      <span id="alertMessage"></span>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                   </div>
 
-                  <div id="paymentAlert" class="alert alert-success alert-dismissible fade show d-none" role="alert">
-                    <span id="alertMessage"></span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
                 </div>
-
               </div>
             </div>
+            <div class="row g-4 mt-4" style="height: auto !important;">
+            </div>
           </div>
-          <div class="row g-4 mt-4" style="height: auto !important;">
-          </div>
-        </div>
-        <div class="tab-pane" id="tab-other">
-          <div class="row g-4">
-            <div class="col-md-6 mx-auto">
-              <div class="border shadow card">
-                <div class="border-bottom card-header">
-                  <h5 class="card-header-title">
-                    Add Gift Card
-                  </h5>
-                  <p class="mb-0 small">Currently this service is not available</p>
-                </div>
-                <form class="needs-validation">
-                  <div class="card-body">
-                    <div class="mb-3">
-                      <label class="form-label" for="giftcard">Gift Card Number</label>
-                      <input placeholder="Gift Card Number" name="giftcard" required="" type="text" id="giftcard" class="form-control">
-                      <div class="invalid-feedback">
+          <div class="tab-pane" id="tab-other">
+            <div class="row g-4">
+              <div class="col-md-6 mx-auto">
+                <div class="border shadow card">
+                  <div class="border-bottom card-header">
+                    <h5 class="card-header-title">
+                      Add Gift Card
+                    </h5>
+                    <p class="mb-0 small">Currently this service is not available</p>
+                  </div>
+                  <form class="needs-validation">
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label class="form-label" for="giftcard">Gift Card Number</label>
+                        <input placeholder="Gift Card Number" name="giftcard" required="" type="text" id="giftcard" class="form-control">
+                        <div class="invalid-feedback">
 
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="border-top card-footer">
-                    <div class="text-center">
-                      <button type="submit" class="btn btn-primary fs-5 me-3">
+                    <div class="border-top card-footer">
+                      <div class="text-center">
+                        <button type="submit" class="btn btn-primary fs-5 me-3">
                         <span class="spinner-border spinner-border-sm me-2" aria-hidden="true" style="display: none;">
 
                         </span>
-                        <span>Submit</span>
-                      </button>
+                          <span>Submit</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </form>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
 
-        <!----------------------------------Status table ------------------------->
-        <div class="tab-pane" id="tab-Status">
-          <div class="row g-4">
-            <div class="col-md-6 mx-auto">
-              <div class="border shadow card">
-                <div class="border-bottom card-header">
-                  <h5 class="card-header-title">
-                    Status
-                  </h5>
-                  <p class="mb-0 small">Status table</p>
-                </div>
-                <div class="card-body">
-                  <!-- Search and Refresh Controls -->
-                  <div class="d-flex justify-content-between mb-3">
-                    <input type="text" id="searchTransactionId" class="form-control" placeholder="Search by Transaction ID" style="
+<!----------------------------------Status table ------------------------->
+          <div class="tab-pane" id="tab-Status">
+            <div class="row g-4">
+              <div class="col-md-6 mx-auto">
+                <div class="border shadow card">
+                  <div class="border-bottom card-header">
+                    <h5 class="card-header-title">
+                      Status
+                    </h5>
+                    <p class="mb-0 small">Status table</p>
+                  </div>
+                  <div class="card-body">
+                    <!-- Search and Refresh Controls -->
+                    <div class="d-flex justify-content-between mb-3">
+                      <input type="text" id="searchTransactionId" class="form-control" placeholder="Search by Transaction ID" style="
     margin-top: 10px;
-
+    
 ">
-                    <button id="refreshButton" class="btn btn-primary" style="
+                      <button id="refreshButton" class="btn btn-primary" style="
     margin-top: 10px;
     margin-left: 10px;
 ">Refresh</button>
+                    </div>
+                    <!-- Table -->
+                    <table class="table table-sm">
+                      <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Transaction ID</th>
+                      </tr>
+                      </thead>
+                      <tbody id="transactionTableBody">
+                      <!-- Table rows will be inserted here -->
+                      </tbody>
+                    </table>
                   </div>
-                  <!-- Table -->
-                  <table class="table table-sm">
-                    <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Date</th>
-                      <th>Amount</th>
-                      <th>Status</th>
-                      <th>Transaction ID</th>
-                    </tr>
-                    </thead>
-                    <tbody id="transactionTableBody">
-                    <!-- Table rows will be inserted here -->
-                    </tbody>
-                  </table>
                 </div>
               </div>
             </div>
           </div>
+
         </div>
-
       </div>
+
+
+
+    </section>
+
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span>Idcard</span></strong>. All Rights Reserved
     </div>
+    <div class="credits">
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+      Designed by <a href="https://scriza.in/">Scriza</a>
+    </div>
+  </footer><!-- End Footer -->
 
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-
-  </section>
-
-
-</main><!-- End #main -->
-
-<!-- ======= Footer ======= -->
-<footer id="footer" class="footer">
-  <div class="copyright">
-    &copy; Copyright <strong><span>Idcard</span></strong>. All Rights Reserved
-  </div>
-  <div class="credits">
-    <!-- All the links in the footer should remain intact. -->
-    <!-- You can delete the links only if you purchased the pro version. -->
-    <!-- Licensing information: https://bootstrapmade.com/license/ -->
-    <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-    Designed by <a href="https://scriza.in/">Scriza</a>
-  </div>
-</footer><!-- End Footer -->
-
-<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
-<!-- Vendor JS Files -->
-<script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
-<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="assets/vendor/chart.js/chart.umd.js"></script>
-<script src="assets/vendor/echarts/echarts.min.js"></script>
-<script src="assets/vendor/quill/quill.js"></script>
-<script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
-<script src="assets/vendor/tinymce/tinymce.min.js"></script>
-<script src="assets/vendor/php-email-form/validate.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<!-- Template Main JS File -->
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/chart.js/chart.umd.js"></script>
+  <script src="assets/vendor/echarts/echarts.min.js"></script>
+  <script src="assets/vendor/quill/quill.js"></script>
+  <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="assets/vendor/tinymce/tinymce.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Template Main JS File -->
 <!--  <script src="assets/js/main.js"></script>-->
 <!--<script src = "rIndex.js"></script>-->
 <script src  = "config.js"></script>
