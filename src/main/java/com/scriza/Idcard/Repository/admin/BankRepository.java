@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface BankRepository extends JpaRepository<Bank, Integer> {
     List<Bank> findAllByEmail(String email);
-
+    List<Bank> findByEmailAndStatus(String email,String status);
     // Find a bank by identifier
     Bank findByIdentifier(String identifier);
 

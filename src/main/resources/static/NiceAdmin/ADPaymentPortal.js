@@ -827,9 +827,9 @@ document.addEventListener('DOMContentLoaded', function () {
           formData.append('address', upiAddress);
 
           // Append the QR Code file if provided
-          if (upiQrCodeInput.files.length > 0) {
-            formData.append('qrCodeFile', upiQrCodeInput.files[0]);
-          }
+//          if (upiQrCodeInput.files.length > 0) {
+//            formData.append('qrCodeFile', upiQrCodeInput.files[0]);
+//          }
 
           console.log('Submitting UPI form data...'); // Debugging log
 

@@ -300,6 +300,11 @@
       </div>
       <ul class="nav nav-tabs nav-bottom-line mb-3 d-flex justify-content-center">
         <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="tab" href="#tab-bank-details">
+            Bank Details
+          </a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link active" data-bs-toggle="tab" href="#tab-payment-gateway">
             Payment Gateway
           </a>
@@ -321,6 +326,29 @@
         </li>
       </ul>
       <div class="tab-content mt-3" style="height: auto !important;">
+        <div class="tab-pane" id="tab-bank-details">
+          <div class="row g-4">
+            <div class="col-md-8 mx-auto">
+              <div class="card">
+                <div class="border-bottom card-header">
+                  <div class="mb-0 card-title h5"> Bank Details</div>
+                  <p class="mb-0 small">View All the active banks linked to admin for payment requests.</p>
+                </div>
+                <div class="card-body">
+                  <!-- Display Bank Details Here -->
+                  <p>This section will display the active bank details for the admin.</p>
+                  <!--  You can add a table or list here to display the bank details -->
+                  <ul id="bankDetailsList">
+                    <!-- Bank details will be dynamically added here using JavaScript -->
+                  </ul>
+
+                  <!-- <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBankAccountModal">Add Bank Account</button> -->
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="tab-pane show active" id="tab-payment-gateway" style="height: auto !important;">
           <div class="row g-4">
             <div class="col-md-6 col-sm-6 col-lg-6 mx-auto">
@@ -623,10 +651,10 @@
                               </div>
 
                               <!-- QR Code Upload -->
-                              <div class="col-md-6 mb-3">
-                                <label for="upiQrCode" class="form-label">Upload QR Code(Optional)</label>
-                                <input type="file" class="form-control" id="upiQrCode" accept="image/*">
-                              </div>
+<!--                              <div class="col-md-6 mb-3">-->
+<!--                                <label for="upiQrCode" class="form-label">Upload QR Code(Optional)</label>-->
+<!--                                <input type="file" class="form-control" id="upiQrCode" accept="image/*">-->
+<!--                              </div>-->
                             </div>
 
                             <!-- Add UPI Account Button -->

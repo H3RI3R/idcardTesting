@@ -1,5 +1,6 @@
 package com.scriza.Idcard.service.admin.distributor;
 
+import com.scriza.Idcard.DTO.DistributorWithRetailersDto;
 import com.scriza.Idcard.Entity.User;
 import com.scriza.Idcard.Entity.admin.Token.Token;
 import com.scriza.Idcard.Entity.admin.TransactionRequest;
@@ -150,6 +151,7 @@ public class DistributorService {
         // Find the retailer and creator from the database using their emails
         User retailer = userRepository.findByEmail(email);
         User creator = userRepository.findByEmail(creatorEmail);
+        List<User> allByCreatorEmail = userRepository.findByCreatorEmail(email);
 
         // Check if the creator has the "ADMIN" role
         if (!Objects.equals(creator.getRole(), "ADMIN")) {
@@ -161,6 +163,13 @@ public class DistributorService {
             // If the retailer is already deactivated (status == false), throw an informative exception
             if (!retailer.isStatus()) { // Assuming 'isStatus' returns the status of the user
                 throw new RuntimeException("Distributor is already deactivated.");
+            }
+            List<User> usersToUpdate = userRepository.findByCreatorEmail(email);
+            for (int i = 0; i < usersToUpdate.size(); i++) {
+                User user = usersToUpdate.get(i);
+                user.setCreatorEmail(creatorEmail);
+                System.out.println("This retailer changeed its creator email"+user);
+                userRepository.save(user);
             }
 
             // Deactivate the retailer (set status to false)
@@ -231,6 +240,65 @@ public class DistributorService {
         return userRepository.findAll().stream()
                 .filter(user -> "DISTRIBUTOR".equalsIgnoreCase(user.getRole()))
                 .collect(Collectors.toList());
+    }
+    public List<Object> listDistributorsWithRetailers(String role) {
+        List<Object> result = new ArrayList<>();
+
+        if ("ADMIN".equalsIgnoreCase(role)) {
+            // 1. Get Admin Users
+            List<User> admins = userRepository.findByRole("ADMIN");
+
+            for (User admin : admins) {
+                // Add Admin Details to the Result
+                result.add(admin);
+
+                // 2. Get Distributors created by this admin (using creatorEmail and role)
+                List<User> distributors = userRepository.findByCreatorEmail(admin.getEmail());
+                List<User> actualDistributors = new ArrayList<>();
+                for (User u : distributors) {
+                    if ("DISTRIBUTOR".equalsIgnoreCase(u.getRole())) {
+                        actualDistributors.add(u);
+                    }
+                }
+
+                // 3. Create DistributorWithRetailersDto for Each Distributor and Add to the result
+                for (User distributor : actualDistributors) {
+                    DistributorWithRetailersDto dto = createDistributorWithRetailersDto(distributor);
+                    result.add(dto);
+                }
+
+                // 4. Get Retailers created by this admin
+                List<User> retailersCreatedByAdmin = userRepository.findByCreatorEmail(admin.getEmail());
+                List<User> actualRetailers = new ArrayList<>();
+                for(User u : retailersCreatedByAdmin){
+                    if("RETAILER".equalsIgnoreCase(u.getRole())){
+                        actualRetailers.add(u);
+                    }
+                }
+                result.addAll(actualRetailers);
+            }
+        }
+        else if ("DISTRIBUTOR".equalsIgnoreCase(role)) {
+            List<User> distributors = userRepository.findByRole(role);
+            for (User distributor : distributors) {
+                DistributorWithRetailersDto dto = createDistributorWithRetailersDto(distributor);
+                result.add(dto);
+            }
+        } else if ("RETAILER".equalsIgnoreCase(role)) {
+            List<User> retailers = userRepository.findByRole(role);
+            result.addAll(retailers);
+        } else {
+            //Handle exception here
+            return null;
+        }
+
+        return result;
+    }
+
+    private DistributorWithRetailersDto createDistributorWithRetailersDto(User distributor) {
+        // Helper method to create DistributorWithRetailersDto (using creatorEmail)
+        List<User> retailers = userRepository.findByCreatorEmail(distributor.getEmail());
+        return new DistributorWithRetailersDto(distributor, retailers);
     }
 
     public Map<String, Object> findUserDetails(String email, String requestingUserRole) {

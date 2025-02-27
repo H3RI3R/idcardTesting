@@ -3,7 +3,6 @@ package com.scriza.Idcard.controller.admin;
 import com.scriza.Idcard.Configuration.ApiResponse;
 import com.scriza.Idcard.Entity.admin.Bank;
 import com.scriza.Idcard.Entity.admin.distributor.ActivityDis;
-import com.scriza.Idcard.Repository.admin.BankRepository;
 import com.scriza.Idcard.Repository.admin.distributor.ActivityRepositoryDis;
 import com.scriza.Idcard.Response;
 import com.scriza.Idcard.service.admin.BankService;
@@ -13,10 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/admin/bank")
@@ -126,6 +122,20 @@ BankController {
         try {
             List<Bank> banks = bankService.getBanksByEmail(email);
             return ResponseEntity.ok(banks);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/viewByStatus")
+    public ResponseEntity<Map<String, Object>> viewBanksByStatus(@RequestParam String email,
+                                                                 @RequestParam (value = "status" ,required = false)String status) {
+        try {
+            List<Bank> banks = bankService.getBanksByStatus(email, status);
+            if(banks.isEmpty()){
+                return Response.responseFailure("No Banks found ");
+            }
+            return Response.responseSuccess("Bank fetched successfully" ,"Banks" , banks) ;
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }

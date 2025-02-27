@@ -1,5 +1,6 @@
 package com.scriza.Idcard.controller.admin.distributor;
 
+import com.scriza.Idcard.DTO.DistributorWithRetailersDto;
 import com.scriza.Idcard.Entity.User;
 import com.scriza.Idcard.Entity.admin.TransactionRequest;
 import com.scriza.Idcard.Entity.admin.distributor.ActivityAdmin;
@@ -8,6 +9,7 @@ import com.scriza.Idcard.Entity.admin.retailer.Activity;
 import com.scriza.Idcard.Repository.admin.distributor.ActivityRepositoryAdmin;
 import com.scriza.Idcard.Repository.admin.distributor.ActivityRepositoryDis;
 import com.scriza.Idcard.Repository.admin.retailer.ActivityRepository;
+import com.scriza.Idcard.Response;
 import com.scriza.Idcard.service.admin.distributor.DistributorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.management.relation.Role;
 import java.util.*;
 
 @RestController
@@ -99,6 +102,7 @@ public class DistributorController {
     public Map<String, String> deleteDistributor(@RequestParam String email, @RequestParam String creatorEmail) {
         Map<String, String> response = new HashMap<>();
         try {
+
             distributorService.deleteRetailer(email,creatorEmail);
             response.put("message", "Distributor deactivated successfully");
         } catch (RuntimeException e) {
@@ -169,6 +173,17 @@ public class DistributorController {
     @GetMapping("/list")
     public Iterable<User> listDistributors() {
         return distributorService.listDistributors();
+    }
+
+    @GetMapping("/ListDisAndRetByRole/{role}")
+    public ResponseEntity<?> listDistributorsWithRetailers(@PathVariable String role) {
+        List<Object> result = distributorService.listDistributorsWithRetailers(role);
+
+        if (result == null || result.isEmpty()) {
+            return Response.responseFailure("No users");
+        }
+
+        return Response.responseSuccess("All the " + role + " successfully fetched", role, result);
     }
 
 

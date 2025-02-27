@@ -11,6 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -154,6 +159,10 @@ public class BankService {
     public List<Bank> getBanksByEmail(String email) {
         return bankRepository.findAllByEmail(email);
     }
+    public List<Bank> getBanksByStatus(String email, String status) {
+        return bankRepository.findByEmailAndStatus(email,status);
+    }
+
 
     @Transactional
     public ResponseEntity<String> updateStatus(String email, String identifier, String status) {

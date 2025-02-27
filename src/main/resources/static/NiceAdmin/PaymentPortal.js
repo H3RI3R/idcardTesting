@@ -994,7 +994,7 @@ document.addEventListener('DOMContentLoaded', function () {
           const upiIdInput = document.getElementById('upiId');
           const upiAccountNameInput = document.getElementById('upiAccountName');
           const upiAddressInput = document.getElementById('upiAddress');
-          const upiQrCodeInput = document.getElementById('upiQrCode');
+//          const upiQrCodeInput = document.getElementById('upiQrCode');
 
           // Ensure inputs exist before accessing their values
           if (!upiIdInput || !upiAccountNameInput || !upiAddressInput) {
@@ -1032,9 +1032,9 @@ document.addEventListener('DOMContentLoaded', function () {
           formData.append('address', upiAddress);
 
           // Append the QR Code file if provided
-          if (upiQrCodeInput.files.length > 0) {
-            formData.append('qrCodeFile', upiQrCodeInput.files[0]);
-          }
+//          if (upiQrCodeInput.files.length > 0) {
+//            formData.append('qrCodeFile', upiQrCodeInput.files[0]);
+//          }
 
           console.log('Submitting UPI form data...'); // Debugging log
 
@@ -1585,4 +1585,67 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
   })();
-  //-------------------------------------------------------
+  //-----------------------new section all banks details --------------------------------
+      document.addEventListener("DOMContentLoaded", function() {
+          const bankDetailsList = document.getElementById("bankDetailsList");
+          const userEmail = sessionStorage.getItem('userEmail');
+
+          if (!userEmail) {
+              console.error("User email not found in session storage.");
+              bankDetailsList.innerHTML = "<li>User email not found. Please log in.</li>";
+              return;
+          }
+
+          // First, fetch the creatorEmail from the user info API
+          fetch(`${API_URL}/api/admin/distributor/userInfo?email=${userEmail}`)
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error(`HTTP error! Status: ${response.status}`);
+                  }
+                  return response.json();
+              })
+              .then(userData => {
+                  const creatorEmail = userData.creatorEmail;
+
+                  if (!creatorEmail) {
+                      console.error("Creator email not found in user data.");
+                      bankDetailsList.innerHTML = "<li>Creator email not found. Contact support.</li>";
+                      return;
+                  }
+
+                  // Now, fetch the bank details using the creatorEmail and status
+                  const bankApiUrl = `${API_URL}/api/admin/bank/viewByStatus?email=${creatorEmail}&status=ACTIVE`;
+                  return fetch(bankApiUrl);
+              })
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error(`HTTP error! Status: ${response.status}`);
+                  }
+                  return response.json();
+              })
+              .then(bankData => {
+                  bankDetailsList.innerHTML = ""; // Clear existing list items
+
+                  if (bankData.status === "success" && bankData.Banks && bankData.Banks.length > 0) {
+                      bankData.Banks.forEach(bank => {
+                          const listItem = document.createElement("li");
+                          listItem.innerHTML = `
+                              <strong>Bank Name:</strong> ${bank.name}<br>
+                              <strong>Account Identifier:</strong> ${bank.identifier}<br>
+                              <strong>IFSC Code:</strong> ${bank.ifscCode}<br>
+                              <strong>Address:</strong> ${bank.address}<br>
+                              <strong>Type:</strong> ${bank.type}<br>
+                              <hr>
+                          `;
+                          bankDetailsList.appendChild(listItem);
+                      });
+                  } else {
+                      bankDetailsList.innerHTML = "<li>No active bank details found.</li>";
+                  }
+              })
+              .catch(error => {
+                  console.error("Error fetching data:", error);
+                  bankDetailsList.innerHTML = "<li>Error fetching bank details. Please try again later.</li>";
+              });
+      });
+

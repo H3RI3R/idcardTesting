@@ -298,10 +298,14 @@
                   <input type="file" id="photoInput" name="photo" class="form-control mb-3" required>
                   <input type="text" id="name" name="name" placeholder="Personal Name" class="form-control mb-3" required>
                   <input type="text" id="businessName" name="businessName" placeholder="Business Name" class="form-control mb-3" required>
-                  <input type="email" id="email" name="email" placeholder="Personal Email (Max 25 char only)" class="form-control mb-3" required>
-                  <input type="text" id="businessAddress" name="businessAddress" placeholder="Business Address with Business Number" class="form-control mb-3" required>
-                  <input type="text" id="currentAddress" name="currentAddress" placeholder="Current Address with Contact Number" class="form-control mb-3" required>
-                  <input type="text" id="permanentAddress" name="permanentAddress" placeholder="Permanent Address with Contact Number" class="form-control mb-3" required>
+                  <input type="email" id="email" name="email" placeholder="Personal Email (Max 25 char only)" class="form-control mb-3" required maxlength="25">
+                  <input type="text" id="businessAddress" name="businessAddress" placeholder="Business Address " class="form-control mb-3" required maxlength="61">
+                  <input type="text" id="businessNo" name="businessNo" placeholder=" Business Number" class="form-control mb-3" required>
+
+                  <input type="text" id="currentAddress" name="currentAddress" placeholder="Current Address " class="form-control mb-3" required maxlength="80">
+                  <input type="text" id="currentNo" name="currentNo" placeholder="Current Contact Number" class="form-control mb-3" required>
+                  <input type="text" id="permanentAddress" name="permanentAddress" placeholder="Permanent Address" class="form-control mb-3" required maxlength="80">
+                  <input type="text" id="permanentNo" name="permanentNo" placeholder="Permanent  Contact Number" class="form-control mb-3" required>
                   <input type="text" id="phoneNumber" name="phoneNumber" placeholder="Personal Contact Number (Max 10 no.)" class="form-control mb-3" required>
                   <!-- Submit button -->
                   <button type="submit" class="btn btn-dark">Submit</button>
