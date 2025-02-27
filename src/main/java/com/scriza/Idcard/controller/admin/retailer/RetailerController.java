@@ -531,7 +531,6 @@ public class RetailerController {
         htmlBuilder.append("          color: #383747;\n");
         htmlBuilder.append("        }\n");
         htmlBuilder.append("\n");
-
         htmlBuilder.append("        .value-col input, .value-col span {\n");
         htmlBuilder.append("          font-family: Inter;\n");
         htmlBuilder.append("          font-size: 10px;\n");
