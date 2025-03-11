@@ -28,7 +28,10 @@ public class UserIdCardController {
                                               @RequestParam("phoneNumber") String phoneNumber,
                                               @RequestParam("retailerEmail") String retailerEmail,
                                               @RequestParam("emailAddress") String emailAddress,
-                                              @RequestParam("employeeType")String employeeType) {
+                                              @RequestParam("employeeType")String employeeType ,
+                                              @RequestParam("businessNo")String businessNo,
+                                              @RequestParam("permanentNo")String permanentNo,
+                                              @RequestParam("currentNo")String currentNo) {
 
         UserIdCard userIdCard = new UserIdCard();
         userIdCard.setName(name);
@@ -40,6 +43,10 @@ public class UserIdCardController {
         userIdCard.setRetailerEmail(retailerEmail);
         userIdCard.setEmailAddress(emailAddress);
         userIdCard.setEmployeeType(employeeType);
+        userIdCard.setBusinessNo(businessNo);
+        userIdCard.setPermanentNo(permanentNo);
+        userIdCard.setCurrentNo(currentNo);
+
 
         try {
             UserIdCard savedUser = service.saveOrUpdateUser(photo, userIdCard);

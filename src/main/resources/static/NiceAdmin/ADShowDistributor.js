@@ -446,39 +446,82 @@ document.addEventListener("DOMContentLoaded", function() {
     // Call the function on page load
     fetchUserName();
 });
-//----------------------------------Show Token dis   table  Api ----------------------------------
-document.addEventListener('DOMContentLoaded', function () {
-    const distributorTableBody = document.getElementById('distributorTableBody');
-    const email = sessionStorage.getItem('userEmail'); // Get email from session storage
+   //----------------------------------Show Token dis   table  Api ----------------------------------
+        document.addEventListener('DOMContentLoaded', function () {
+            const distributorTableBody = document.getElementById('distributorTableBody');
+            const email = sessionStorage.getItem('userEmail'); // Get email from session storage
 
-    // Fetch distributor list with the email from session storage
-    fetch(`${API_URL}/api/admin/distributor/listWithAdminAccess?adminEmail=${encodeURIComponent(email)}`)
-        .then(response => response.json())
-        .then(distributors => {
-        distributors.forEach(distributor => {
-            // Fetch token count for each distributor
-            fetch(`${API_URL}/api/admin/token/count?identifier=${distributor.phoneNumber}`)
+            // Fetch distributor list with the email from session storage
+            fetch(`${API_URL}/api/admin/distributor/listWithAdminAccess?adminEmail=${encodeURIComponent(email)}`)
                 .then(response => response.json())
-                .then(tokenData => {
-                // Insert distributor details and token count into the table
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                            <td>${distributor.id}</td>
-                            <td>${distributor.name}</td>
-                            <td>${distributor.creatorEmail || 'N/A'}</td>
-                            <td>${distributor.email}</td>
-                            <td>${distributor.phoneNumber}</td>
-                            <td>${distributor.companyAddress || 'N/A'}</td>
-                            <td>${distributor.password}</td>
+                .then(distributors => {
+                    const tableData = distributors.map(distributor => {
+                        return {
+                            id: distributor.id,
+                            name: distributor.name,
+                            email: distributor.email,
+                            phoneNumber: distributor.phoneNumber,
+                            tokenCount: distributor.tokenCount,
+                            retailerCreatedCount: distributor.retailerCreatedCount,
+                            status: distributor.status
+                        };
+                    });
+                    populateTable(tableData);
+                })
+                .catch(error => console.error('Error fetching distributor data:', error));
 
-                            <td>${tokenData.tokenCount}</td>
-                        `;
-                distributorTableBody.appendChild(row);
-            });
+                // Add event listener to the download button
+                document.getElementById('downloadButton').addEventListener('click', function () {
+                    downloadCsv();
+                });
+
+            // Fetch distributor list with the email from session storage
+            function populateTable(distributors) {
+                distributorTableBody.innerHTML = ''; // Clear existing rows
+
+                distributors.forEach(distributor => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${distributor.id}</td>
+                        <td>${distributor.name}</td>
+                        <td>${distributor.email}</td>
+                        <td>${distributor.phoneNumber}</td>
+                        <td>${distributor.tokenCount}</td>
+                        <td>${distributor.retailerCreatedCount}</td>
+                        <td>${distributor.status ? 'Active' : 'Inactive'}</td>
+                    `;
+                    distributorTableBody.appendChild(row);
+                });
+            }
+
+            // Function to generate and download CSV file
+            function downloadCsv() {
+                const email = sessionStorage.getItem('userEmail'); // Get email from session storage
+
+                fetch(`${API_URL}/api/admin/distributor/listWithAdminAccess?adminEmail=${encodeURIComponent(email)}`)
+                    .then(response => response.json())
+                    .then(distributors => {
+                        let csvContent = "data:text/csv;charset=utf-8,";
+                        csvContent += "D.Id,Name,Email,Phone Number,Token,Retailer Created,Status\r\n"; // CSV header
+
+                        distributors.forEach(distributor => {
+                            csvContent += `${distributor.id},${distributor.name},${distributor.email},${distributor.phoneNumber},${distributor.tokenCount},${distributor.retailerCreatedCount},${distributor.status ? 'Active' : 'Inactive'}\r\n`;
+                        });
+
+                        const encodedUri = encodeURI(csvContent);
+                        const link = document.createElement("a");
+                        link.setAttribute("href", encodedUri);
+                        link.setAttribute("download", "distributors.csv");
+                        document.body.appendChild(link); // Required for FF
+
+                        link.click(); // Trigger download
+
+                        document.body.removeChild(link); // Clean up
+                    })
+                    .catch(error => console.error('Error fetching distributor data:', error));
+            }
         });
-    })
-        .catch(error => console.error('Error fetching distributor data:', error));
-});
+
 //----------------------------------Search dis Api ----------------------------------
   document.getElementById('searchDistributorForm').addEventListener('submit', function (event) {
      event.preventDefault();
@@ -492,15 +535,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
      // Clear the table before adding new results
      distributorTable.innerHTML = '';
+   // Validation
+    let isValid = true;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^\d{10}$/;
 
-     // Simple email validation using regex
-     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-     if (!emailRegex.test(email)) {
-         emailError.style.display = 'block';
-         return; // Stop the form submission if email is invalid
-     } else {
-         emailError.style.display = 'none';
-     }
+    if (email === "") {
+         modalMessage.textContent = 'Please enter an email or a 10-digit phone number.';
+         errorModal.style.display = 'block';
+         return;
+    }
+
+    if (!emailRegex.test(email) && !phoneRegex.test(email)) {
+        emailError.textContent = "Please enter a valid email or a 10-digit phone number.";  // More specific message
+        emailError.style.display = 'block';
+        isValid = false;
+    }
+
+    if (!isValid) {
+        return;  // Stop further execution if validation fails
+    }
 
      // Fetch distributor info by email
          fetch(`${API_URL}/api/admin/distributor/userInfo?email=${email}`)
@@ -509,7 +563,7 @@ document.addEventListener('DOMContentLoaded', function () {
                      // If the response is not ok (status code outside 200-299)
                     if (response.status === 400) {
                      // Show modal with error message
-                     modalMessage.textContent = 'Distributor not found with this email.';
+                     modalMessage.textContent = 'Distributor not found with this email or phoneNumber.';
                      errorModal.style.display = 'block';
                      return; // Stop processing further
                  }

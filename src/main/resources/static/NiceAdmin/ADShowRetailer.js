@@ -467,46 +467,80 @@ function getSessionEmail() {
 //----------------------------------Show Token retiler  Api ----------------------------------
 
 //----------------------------------Show Table Api ----------------------------------
-document.addEventListener('DOMContentLoaded', function() {
-    const adminEmail = sessionStorage.getItem('userEmail');
-    const retailerTableBody = document.getElementById('retailerTableBody');
+  document.addEventListener('DOMContentLoaded', function () {
+            const adminEmail = sessionStorage.getItem('userEmail');
+            const retailerTableBody = document.getElementById('retailerTableBody');
 
-    if (!adminEmail) {
-        console.error('Admin email is not set in session storage');
-        return;
-    }
+            if (!adminEmail) {
+                console.error('Admin email is not set in session storage');
+                return;
+            }
 
-    // Fetch the list of all retailers including token amount
-    fetch(`${API_URL}/api/admin/retailer/listAllRetailer?adminEmail=${encodeURIComponent(adminEmail)}`)
-        .then(response => {
-        if (!response.ok) {
-            throw new Error(`Network response was not ok: ${response.statusText}`);
-        }
-        return response.json();
-    })
-        .then(data => {
-        // Iterate over each retailer and create table rows
-        data.forEach(item => {
-            const retailer = item.user;
-            const tokenAmount = item.tokenAmount || 0;
+            // Fetch the list of all retailers including token amount and ID card count
+            fetch(`${API_URL}/api/admin/retailer/listAllRetailer?adminEmail=${encodeURIComponent(adminEmail)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Iterate over each retailer and create table rows
+                    data.forEach(retailerData => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${retailerData.id}</td>
+                            <td>${retailerData.name || 'N/A'}</td>
+                            <td>${retailerData.creatorEmail || 'N/A'}</td>
+                            <td>${retailerData.email}</td>
+                            <td>${retailerData.phoneNumber || 'N/A'}</td>
+                            <td>${retailerData.companyAddress || 'N/A'}</td>
+                            <td>${retailerData.tokenAmount}</td>
+                            <td>${retailerData.idCardCreatedCount}</td>
+                         `;
+                        retailerTableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching retailers:', error);
+                });
 
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                    <td>${retailer.id}</td>
-                    <td>${retailer.name || 'N/A'}</td>
-                    <td>${retailer.creatorEmail || 'N/A'}</td>
-                    <td>${retailer.email}</td>
-                    <td>${retailer.phoneNumber || 'N/A'}</td>
-                    <td>${retailer.companyAddress || 'N/A'}</td>
-                    <td>${tokenAmount}</td>
-                `;
-            retailerTableBody.appendChild(row);
+             // Add event listener to the download button
+            document.getElementById('downloadButton').addEventListener('click', function () {
+                downloadCsv();
+            });
+
+            function downloadCsv() {
+             const adminEmail = sessionStorage.getItem('userEmail');
+                    fetch(`${API_URL}/api/admin/retailer/listAllRetailer?adminEmail=${encodeURIComponent(adminEmail)}`)
+                        .then(response => response.json())
+                        .then(retailerData => {
+                            let csvContent = "data:text/csv;charset=utf-8,";
+                            csvContent += "R.Id,Name,Email,Creator Email,Phone Number,Company,Token,ID Card Created\r\n";
+
+                            retailerData.forEach(retailer => {
+                                csvContent += `${retailer.id},${retailer.name || 'N/A'},${retailer.email},${retailer.creatorEmail},${retailer.phoneNumber || 'N/A'},${retailer.company || 'N/A'},${retailer.tokenAmount},${retailer.idCardCreatedCount}\r\n`;
+                            });
+
+                            const encodedUri = encodeURI(csvContent);
+                            const link = document.createElement("a");
+                            link.setAttribute("href", encodedUri);
+                            link.setAttribute("download", "retailers.csv");
+                            document.body.appendChild(link);
+
+                            link.click();
+
+                            document.body.removeChild(link);
+                        })
+                        .catch(error => console.error('Error fetching retailer data:', error));
+                    }
         });
-    })
-        .catch(error => {
-        console.error('Error fetching retailers:', error);
-    });
+        document.addEventListener('DOMContentLoaded', function() {
+   const email = sessionStorage.getItem('userEmail'); // Get email from session storage
+   document.getElementById('userEmail').innerText = email;
+    document.getElementById('userEmail1').innerText = email;
 });
+
 //----------------------------------Logout Api ----------------------------------
 
 document.addEventListener("DOMContentLoaded", function() {

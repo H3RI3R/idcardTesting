@@ -1,5 +1,7 @@
 package com.scriza.Idcard.controller.admin.retailer;
 import com.scriza.Idcard.Configuration.ApiResponse;
+import com.scriza.Idcard.DTO.IdCardDTO;
+import com.scriza.Idcard.DTO.RetailerResponse;
 import com.scriza.Idcard.Entity.IdCard;
 import com.scriza.Idcard.Entity.User;
 import com.scriza.Idcard.Entity.admin.Token.Token;
@@ -25,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin/retailer")
@@ -75,7 +78,7 @@ public class RetailerController {
 
         // Check if the user has the "ADMIN" role
         if (adminUser != null && "ADMIN".equalsIgnoreCase(adminUser.getRole())) {
-            List<UserWithToken> retailers = retailerService.getAllRetailersWithTokens();
+            List<RetailerResponse> retailers = retailerService.getAllRetailersWithTokens();
             return ResponseEntity.ok(retailers);
         } else {
             return ResponseEntity.status(401).body("Unauthorized access");
@@ -297,7 +300,7 @@ public class RetailerController {
                 + "}\n"
                 + ".image-col img {\n"
                 + "    width: 100%;\n"
-                + "    height: 100%;\n"
+                + "    height: 75%;\n"
                 + "}\n"
                 + "</style>\n"
                 + "</head>\n"
@@ -581,7 +584,7 @@ public class RetailerController {
         htmlBuilder.append("        }\n");
         htmlBuilder.append("        .image-col img {\n");
         htmlBuilder.append("          width: 100%;\n");
-        htmlBuilder.append("          height: 100%;\n");
+        htmlBuilder.append("          height: 75%;\n");
         htmlBuilder.append("        }\n");
         htmlBuilder.append("    </style>\n");
         htmlBuilder.append("</head>\n");
@@ -748,8 +751,14 @@ public class RetailerController {
     public Map<String, Object> getIdCardHistory(@RequestParam String retailerEmail) {
         try {
             List<IdCard> idCardHistory = retailerService.getIdCardHistory(retailerEmail);
+
+            // Convert List<IdCard> to List<IdCardDTO> to remove "photo"
+            List<IdCardDTO> idCardDTOList = idCardHistory.stream()
+                    .map(IdCardDTO::new)
+                    .collect(Collectors.toList());
+
             Map<String, Object> response = new HashMap<>();
-            response.put("idCardHistory", idCardHistory);
+            response.put("idCardHistory", idCardDTOList);
             return response;
         } catch (RuntimeException e) {
             Map<String, Object> response = new HashMap<>();

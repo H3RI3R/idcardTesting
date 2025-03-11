@@ -1,5 +1,6 @@
 package com.scriza.Idcard.service.admin.distributor;
 
+import com.scriza.Idcard.DTO.DistributorResponse;
 import com.scriza.Idcard.DTO.DistributorWithRetailersDto;
 import com.scriza.Idcard.Entity.User;
 import com.scriza.Idcard.Entity.admin.Token.Token;
@@ -9,6 +10,8 @@ import com.scriza.Idcard.Repository.UserRepository;
 import com.scriza.Idcard.Repository.admin.Token.TokenRepository;
 import com.scriza.Idcard.Repository.admin.TransactionRequestRepository;
 import com.scriza.Idcard.Repository.admin.distributor.ActivityRepositoryAdmin;
+import com.scriza.Idcard.service.admin.Token.TokenService;
+import com.scriza.Idcard.service.admin.retailer.RetailerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,10 @@ import java.util.stream.Collectors;
 @Service
 public class DistributorService {
 
+    @Autowired
+    private TokenService tokenService;
+    @Autowired
+    private RetailerService retailerService;
     @Autowired
     private UserRepository userRepository;
 
@@ -67,18 +74,18 @@ public class DistributorService {
         Token token = tokenRepository.findByUserEmail(email);
         return token != null ? token.getTokenAmount() : 0;
     }
-    public User getUserByEmail(String email) {
-        User user;
-        if (email.contains("@")) { // Check if the input is an email
-            user = userRepository.findByEmail(email);
-        } else { // Otherwise, assume it's a phone number
-            user = userRepository.findByPhoneNumber(email);
+    public User getUserByEmail(String identifier) {  // Changed parameter name
+        User user = null;
+        if (identifier.contains("@")) { // Check if the input is an email
+            user = userRepository.findByEmail(identifier);
+        } else if (identifier.matches("\\d+")) { // Check if the input is a phone number (digits only)
+            user = userRepository.findByPhoneNumber(identifier);
         }
 
         if (user != null) {
             return user;
         } else {
-            throw new RuntimeException("User not found with provided email/phone: " + email);
+            throw new RuntimeException("User not found with provided identifier: " + identifier);
         }
     }
 
@@ -226,14 +233,31 @@ public class DistributorService {
         activity.setAdminEmail(adminEmail);
         activityRepositoryAdmin.save(activity);
     }
-    public List<User> listDistributors(String adminEmail) {
+
+    public List<DistributorResponse> listDistributorsWithDetails(String adminEmail) {
         User admin = userRepository.findByEmail(adminEmail);
         if (admin == null || !"ADMIN".equalsIgnoreCase(admin.getRole())) {
             throw new RuntimeException("Unauthorized access: Not an admin");
         }
 
-        return userRepository.findAll().stream()
+        List<User> distributors = userRepository.findAll().stream()
                 .filter(user -> "DISTRIBUTOR".equalsIgnoreCase(user.getRole()))
+                .collect(Collectors.toList());
+
+        return distributors.stream()
+                .map(distributor -> {
+                    DistributorResponse response = new DistributorResponse();
+                    response.setId(distributor.getId());
+                    response.setName(distributor.getName());
+                    response.setEmail(distributor.getEmail());
+                    response.setPhoneNumber(distributor.getPhoneNumber());
+                    response.setRole(distributor.getRole());
+                    response.setStatus(distributor.isStatus());
+                    response.setTokenCount(tokenService.getTokenCount(distributor.getPhoneNumber()));  //Use phone Number as an identifier
+                    response.setRetailerCreatedCount(retailerService.countRetailersCreatedBy(distributor.getEmail())); // Use Email as distributor identifier
+                    // Set other fields as needed
+                    return response;
+                })
                 .collect(Collectors.toList());
     }
     public Iterable<User> listDistributors() {

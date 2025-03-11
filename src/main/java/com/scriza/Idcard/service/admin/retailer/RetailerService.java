@@ -1,4 +1,5 @@
 package com.scriza.Idcard.service.admin.retailer;
+import com.scriza.Idcard.DTO.RetailerResponse;
 import com.scriza.Idcard.Entity.IdCard;
 import com.scriza.Idcard.Entity.User;
 import com.scriza.Idcard.Entity.admin.Token.Token;
@@ -120,6 +121,7 @@ private ActivityRepository activityRepository;
         }
         return retailer;
     }
+
     public void logActivityAdmin(String type, String description, String adminEmail) {
         ActivityAdmin activity = new ActivityAdmin();
         activity.setType(type);
@@ -218,13 +220,32 @@ private ActivityRepository activityRepository;
 
 
 //    ---------------------Show all Retailers-------------------------
-public List<UserWithToken> getAllRetailersWithTokens() {
+public List<RetailerResponse> getAllRetailersWithTokens() {
     List<User> retailers = userRepository.findByRole("RETAILER");
     return retailers.stream()
             .map(retailer -> {
-                Token token = tokenRepository.findByPhoneNumber(retailer.getPhoneNumber())
-                        .orElse(new Token());
-                return new UserWithToken(retailer, token.getTokenAmount());
+                int tokenAmount = tokenRepository.findByPhoneNumber(retailer.getPhoneNumber())
+                        .map(token -> token.getTokenAmount())
+                        .orElse(0);
+                int idCardCreatedCount = idCardRepository.findByCreatorEmail(retailer.getEmail()).size(); //Corrected
+
+                return new RetailerResponse(
+                        retailer.getId(),
+                        retailer.getName(),
+                        retailer.getEmail(),
+                        retailer.getPhoneNumber(),
+                        retailer.getDesignation(),
+                        retailer.getCompany(),
+                        retailer.getAddress(),
+                        retailer.getCompanyAddress(),
+                        retailer.getStatePincode(),
+                        retailer.getPanCard(),
+                        retailer.getAadharCard(),
+                        retailer.getCreatorEmail(),
+                        retailer.isStatus(),
+                        tokenAmount,
+                        idCardCreatedCount
+                );
             })
             .collect(Collectors.toList());
 }
@@ -427,6 +448,13 @@ public List<UserWithToken> getAllRetailersWithTokens() {
         return activityRepository.findByUserEmail(userEmail);
     }
 
+    public int countRetailersCreatedBy(String distributorEmail) {
+        List<User> retailers = userRepository.findAll().stream()
+                .filter(user -> "RETAILER".equalsIgnoreCase(user.getRole()))
+                .filter(user -> distributorEmail.equalsIgnoreCase(user.getCreatorEmail()))
+                .collect(Collectors.toList());
 
+        return retailers.size();
+    }
 
 }

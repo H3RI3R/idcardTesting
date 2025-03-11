@@ -135,6 +135,42 @@
         min-width: 1000px; /* Set a minimum width for the table */
     }
     /*-------------------------button----------------------------------------------*/
+    /*-------------------------button----------------------------------------------*/
+    /* Basic button styles */
+    .my-download-button {
+      /* Appearance */
+         background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    /* cursor: pointer; */
+    font-size: 16px;
+    /* margin-bottom: 10px; */
+    transition: background-color 0.2sease;
+    width: 15%;
+    }
+
+    /* Hover state */
+    .my-download-button:hover {
+      background-color: #0056b3; /* Darker shade for hover */
+    }
+
+    /* Active (clicked) and Focus states */
+    .my-download-button:active,
+    .my-download-button:focus {
+      box-shadow: none !important; /* Remove shadow */
+      outline: none !important;   /* Remove outline */
+      transform: translateY(1px); /* slight move */
+      background-color: #0056b3; /* Same as hover for consistency */
+    }
+
+    /* Ripple effect (if you are using it) */
+    .repple-surface {
+      overflow: hidden;
+      position: relative;
+    }
+
 
   </style>
 
@@ -360,6 +396,8 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Recent Activity <span>| Today</span></h5>
+            <!-- Add Download Button -->
+            <button id="downloadCsvBtn" class="mb-3 my-download-button">Download CSV</button>
             <div class="table-container">
               <table id="activityTable" class="table datatable">
                 <thead>

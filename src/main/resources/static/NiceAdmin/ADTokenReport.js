@@ -132,6 +132,9 @@ document.addEventListener("DOMContentLoaded", function() {
       const filteredData = tableData.filter(data => data !== null); // Remove null entries
 //      console.log("Filtered Data:", filteredData); // Log to check if data is being filtered correctly
       populateTable(filteredData);
+
+      // After fetching and processing data, enable the download button
+      document.getElementById('downloadCsvBtn').disabled = false;
   }
 
   function populateTable(tableData) {
@@ -186,9 +189,70 @@ document.addEventListener("DOMContentLoaded", function() {
 //          paginationControls.innerHTML = '';
 //          paginationControls.appendChild(dataTable.tableWrapper.querySelector('.dataTable-pagination'));
       });
+
+        // Attach data to the download button
+        document.getElementById('downloadCsvBtn').data = tableData; // Store the data
   }
 
   document.addEventListener('DOMContentLoaded', fetchAdminActivities);
+
+
+// Function to convert the data to CSV format
+function convertToCSV(data) {
+    if (!data || data.length === 0) {
+        return '';
+    }
+
+    const headers = Object.keys(data[0]);
+    const csvRows = [];
+
+    // Add headers
+    csvRows.push(headers.join(','));
+
+    // Add data rows
+    for (const row of data) {
+        const values = headers.map(header => {
+            const value = row[header];
+            return `"${value ? value.toString().replace(/"/g, '""') : ''}"`;  // Escape double quotes
+        });
+        csvRows.push(values.join(','));
+    }
+
+    return csvRows.join('\n');
+}
+
+// Function to download the CSV file
+function downloadCSV(csvData) {
+    const blob = new Blob([csvData], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('hidden', '');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'activity_data.csv'); // Set the filename
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url); // Free up memory
+}
+
+// Event listener for the download button
+document.addEventListener('DOMContentLoaded', function() {
+    const downloadBtn = document.getElementById('downloadCsvBtn');
+
+    // Initially disable the download button
+    downloadBtn.disabled = true;
+
+    downloadBtn.addEventListener('click', function() {
+        const tableData = this.data; // Retrieve the data
+        if (tableData && tableData.length > 0) {
+            const csvData = convertToCSV(tableData);
+            downloadCSV(csvData);
+        } else {
+            alert('No data available to download.');
+        }
+    });
+});
+
 //-------------------------------------__toggle bar
   (function() {
       "use strict";

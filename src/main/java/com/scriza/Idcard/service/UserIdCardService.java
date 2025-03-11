@@ -56,6 +56,9 @@ public class UserIdCardService {
             existing.setEmailAddress(userIdCard.getEmailAddress());
             existing.setPhotoUrl(userIdCard.getPhotoUrl());
             existing.setEmployeeType(userIdCard.getEmployeeType());
+            existing.setCurrentNo(userIdCard.getCurrentNo());
+            existing.setBusinessNo(userIdCard.getBusinessNo());
+            existing.setPermanentNo(userIdCard.getPermanentNo());
             return repository.save(existing);
         } else {
             return repository.save(userIdCard);

@@ -29,6 +29,9 @@ public class UserIdCard {
     private String retailerEmail;
     private String emailAddress;
     private String employeeType;
+    private String currentNo;
+    private String permanentNo;
+    private String businessNo;
 
     @Column(nullable = false)
     private String photoUrl; // URL or path to the uploaded photo

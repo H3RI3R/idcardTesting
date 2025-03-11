@@ -368,115 +368,115 @@ document.addEventListener("DOMContentLoaded", function() {
 //----------------------------------Search  ID card by id  Api ----------------------------------
 
 //----------------------------------Show ID card By ID Api ----------------------------------
-document.addEventListener("DOMContentLoaded", function() {
-    const searchForm = document.getElementById("deleteRetailerForm");
-    const confirmationSection = document.getElementById("confirmationSection");
-    const retailerTable = document.getElementById("retailerTable");
-
-    searchForm.addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        const transactionId = document.getElementById("inputEmail").value.trim();
-
-        if (!transactionId) {
-            alert("Please enter a Transaction ID");
-            return;
-        }
-
-        fetchIdCardById(transactionId);
-    });
-
-    function fetchIdCardById(id) {
-        fetch(`${API_URL}/api/admin/retailer/idcard?id=${encodeURIComponent(id)}`)
-            .then(response => response.json())
-            .then(data => {
-            if (data.error) {
-                alert(`Error: ${data.error}`);
-                confirmationSection.style.display = "none";
-                return;
-            }
-
-            if (data.idCards && data.idCards.length > 0) {
-                // Clear existing table data
-                retailerTable.innerHTML = "";
-
-                // Populate table with the fetched ID card details
-                data.idCards.forEach(idCard => {
-                    const row = document.createElement("tr");
-
-                    row.innerHTML = `
-                            <td>${idCard.name}</td>
-                            <td>${idCard.phoneNumber}</td>
-                            <td>${idCard.businessName}</td>
-                            <td>Success</td>
-                            <td>${idCard.id}</td>
-                        `;
-                    retailerTable.appendChild(row);
-                });
-
-                // Display the confirmation section
-                confirmationSection.style.display = "block";
-            } else {
-                alert("No ID Card found for the provided Transaction ID.");
-                confirmationSection.style.display = "none";
-            }
-        })
-            .catch(error => {
-            console.error("Error fetching ID Card:", error);
-            alert("An error occurred while fetching the ID Card.");
-            confirmationSection.style.display = "none";
-        });
-    }
-});
 
 //----------------------------------Show Table Api ----------------------------------
 document.addEventListener("DOMContentLoaded", function () {
-    const retailerEmail = sessionStorage.getItem('userEmail');
+        const retailerEmail = sessionStorage.getItem('userEmail');
+        let allRecords = [];
+        let currentPage = 1;
+        const recordsPerPage = 10;
 
-    if (retailerEmail) {
-        fetch(`${API_URL}/api/admin/retailer/idcard-history?retailerEmail=${encodeURIComponent(retailerEmail)}`)
-            .then(response => response.json())
-            .then(data => {
-            if (data.idCardHistory && Array.isArray(data.idCardHistory)) {
-                const retailerTableBody = document.getElementById('retailerTableBody');
-                retailerTableBody.innerHTML = ''; // Clear the table body first
+        if (retailerEmail) {
+            fetch(`${API_URL}/api/admin/retailer/idcard-history?retailerEmail=${encodeURIComponent(retailerEmail)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.idCardHistory && Array.isArray(data.idCardHistory)) {
+                        allRecords = data.idCardHistory;
+                        renderTable();  // Render initial table
+                    } else {
+                        console.error('No ID cards found or invalid response format');
+                    }
+                })
+                .catch(error => console.error('Error fetching ID Card history:', error));
+        } else {
+            console.error('No retailer email found in session.');
+        }
 
-                data.idCardHistory.forEach(idCard => {
-                    const row = document.createElement('tr');
+        function renderTable() {
+            const retailerTableBody = document.getElementById('retailerTableBody');
+            retailerTableBody.innerHTML = ''; // Clear the table
 
-                    const nameCell = document.createElement('td');
-                    nameCell.textContent = idCard.name;
-                    row.appendChild(nameCell);
+            let filteredData = allRecords;
 
-                    const phoneNumberCell = document.createElement('td');
-                    phoneNumberCell.textContent = idCard.phoneNumber;
-                    row.appendChild(phoneNumberCell);
-
-                    const companyNameCell = document.createElement('td');
-                    companyNameCell.textContent = idCard.businessName;
-                    row.appendChild(companyNameCell);
-
-                    const statusCell = document.createElement('td');
-                    statusCell.textContent = 'Success';
-                    row.appendChild(statusCell);
-
-                    const transactionIdCell = document.createElement('td');
-                    transactionIdCell.textContent = idCard.id;
-                    row.appendChild(transactionIdCell);
-
-                    retailerTableBody.appendChild(row);
-                });
-            } else {
-                console.error('No ID cards found or invalid response format');
+            // Apply search filter
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            if (searchValue) {
+                filteredData = allRecords.filter(idCard =>
+                    idCard.name.toLowerCase().includes(searchValue) ||
+                    idCard.businessName.toLowerCase().includes(searchValue) ||
+                    idCard.id.toString().includes(searchValue)
+                );
             }
-        })
-            .catch(error => {
-            console.error('Error fetching ID Card history:', error);
+
+            // Paginate the data
+            const start = (currentPage - 1) * recordsPerPage;
+            const end = start + recordsPerPage;
+            const paginatedData = filteredData.slice(start, end);
+
+            // Populate the table
+            paginatedData.forEach(idCard => {
+                const row = document.createElement('tr');
+
+                // ID Card Name
+                const nameCell = document.createElement('td');
+                nameCell.textContent = idCard.name;
+                row.appendChild(nameCell);
+
+                // Phone Number (Hiding the first digits)
+                const phoneNumberCell = document.createElement('td');
+                const hiddenPhone = idCard.phoneNumber.slice(0, -4).replace(/\d/g, '*') + idCard.phoneNumber.slice(-4);
+                phoneNumberCell.textContent = hiddenPhone;
+                row.appendChild(phoneNumberCell);
+
+                // Company Name
+                const companyNameCell = document.createElement('td');
+                companyNameCell.textContent = idCard.businessName;
+                row.appendChild(companyNameCell);
+
+                // Status
+                const statusCell = document.createElement('td');
+                statusCell.textContent = 'Success';
+                row.appendChild(statusCell);
+
+                // Transaction ID
+                const transactionIdCell = document.createElement('td');
+                transactionIdCell.textContent = idCard.id;
+                row.appendChild(transactionIdCell);
+
+                retailerTableBody.appendChild(row);
+            });
+
+            updatePagination(filteredData.length);
+        }
+
+        // Update Pagination Buttons
+        function updatePagination(totalRecords) {
+            document.getElementById('pageInfo').textContent = `Page ${currentPage}`;
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = (currentPage * recordsPerPage) >= totalRecords;
+        }
+
+        // Pagination Event Listeners
+        document.getElementById('prevPage').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
         });
-    } else {
-        console.error('No retailer email found in session.');
-    }
-});
+
+        document.getElementById('nextPage').addEventListener('click', () => {
+            if (currentPage * recordsPerPage < allRecords.length) {
+                currentPage++;
+                renderTable();
+            }
+        });
+
+        // Search Event Listener
+        document.getElementById('searchInput').addEventListener('input', () => {
+            currentPage = 1;
+            renderTable();
+        });
+    });
 //----------------------------------Logout Api ----------------------------------
 
 document.addEventListener("DOMContentLoaded", function() {

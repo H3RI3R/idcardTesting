@@ -1,5 +1,6 @@
 package com.scriza.Idcard.controller.admin.distributor;
 
+import com.scriza.Idcard.DTO.DistributorResponse;
 import com.scriza.Idcard.DTO.DistributorWithRetailersDto;
 import com.scriza.Idcard.Entity.User;
 import com.scriza.Idcard.Entity.admin.TransactionRequest;
@@ -167,8 +168,8 @@ public class DistributorController {
         }
     }
     @GetMapping("/listWithAdminAccess")
-    public Iterable<User> listDistributors(@RequestParam String adminEmail) {
-        return distributorService.listDistributors(adminEmail);
+    public List<DistributorResponse> listDistributorsWithDetails(@RequestParam String adminEmail) {
+        return distributorService.listDistributorsWithDetails(adminEmail);
     }
     @GetMapping("/list")
     public Iterable<User> listDistributors() {
